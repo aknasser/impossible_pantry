@@ -8,6 +8,7 @@ const categories = require("./categoriesRoutes");
 const ingredients = require("./ingredientsRoutes")
 const recipes = require("./recipesRoutes");
 const users = require("./usersRoutes");
+const styles = require("./stylesRoutes");
 
 // CORS OPTIONS AND SETTINGS
 const whitelist = "http://localhost:3000"
@@ -38,6 +39,7 @@ router.use("/categories", categories);
 router.use("/ingredients", ingredients); 
 router.use("/recipes", recipes); 
 router.use("/users", users); 
+router.use("/styles", styles);
 
 
 

@@ -4,24 +4,16 @@ const mongoose = require("mongoose"); // nécessaire pour connecter facilement �
 
 const {Schema} = mongoose;    //Assigne le Schema à une constante portant le même nom dans Mongoose.
 
-const categorySchema = new Schema(
+const stylesSchema = new Schema(
     {
         name : {
             type : String,
             required : true
         },
-        ingredients: [{
-            type: mongoose.Schema.Types.ObjectId,
-            ref:"Ingredient"
-        }],
-        categoryPicture: {
+        stylePicture: {
             type: String,
             required: true,
         },
-        description : {
-            type : String,
-            required : true
-        }
     },
     {
         timestamps: true
@@ -36,4 +28,4 @@ const categorySchema = new Schema(
 
 // Pour exporter le model dans les autres composants de notre APP
 
-module.exports = mongoose.model("Category", categorySchema);      
+module.exports = mongoose.model("Style", stylesSchema);      

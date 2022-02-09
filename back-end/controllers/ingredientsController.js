@@ -5,8 +5,8 @@ module.exports = {
 
 
     testCookie : async(req, res) => {
-        res.send("Babyyyyyy");
         res.cookie("Hero", "Nass La Menace");
+        res.send("Babyyyyyy");
     },
 
 // (R FROM THE CRUD)
@@ -26,7 +26,6 @@ module.exports = {
 
     newIngredient : async(req, res) => {
         const newIngredient = req.body;
-        console.log(`le titre de la citation : ${newIngredient.name}`)
         
         const newEntry = await Ingredient.create({
             name : newIngredient.name,
@@ -72,6 +71,7 @@ module.exports = {
 
     convertJSON : (req, res) => {
         const properJSONObject = res.locals.toConvert;
+        console.log("WOOOOOW : " + properJSONObject);
         res.json(properJSONObject);
 
     } 

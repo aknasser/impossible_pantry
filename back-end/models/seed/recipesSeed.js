@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Ingredient = require("../ingredients");
 const Recipe = require("../recipes")
-
+const Style = require("../styles");
 
 mongoose.connect(
     "mongodb://localhost:27017/impossible_pantry",
@@ -18,9 +18,10 @@ const alimentationRecipe = async() => {
 // VEGGIE SAUTE
     const veggieSaute = await Recipe.create({
         name : "Veggies Saute",
+        intro : "It doesn't look like much but these veggies will save your life. Literraly!",
         steps : "Blablablba",
         country: "France",
-        style : "Healthy",
+        style : await Style.findOne({ name : "Healthy"}),
         difficulty : 1,
         pictureUrl : "poele.png",
         mainIngredient : await Ingredient.findOne({ name : "mushroom"}),
@@ -57,9 +58,10 @@ const alimentationRecipe = async() => {
 // BOLOGNESE SPAGHETTIS
     const bologneseSpaghettis = await Recipe.create({
         name : "Bolognese Spaghettis",
+        intro : "An all-time classic, easy to cook but hard to master! Can you cook them like la mama ?",
         steps : "Blablablba",
         country: "Italy",
-        style : "Yummy",
+        style : await Style.findOne({ name : "Yummy"}),
         difficulty : 1,
         pictureUrl : "bolognese.png",
         mainIngredient : await Ingredient.findOne({ name : "tomato pulp"}),
@@ -127,9 +129,10 @@ const alimentationRecipe = async() => {
 // LEMON BISCUIT
     const lemonBiscuit = await Recipe.create({
         name : "Lemon Biscuit",
+        intro : "A sweet lemon cookie. Even better with a warm tea and a good movie!",
         steps : "Blablablba",
         country: "Ireland",
-        style : "Sweet",
+        style : await Style.findOne({ name : "Sweet"}),
         difficulty : 1.5,
         pictureUrl : "biscuits.png",
         mainIngredient : await Ingredient.findOne({ name : "lemon juice"}),
