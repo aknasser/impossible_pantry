@@ -10,6 +10,10 @@ const recipeSchema = new Schema(
             type : String,
             required : true,
         },
+        intro : {
+            type : String,
+            required : true,
+        },
         steps: {
             type: String,
             required: true,
@@ -20,8 +24,8 @@ const recipeSchema = new Schema(
             required : true,
         },
         style : {
-            type : String,
-            required : true
+            type: mongoose.Schema.Types.ObjectId,
+            ref:"Style"
         },
         difficulty : {
             type : Number,
