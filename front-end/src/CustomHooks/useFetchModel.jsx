@@ -58,6 +58,8 @@ const useFetchModel = (endpoint) => {
                 console.log("The error:" + e)
             }
         }
+        
+        // CLEAN-UP FUNCTION
         return () => {
             isMounted = false;
             console.log("Component not Mounted yet")

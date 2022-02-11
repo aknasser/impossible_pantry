@@ -23,6 +23,9 @@ const ingredientSchema = new Schema(
             type: Number, //Using a 3 stars ranking system            
             required: true,
         },
+        unit : {
+            type : String,
+        },
         category : {
             type: mongoose.Schema.Types.ObjectId,
             ref:"Category",

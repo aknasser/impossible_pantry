@@ -19,7 +19,16 @@ const alimentationUser = async() => {
         recipesSaved : [],
         recipesSearched : [],
         recipesCooked : [],
-        stock : [],
+        stock : [
+            {
+                ingredient : await Ingredient.findOne({ name : "courgette"}),
+                quantity : 2
+            },
+            {
+                ingredient : await Ingredient.findOne({ name : "minced meat"}),
+                quantity : 500
+            }
+        ],
         
     })
 };

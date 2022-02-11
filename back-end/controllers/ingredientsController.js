@@ -71,7 +71,6 @@ module.exports = {
 
     convertJSON : (req, res) => {
         const properJSONObject = res.locals.toConvert;
-        console.log("WOOOOOW : " + properJSONObject);
         res.json(properJSONObject);
 
     } 
