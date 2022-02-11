@@ -14,7 +14,16 @@ module.exports = {
 
     selectedUser : async(req, res, next) => {
         const idUser = req.params.id;                    // on récupère le paramètre de l'id appelé 
-        const chosenUser = await User.findById(idUser)
+        
+        // We use populate() to have access  tot the property of "ingredient" within the property "stock".
+        const chosenUser = await User.findById(idUser).populate({
+            path : "stock",
+            populate : {
+                path : "ingredient",
+                model : "Ingredient"
+            }
+        })
+        console.log(chosenUser);
         res.locals.toConvert = chosenUser;
         next();
     },

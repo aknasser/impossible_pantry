@@ -49,10 +49,6 @@ const userSchema = new Schema(
                     type : Number,
                     required : true,
                 },
-                unit :  {
-                    type : String,
-                    required : true,
-                }
             }
         ],
     },

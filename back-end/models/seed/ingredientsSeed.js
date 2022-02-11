@@ -42,6 +42,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 1,
+            unit : "",
             category : veggie
         })
 
@@ -50,6 +51,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 1,
+            unit : "",
             category : veggie
         })
 
@@ -58,6 +60,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 1,
+            unit : "g",
             category : veggie
         })
 
@@ -67,6 +70,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 1,
+            unit : "",
             category : veggie
         })
 
@@ -75,6 +79,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 1,
+            unit : "g",
             category : veggie
         })
 
@@ -84,6 +89,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 1,
+            unit : "",
             category : veggie
         })
 
@@ -92,6 +98,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 1,
+            unit : "",
             category : veggie
         })
 
@@ -100,6 +107,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 1,
+            unit : "l",
             category : veggie
         })
 
@@ -109,6 +117,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 3,
+            unit : "g",
             category : dairy
         })
 
@@ -117,6 +126,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 2,
+            unit : "l",
             category : dairy
         })
 
@@ -125,6 +135,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 3,
+            unit : "g",
             category : dairy
         })
 
@@ -134,6 +145,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 1,
+            unit : "",
             category : meat
         })
 
@@ -142,6 +154,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 2,
+            unit : "g",
             category : meat
         })
     
@@ -152,6 +165,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 3,
+            unit : "",
             category : spices
         })
 
@@ -160,6 +174,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 1,
+            unit : "",
             category : spices
         })
 
@@ -169,6 +184,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 1,
+            unit : "",
             category : spices
         })
 
@@ -178,6 +194,7 @@ const alimentationIngredient = async() => {
             price : 2,
             scarcity : 1,
             fSSIndex: 1,
+            unit : "",
             category : spices
         })
 
@@ -187,6 +204,7 @@ const alimentationIngredient = async() => {
             price : 3,
             scarcity : 1,
             fSSIndex: 3,
+            unit : "",
             category : spices
         })
 
@@ -196,6 +214,7 @@ const alimentationIngredient = async() => {
             price : 3,
             scarcity : 2,
             fSSIndex: 3,
+            unit : "l",
             category : beverage
         })
     //CARBS
@@ -204,6 +223,7 @@ const alimentationIngredient = async() => {
         price : 1,
         scarcity : 1,
         fSSIndex: 2,
+        unit : "g",
         category : carbs
     })
 
@@ -212,6 +232,7 @@ const alimentationIngredient = async() => {
         price : 1,
         scarcity : 1,
         fSSIndex: 1,
+        unit : "g",
         category : carbs
     })
 
@@ -220,6 +241,7 @@ const alimentationIngredient = async() => {
         price : 1,
         scarcity : 1,
         fSSIndex: 1,
+        unit : "g",
         category : carbs
     })
 
@@ -230,6 +252,7 @@ const alimentationIngredient = async() => {
         price : 1,
         scarcity : 1,
         fSSIndex: 3,
+        unit : "g",
         category : sweet
     })
 // END - Creation ingredients
