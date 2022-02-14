@@ -7,7 +7,9 @@ router.get("/testCookie", ingredientsController.testCookie);
 
 // R DU CRUD
 router.get("/",  ingredientsController.retrieveIngredient, ingredientsController.convertJSON);  
-router.get("/:id", ingredientsController.selectedIngredient, ingredientsController.convertJSON);
+router.get("/unit/:ingredient", ingredientsController.unitFinder);
+router.get("/id/:id", ingredientsController.selectedIngredient, ingredientsController.convertJSON);
+
 
 // C DU CRUD
 router.post("/create", ingredientsController.newIngredient);

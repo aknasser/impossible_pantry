@@ -9,14 +9,14 @@ module.exports = {
         res.send("Babyyyyyy");
     },
 
-// (R FROM THE CRUD)
+// (R OF THE CRUD)
     retrieveIngredient : async (req, res, next) => {
         const allIngredients = await Ingredient.find({});
         res.locals.toConvert = allIngredients;   
         next(); 
      },
      
-//(R FROM THE CRUD - 1 ENTRY SELECTED)
+//(R OF THE CRUD - 1 ENTRY SELECTED)
     selectedIngredient : async(req, res, next) => {
         const idIngredient = req.params.id;                    // on récupère le paramètre de l'id appelé 
         const chosenIngredient = await Ingredient.findById(idIngredient)
@@ -24,6 +24,25 @@ module.exports = {
         next();
     },
 
+// To collect the unit corresponding to the ingredient Typed by the user in the front
+    unitFinder : async(req, res) => {
+        // 1 - We collect the ingredient from the request params.
+        const nameIngredient = req.params.ingredient;
+        console.log(`Entry typed by the user : ${nameIngredient}`);
+        // 2 - We find the corresponding entry in the collection ingredients in the DB
+        const ingredientTargeted = await Ingredient.findOne({ name : nameIngredient});
+        
+        if (ingredientTargeted) {
+            // 3 - We put the unit value in a variable
+            const rightUnit =  ingredientTargeted.unit;
+            console.log(`unitFinder, the ingredient we found : ${ingredientTargeted}`);
+            console.log(`The unit found : ${rightUnit}`)
+            // 4 - We sent the response to the client : if rightUnit exists, we sent it to the client
+            res.json(rightUnit);
+        }
+    },
+
+// C OF THE CRUD
     newIngredient : async(req, res) => {
         const newIngredient = req.body;
         
@@ -39,6 +58,7 @@ module.exports = {
 
     },
 
+// U OF TH CRUD
     updatedIngredient : async(req, res) => {
         let ingredientUpdated = req.body;
         console.log(`L'auteur de la citation updaté : ${ingredientUpdated.author}`);
@@ -61,6 +81,7 @@ module.exports = {
 
     },
 
+// D OF TH CRUD
     deletedObject : async(req, res) => {
         const targetId = req.params.id;
         console.log(`ID de l'élément à supprimer : ${targetId}`);

@@ -9,12 +9,14 @@ import { useContext } from "react";
 const IngredientsSelection = ({category, endpoint}) => {
 
 
-// User Stock Management here we control the current food stock for a given category.
-// This data comes from the component INgredientsList 
+// USER STOCK MANAGEMENT - here we control the current food stock for a given category. 
+// We update it with A POST REQUEST once the user click on let's go! 
+// This data comes from the component INgredientsList. 
     const {userAccount, setUserAccount} = useContext(UserContext)
 
-    const userStock = userAccount.content.stock
 
+// START - COLLECT ALL THE INGREDIENTS FOR A GIVEN CATEGORY
+// These ingredients are included in the props category (coming from the component Pantry.jsx)
 
 // This variable includes all the ingredients available for a given category.
     const [categoryIng, setCategoryIng] = React.useState([]);
@@ -29,7 +31,7 @@ const IngredientsSelection = ({category, endpoint}) => {
             try {
                 // we loop in the ingredients included in category.
                 for (let i = 0; i < category.ingredients.length; i++) {
-                    const ingFetched = await axios.get(`${endpoint}/ingredients/${category.ingredients[i]}`, {crossdomain : true});
+                    const ingFetched = await axios.get(`${endpoint}/ingredients/id/${category.ingredients[i]}`, {crossdomain : true});
                     
                     // IF the ingredient exists AND the component is mounted 
                     if (category.ingredients[i] && isMounted) {
@@ -44,7 +46,7 @@ const IngredientsSelection = ({category, endpoint}) => {
         }; 
         fetchCatIng();
 
-    //below, The clean-up function. We used is to set isMounted = false; "block" the fetch while waiting for the mounting component. 
+    //CLEAN-UP FUNCTION. We used is to set isMounted = false; "block" the fetch while waiting for the mounting component. 
         return () => {
             isMounted = false;
             console.log("Component not mounted yet")
@@ -53,105 +55,204 @@ const IngredientsSelection = ({category, endpoint}) => {
         };
     }, []);
 
+// END - COLLECT ALL THE INGREDIENT FOR A GIVEN CATEGORY
+
 
     
 
 
-// This variable includes the ingredients added by the user to its foodstock.
+// NEWINGREDIENTS - This variable includes the ingredients added by the user to its foodstock.
     const [newIngredients, setNewIngredients] = React.useState([]);
-    const [ingredientTyped, setIngredientTyped] = React.useState(""); // Might be good to convert it into an object with the following property : name, quantity, unit, will be easier to manage.
 
-// This function enable us to update the IngredientList
+
+// INGREDIENTTYPED - This variable contains the input typed by the user in the field with name="ingredient". 
+// Everytime the user type a new letter in this input, we update ingredientTyped (thanks onChange)
+// This state will be passed as a props of IngredientsList (later in this code).   
+
+    const [ingredientTyped, setIngredientTyped] = React.useState({
+        name : "",
+        quantity:"", 
+        unit : "N/A"
+    }); 
+    
+// OWNEDINGREDIENTS -  food already owned by the user when start the app (come from user.content.stock)
+// We create this state and we display/update it in IngredientsList (we pass it as a props later in this code). 
+    const [ownedIngredients, setOwnedIngredients] = React.useState([]);
+
+
+// VALID ENTRY CHECKER FUNCTION (called in validationIngredients) - to check if the typed ingredient is Valid (= part of categoryIng )
+/* We use it when :  
+1 - the user submit an ingredient after typing it
+2 - While the user his typing to fetch the corresponding unit IF we the ingredient is valid(meaning checkValidation return true).
+ */  
+
+
+    const checkValidation = (controller) =>  {
+
+        for (let i = 0; i < categoryIng.length; i++) {
+            if (ingredientTyped.name === categoryIng[i].name) {
+                // 2 - We execute the code below
+                controller = true;
+                console.log("We found a match"); 
+                break; // to escape the loop once we find a match among categorIng
+            }
+        }
+        return controller;      
+    }
+
+
+
+// DUPLICATE CHECKER FUNCTION (called in validationIngredients)
+    const duplicateChecker = (controller, arrayToCheck) => {
+        // We loop in the array to check...
+        for (let i = 0; i < arrayToCheck.length; i++) {
+            // If the ingredientTyped is already in the array to check...
+            if (ingredientTyped.name === arrayToCheck[i].name) {
+                controller = false;
+                break; // No need to keep looping if we find a duplicate. 
+                // Otherwise, if the array IS NOT in the array to check...
+            } else {
+                controller = true;
+            } 
+        }
+        return controller;
+    }
+
+
+
+
+// FUNCTION TO UPDATE INGREDIENTLIST
     const validationIngredients = (event) => {
         event.preventDefault();
 
-        // A - CHECK IF INGREDIENT IS VALID
 
-        // 1 - We compare ingredientTyped with categoryIng - IF ingredientTyped is  present in category ...
+        // validIngredient is a controller. We use it to check whether the ingredient typed is available in this category. 
+        // isUniqueNewIng and isUniqueUserIng are "controllers". We use them to check duplicates. They will remain true IF ingredientTyped is UNIQUE in newIngredients and ownedIngredients
         let validIngredient = false;
-
-        for (let i = 0; i < categoryIng.length; i++) {
-            if (ingredientTyped === categoryIng[i].name) {
-                // 2 - We execute the code below
-/*                 setNewIngredients(newIngredients => [...newIngredients, ingredientTyped])
- */                validIngredient = true;
-            } 
-        }
-        console.log("validIngredient : " + validIngredient)
-
-
-        // B- CHECK IF INGREDIENT IS A DUPLICATE (NEW INGREDIENT)
-
-        // isUniqueNewIng and isUniqueUserIng are "controller". We use them to check duplicates. They will remain true IF ingredientTyped is UNIQUE in NewIngredients and userIngredients
         let isUniqueNewIng = true;
+        let isUniqueUserIng = true;
 
-        const duplicateChecker = (controller, arrayToCheck) => {
-            // We loop in the array to check...
-            for (let i = 0; i < arrayToCheck.length; i++) {
-                // If the ingredientTyped is already in the array to check...
-                if (ingredientTyped === arrayToCheck[i]) {
-                    console.log(`Duplicate!`); 
-                    controller = false;
-                    break; // No need to keep looping if we find a duplicate. 
-                    // Otherwise, if the array IS NOT in the array to check...
-                } else {
-                    console.log(`Unique!!`);
-                    controller = true;
-                } 
-            }
-            return controller;
-        }
+    // A - CHECK IF INGREDIENT IS VALID
+
+        validIngredient = checkValidation(validIngredient);
+
+    // B- CHECK IF INGREDIENT IS A DUPLICATE (NEW INGREDIENT)
 
         isUniqueNewIng = duplicateChecker(isUniqueNewIng, newIngredients);
+        isUniqueUserIng = duplicateChecker(isUniqueNewIng, ownedIngredients);
 
-
-        // 3a - If we don't find any equality,validIngredient remains false = We sent an alert to the user. 
+        // a - If we don't find any equality, validIngredient remains false = We sent an alert to the user. 
         if (!validIngredient) {
-            alert(`${ingredientTyped} is not a valid ingredient for this category. Please correct your entry or pick another category.`);
+            console.log(validIngredient);
+            alert(`${ingredientTyped.name} is not a valid ingredient for this category. Please correct your entry or pick another category.`);
         }
 
-        // 3b - If we find an object with the same name , isUniqueNewIng IS false = We sent an alert to the user.         
+        // b - For the food recently added by the user :If we find an object with the same name , isUniqueNewIng IS false = We sent an alert to the user.         
         if (!isUniqueNewIng) {
-            alert(`${ingredientTyped} is already in the food stock. Please add another ingredient.`)
+            alert(`you've added ${ingredientTyped.name} a bit earlier. Please pick another ingredient.`)
         }
-        // 3d - When these 3 conditions are fulfilled, we execute this code to add the ingredientTyped to the list of newIngredients.
-        if (validIngredient && isUniqueNewIng) {
+
+        // c - For the food already owned by the user : If we find an object with the same name , isUniqueUserIng IS false = We sent an alert to the user.         
+
+        if (!isUniqueUserIng) {
+            alert(`${ingredientTyped.name} is already in the food stock. Please add another ingredient.`)
+        }
+
+        // d - When these 3 conditions are met, we execute this code to add the ingredientTyped to the list of newIngredients.
+        if (validIngredient && isUniqueNewIng && isUniqueUserIng) {
             setNewIngredients(newIngredients => [...newIngredients, ingredientTyped])
         } 
     };
 
 
+// UNIT UPDATING : We want to update the unit dynamically => When the user types a valid ingredient, we fetch the corresponding unit(unit input is a readonly input - the user can't change it himself).
+
+    React.useEffect(() => {
+
+        // 1 - We create a function to fetch the right unit. This effect is triggered eveytime ingredientTyped changed [dependency]. 
+        const getRightUnit = async () => {
+
+            let ingTypedValid = false;
+            ingTypedValid = checkValidation(ingTypedValid);
+
+            // b - IF  ingredientTyped is a valid ingredient we start the request.  We check that with the function
+            if (ingTypedValid) {
+                try {
+                    console.log("At least we are trying...")
+                    // c - ingToSearch contains the value to look for (the ingredientTyped) if nothing has been typed yet, we give it the value oupsie. This tip enable us to bypass 404 error during the GET Request
+                    const ingToSearch = ingredientTyped.name || "oupsie";
     
-// We use this function to constantly update what the user is typing.
+                    const fetchUnit = await axios.get(`${endpoint}/ingredients/unit/${ingToSearch}`, {crossdomain : true})
+                    // d - we collect this unit and update the state of ingredientTyped. The value displayed for the unit input (read-only) change automatically as a consequence 
+                    if(fetchUnit) {
+                        const rightUnit =fetchUnit.data;
+                        console.log (`unit updated`)            
+                        setIngredientTyped({
+                            ...ingredientTyped,
+                            unit : rightUnit
+                            });
+                    }
+                } catch (e) {
+                    console.log(`Issue to fetch the right unit : ${e}`);
+                    setIngredientTyped({
+                        ...ingredientTyped,
+                        unit : "scheiiiiissss!!!"
+                    })
+                } 
+
+                } else {
+                    console.log(`Hmm, typed Ingredient is ${ingTypedValid} `)
+                }
+            }
+        getRightUnit();
+    }, [endpoint, ingredientTyped.name])
+
+
+
+
+// CONTROLLED INPUT : We use this function to constantly update what the user is TYPING.
     const ingredientUpdater = (event) => {
-        setIngredientTyped(event.target.value);
-        console.log(`The user is typing : ${event.target.value}`)
+        setIngredientTyped({
+            ...ingredientTyped,
+            [event.target.name] : event.target.value,
+            });
+
+/*         console.log(`The field updated : ${event.target.name}`)
+        console.log(`The unit for this ingredient is typing : ${ingredientTyped.unit}(shouldn't be updated yet)`) */
+
+
+
     };
+
+
     return (
         <div>
             <h3>{category.name}</h3>
             <img src={category.categoryPicture} alt="Category" />
             <h4>{category.description}</h4>
             <form action="" onSubmit={validationIngredients}>
-                <label htmlFor="pickedIng">In your kitchen...</label>
-                <input list={category.name} id={category._id} name="pickedIng" onChange={ingredientUpdater} />
+                <label htmlFor="name">In your kitchen...</label>
+                <input list={category.name} id={category._id} name="name" onChange={ingredientUpdater} />
                 <datalist id={category.name}>
                     {categoryIng.map(ingredient => (
                         <option value={ingredient.name}  key={ingredient._id}  />
                     ))} 
                 </datalist>
                 <label htmlFor="quantity">Quantity</label>
-                <input type="text" id="quantity" />
+                <input type="text" id="quantity" name="quantity" onChange={ingredientUpdater} />
                 <label htmlFor="unit">Unit</label>
-                <input type="text" id="unit" value="unit" readOnly />
+                <input type="text" id="unit" value={ingredientTyped.unit} name="unit" readOnly onChange={ingredientUpdater} />
                 <input type="submit" />
             </form>
+
+            {/* This component display the food available for the user (ingredients already owned + ingredients added recently) */}
             <IngredientsList 
                 ingredients = {newIngredients} // All the new ingredients (the ingredients we are adding while filling the form)
                 ingredientUpdater = {setNewIngredients} // set updater Function. We use this function in IngredientList to delete ingredients if needed.
                 catIng = {category.ingredients} // all the ingredients for a given category
+                ownedIngredients = {ownedIngredients}  // The food owned by the user. Fetched from the DB
+                setOwnedIngredients = {setOwnedIngredients} // The state updater funcion for ownedIngredients. For example, deleting food the user has consumed since his last login
             />
-
         </div>
     );
 }
