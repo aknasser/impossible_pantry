@@ -23,7 +23,6 @@ module.exports = {
                 model : "Ingredient"
             }
         })
-        console.log(chosenUser);
         res.locals.toConvert = chosenUser;
         next();
     },

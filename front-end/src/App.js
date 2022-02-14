@@ -46,7 +46,7 @@ const App = () => {
 
   {/* YOUR KITCHEN */}
             <Route path = "/yourkitchen">
-              {categories.isLoading || categories.content===""  ? (
+              {categories.isLoading || categories.content==="" || userAccount.isLoading  ? (
                 <p>Loading...</p>
               ) : (
                 <Pantry 
