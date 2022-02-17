@@ -46,7 +46,7 @@ module.exports = {
 
     updatedUser : async(req, res) => {
         let userUpdated = req.body
-        console.log(`L'auteur de la citation updaté : ${userUpdated.author}`);
+        console.log(`The user to be updated : ${userUpdated.name}`);
         let objectId = req.params.id;
         console.log(`L'id: ${objectId}`);
 

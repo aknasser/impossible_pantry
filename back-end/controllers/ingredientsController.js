@@ -35,7 +35,6 @@ module.exports = {
         if (ingredientTargeted) {
             // 3 - We put the unit value in a variable
             const rightUnit =  ingredientTargeted.unit;
-            console.log(`unitFinder, the ingredient we found : ${ingredientTargeted}`);
             console.log(`The unit found : ${rightUnit}`)
             // 4 - We sent the response to the client : if rightUnit exists, we sent it to the client
             res.json(rightUnit);

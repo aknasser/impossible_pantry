@@ -1,18 +1,13 @@
 import axios from 'axios';
 import * as React from 'react';
 import IngredientsList from "./IngredientsList";
-import UserContext from "../../Context/UserContext"
-import { useContext } from "react";
 
 
 
-const IngredientsSelection = ({category, endpoint}) => {
+
+const IngredientsSelection = ({category, endpoint, stock, setStock}) => {
 
 
-// USER STOCK MANAGEMENT - here we control the current food stock for a given category. 
-// We update it with A POST REQUEST once the user click on let's go! 
-// This data comes from the component INgredientsList. 
-    const {userAccount, setUserAccount} = useContext(UserContext)
 
 
 // START - COLLECT ALL THE INGREDIENTS FOR A GIVEN CATEGORY
@@ -200,8 +195,6 @@ const IngredientsSelection = ({category, endpoint}) => {
                     })
                 } 
 
-                } else {
-                    console.log(`Hmm, typed Ingredient is ${ingTypedValid} `)
                 }
             }
         getRightUnit();
@@ -215,18 +208,70 @@ const IngredientsSelection = ({category, endpoint}) => {
         setIngredientTyped({
             ...ingredientTyped,
             [event.target.name] : event.target.value,
-            });
-
-/*         console.log(`The field updated : ${event.target.name}`)
-        console.log(`The unit for this ingredient is typing : ${ingredientTyped.unit}(shouldn't be updated yet)`) */
-
-
-
+            })  
     };
+
+
+
+// FEED THE STOCK - As the user update his stock( ownedIngredients and NewIngredient), we update the variable stock, with setStock.
+// we use stock in the parent component Pantry, during the POST Request
+
+// TEST VALUE 
+
+
+
+     React.useEffect(() => {
+        // 1 - FILTER THE RESULTS TO AVOID DUPLICATE
+            // a - We create an array to store ownedIngredients and newIngredients
+            // b - We loop into this array and stock (current state of the stock).
+            // c-  If there is a mismatch for the name, we add the given ingredient to the array ingredientChecked
+
+        // 2 - UPDATE THE STOCK WITH THIS ARRAY
+            // a- We set the new value of stock, with ingredientChecked
+
+        // new state for stock  = we merge the cuurent stock, the new values of ownedIngredients and / or newingredients
+        setStock(stock => [...stock, ...ownedIngredients, ...newIngredients]);
+     }, [ownedIngredients, newIngredients])
+    
+
+// CHECK LOGS
+
+     // To check the current state of stock 
+    React.useEffect( () => {
+        if (stock) {
+            console.log(`stock (${category.name}): ${stock.length} `)
+        } 
+         else  {
+            console.log("Fuck you Berkeley!!!");
+        }
+        if (stock.length >= 1 ) {
+            for(let i = 0; i < stock.length; i++) {
+                console.log (`In the stock : ${stock[i].name} `)
+            }
+        }
+    }, [stock]); 
+
+    // To check the current state of stock 
+/*     React.useEffect( () => {
+        if (test) {
+            console.log(`test for ${category.name} : ${test.length} `)
+        } 
+         else  {
+            console.log("Fuck you Test!");
+        }
+        if (test.length >= 1 ) {
+            for(let i = 0; i < test.length; i++) {
+                console.log (`Here is the first element : ${test[i].name} `)
+            }
+        }
+    }, [test]); */
+
+
 
 
     return (
         <div>
+
             <h3>{category.name}</h3>
             <img src={category.categoryPicture} alt="Category" />
             <h4>{category.description}</h4>
@@ -252,6 +297,8 @@ const IngredientsSelection = ({category, endpoint}) => {
                 catIng = {category.ingredients} // all the ingredients for a given category
                 ownedIngredients = {ownedIngredients}  // The food owned by the user. Fetched from the DB
                 setOwnedIngredients = {setOwnedIngredients} // The state updater funcion for ownedIngredients. For example, deleting food the user has consumed since his last login
+                stock = {stock}
+                setStock = {setStock}
             />
         </div>
     );

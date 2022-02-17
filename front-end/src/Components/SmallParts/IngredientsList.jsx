@@ -2,7 +2,7 @@ import UserContext from "../../Context/UserContext"
 import React, { useContext} from "react";
 
 
-const IngredientsList = ({ingredients, ingredientUpdater, catIng, ownedIngredients, setOwnedIngredients}) => {
+const IngredientsList = ({ingredients, ingredientUpdater, catIng, ownedIngredients, setOwnedIngredients, stock, setStock}) => {
     // To set and update the user details (stored in the UserContext).
     const {userAccount, setUserAccount} = useContext(UserContext)
  
@@ -21,7 +21,6 @@ const IngredientsList = ({ingredients, ingredientUpdater, catIng, ownedIngredien
         // if(userStock) is super useful. With that, we can wait that the userStock is loaded before executing "the meat of the code"
         if (userAccount.content) {
             for (let i = 0 ; i < catIng.length ; i++) {
-                console.log(`user : ${userAccount.content.name}`)
                 for (let j = 0 ; j < userStock.length ; j++) {
                     // When there is a match,it means that an ingredients from the user stock belongs to this category.
                     // We add the name of the food owned by the user to the state ownedIngredients (using setOwnedIngredients) 
@@ -57,14 +56,23 @@ const IngredientsList = ({ingredients, ingredientUpdater, catIng, ownedIngredien
     // Argument 1 : The array in which the food to delete is located | Argument 2 : the food to delete | Argument 3 : We use this function to update the state and get an array WITHOUT the food to delete
     const deleteIngredient = (foodArray, foodToDelete, updatingFunction) => {
 
-            // 1 - select the ingredient (we already passed it as an argument of the function)
-            // 2 - Create a filtered array WITHOUT the food to be deleted from the list (array.filter)
+        // 1 - select the ingredient (we already passed it as an argument of the function)
+        // 2 - DELETE FROM INGREDIENT LIST
+            // a - Create a filtered array WITHOUT the food to be deleted from the list (array.filter)
             const ingredientsUpdated = foodArray.filter(ingredient => {
                 return ingredient !== foodToDelete
             })
             console.log(`1 ingredient has been deleted from the food stock: ${ingredientsUpdated}`)
-            // 3 - We update ingredients with this new array (this array excludes the food to be deleted).
+            // b - We update ingredients with this new array (this array excludes the food to be deleted).
             updatingFunction(ingredientsUpdated);
+
+        // 3 - DELETE FROM THE STATE "STOCK"
+            // a - Create a filtered array including the whole Stock WITHOUT the ingredient to be deleted
+            const stockUpdated = stock.filter(ingredient => {
+                return ingredient !== foodToDelete 
+            })
+            // b - We update the stock
+            setStock(stockUpdated);
     };
 
 
