@@ -1,18 +1,13 @@
 import axios from 'axios';
 import * as React from 'react';
 import IngredientsList from "./IngredientsList";
-import UserContext from "../../Context/UserContext"
-import { useContext } from "react";
 
 
 
-const IngredientsSelection = ({category, endpoint}) => {
+
+const IngredientsSelection = ({category, endpoint, stock, setStock}) => {
 
 
-// USER STOCK MANAGEMENT - here we control the current food stock for a given category. 
-// We update it with A POST REQUEST once the user click on let's go! 
-// This data comes from the component INgredientsList. 
-    const {userAccount, setUserAccount} = useContext(UserContext)
 
 
 // START - COLLECT ALL THE INGREDIENTS FOR A GIVEN CATEGORY
@@ -70,9 +65,11 @@ const IngredientsSelection = ({category, endpoint}) => {
 // This state will be passed as a props of IngredientsList (later in this code).   
 
     const [ingredientTyped, setIngredientTyped] = React.useState({
-        name : "",
-        quantity:"", 
-        unit : "N/A"
+        ingredient : {
+            name : "",
+            unit:"", 
+        },
+        quantity : "N/A"
     }); 
     
 // OWNEDINGREDIENTS -  food already owned by the user when start the app (come from user.content.stock)
@@ -90,7 +87,7 @@ const IngredientsSelection = ({category, endpoint}) => {
     const checkValidation = (controller) =>  {
 
         for (let i = 0; i < categoryIng.length; i++) {
-            if (ingredientTyped.name === categoryIng[i].name) {
+            if (ingredientTyped.ingredient.name === categoryIng[i].name) {
                 // 2 - We execute the code below
                 controller = true;
                 console.log("We found a match"); 
@@ -107,7 +104,7 @@ const IngredientsSelection = ({category, endpoint}) => {
         // We loop in the array to check...
         for (let i = 0; i < arrayToCheck.length; i++) {
             // If the ingredientTyped is already in the array to check...
-            if (ingredientTyped.name === arrayToCheck[i].name) {
+            if (ingredientTyped.ingredient.name === arrayToCheck[i].ingredient.name) {
                 controller = false;
                 break; // No need to keep looping if we find a duplicate. 
                 // Otherwise, if the array IS NOT in the array to check...
@@ -144,18 +141,18 @@ const IngredientsSelection = ({category, endpoint}) => {
         // a - If we don't find any equality, validIngredient remains false = We sent an alert to the user. 
         if (!validIngredient) {
             console.log(validIngredient);
-            alert(`${ingredientTyped.name} is not a valid ingredient for this category. Please correct your entry or pick another category.`);
+            alert(`${ingredientTyped.ingredient.name} is not a valid ingredient for this category. Please correct your entry or pick another category.`);
         }
 
         // b - For the food recently added by the user :If we find an object with the same name , isUniqueNewIng IS false = We sent an alert to the user.         
         if (!isUniqueNewIng) {
-            alert(`you've added ${ingredientTyped.name} a bit earlier. Please pick another ingredient.`)
+            alert(`you've added ${ingredientTyped.ingredient.name} a bit earlier. Please pick another ingredient.`);
         }
 
         // c - For the food already owned by the user : If we find an object with the same name , isUniqueUserIng IS false = We sent an alert to the user.         
 
         if (!isUniqueUserIng) {
-            alert(`${ingredientTyped.name} is already in the food stock. Please add another ingredient.`)
+            alert(`${ingredientTyped.ingredient.name} is already in the food stock. Please add another ingredient.`);
         }
 
         // d - When these 3 conditions are met, we execute this code to add the ingredientTyped to the list of newIngredients.
@@ -180,7 +177,7 @@ const IngredientsSelection = ({category, endpoint}) => {
                 try {
                     console.log("At least we are trying...")
                     // c - ingToSearch contains the value to look for (the ingredientTyped) if nothing has been typed yet, we give it the value oupsie. This tip enable us to bypass 404 error during the GET Request
-                    const ingToSearch = ingredientTyped.name || "oupsie";
+                    const ingToSearch = ingredientTyped.ingredient.name || "oupsie";
     
                     const fetchUnit = await axios.get(`${endpoint}/ingredients/unit/${ingToSearch}`, {crossdomain : true})
                     // d - we collect this unit and update the state of ingredientTyped. The value displayed for the unit input (read-only) change automatically as a consequence 
@@ -189,7 +186,10 @@ const IngredientsSelection = ({category, endpoint}) => {
                         console.log (`unit updated`)            
                         setIngredientTyped({
                             ...ingredientTyped,
-                            unit : rightUnit
+                            ingredient : {
+                                ...ingredientTyped.ingredient,
+                                unit : rightUnit
+                            }
                             });
                     }
                 } catch (e) {
@@ -200,12 +200,10 @@ const IngredientsSelection = ({category, endpoint}) => {
                     })
                 } 
 
-                } else {
-                    console.log(`Hmm, typed Ingredient is ${ingTypedValid} `)
                 }
             }
         getRightUnit();
-    }, [endpoint, ingredientTyped.name])
+    }, [endpoint, ingredientTyped.ingredient.name])
 
 
 
@@ -214,19 +212,53 @@ const IngredientsSelection = ({category, endpoint}) => {
     const ingredientUpdater = (event) => {
         setIngredientTyped({
             ...ingredientTyped,
-            [event.target.name] : event.target.value,
-            });
-
-/*         console.log(`The field updated : ${event.target.name}`)
-        console.log(`The unit for this ingredient is typing : ${ingredientTyped.unit}(shouldn't be updated yet)`) */
-
-
-
+            ingredient : 
+                {
+                ...ingredientTyped.ingredient,
+                [event.target.name] : event.target.value,
+                }
+            })  
     };
+
+    const quantityUpdater = (event) => {
+        setIngredientTyped({
+            ...ingredientTyped,
+            quantity : event.target.value
+            })  
+    }
+
+
+// FEED THE STOCK - As the user update his stock( ownedIngredients and NewIngredient), we update the variable stock, with setStock.
+// we use stock in the parent component Pantry, during the POST Request
+// /!\ At this stage the stock contains duplicates. We will clean them when the user start the Post Request (in Pantry, parent component.)
+
+    React.useEffect( () => {
+        setStock([...stock, ...ownedIngredients, ...newIngredients]);
+    console.log(`CONTENT NewIngredients: ${JSON.stringify(newIngredients)}`);
+    }, [ownedIngredients, newIngredients]); 
+
+
+// CHECKING LOG - With this useEffect, we check the value of stock everytime when there is a changed
+    React.useEffect( () => {
+        console.log(`QTY STOCK : ${stock.length}`)
+        console.log(`STOCK : ${JSON.stringify(stock)}`)
+        for (let food of stock) {
+            console.log(`Name of the ingredient :${JSON.stringify(food.ingredient.name)}`)
+        }
+    }, [stock])
+
+
+
+
+
+
 
 
     return (
         <div>
+{/*         {stock.map(foodStock => (
+                <h6 key= {foodStock.ingredient.name}>{foodStock.ingredient.name}</h6>
+            ))} */}
             <h3>{category.name}</h3>
             <img src={category.categoryPicture} alt="Category" />
             <h4>{category.description}</h4>
@@ -239,9 +271,9 @@ const IngredientsSelection = ({category, endpoint}) => {
                     ))} 
                 </datalist>
                 <label htmlFor="quantity">Quantity</label>
-                <input type="text" id="quantity" name="quantity" onChange={ingredientUpdater} />
+                <input type="text" id="quantity" name="quantity" onChange={quantityUpdater} />
                 <label htmlFor="unit">Unit</label>
-                <input type="text" id="unit" value={ingredientTyped.unit} name="unit" readOnly onChange={ingredientUpdater} />
+                <input type="text" id="unit" value={ingredientTyped.ingredient.unit} name="unit" readOnly onChange={ingredientUpdater} />
                 <input type="submit" />
             </form>
 
@@ -252,6 +284,8 @@ const IngredientsSelection = ({category, endpoint}) => {
                 catIng = {category.ingredients} // all the ingredients for a given category
                 ownedIngredients = {ownedIngredients}  // The food owned by the user. Fetched from the DB
                 setOwnedIngredients = {setOwnedIngredients} // The state updater funcion for ownedIngredients. For example, deleting food the user has consumed since his last login
+                stock = {stock}
+                setStock = {setStock}
             />
         </div>
     );

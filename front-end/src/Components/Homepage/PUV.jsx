@@ -10,8 +10,8 @@ const PUV = () => {
 
     return (
         <>
-        <span>{userAccount.content.name}</span>
-          <h1>Find your Next Cooking experience in a flash</h1>
+         <span>{userAccount.content.name}</span>
+         <h1>Find your Next Cooking experience in a flash</h1>
           <HeroPicture/>
           <Cta cta="Looking for inspiration"></Cta>
           <Cta cta="I want to eat..."></Cta>
