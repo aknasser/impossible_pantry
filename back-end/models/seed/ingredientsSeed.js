@@ -42,7 +42,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 1,
-            unit : "",
+            unit : "piece",
             category : veggie
         })
 
@@ -51,7 +51,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 1,
-            unit : "",
+            unit : "piece",
             category : veggie
         })
 
@@ -70,7 +70,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 1,
-            unit : "",
+            unit : "piece",
             category : veggie
         })
 
@@ -89,7 +89,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 1,
-            unit : "",
+            unit : "piece",
             category : veggie
         })
 
@@ -98,7 +98,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 1,
-            unit : "",
+            unit : "piece",
             category : veggie
         })
 
@@ -145,7 +145,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 1,
-            unit : "",
+            unit : "piece",
             category : meat
         })
 
@@ -165,7 +165,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 3,
-            unit : "",
+            unit : "piece",
             category : spices
         })
 
@@ -174,7 +174,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 1,
-            unit : "",
+            unit : "piece",
             category : spices
         })
 
@@ -184,7 +184,7 @@ const alimentationIngredient = async() => {
             price : 1,
             scarcity : 1,
             fSSIndex: 1,
-            unit : "",
+            unit : "piece",
             category : spices
         })
 
@@ -194,7 +194,7 @@ const alimentationIngredient = async() => {
             price : 2,
             scarcity : 1,
             fSSIndex: 1,
-            unit : "",
+            unit : "piece",
             category : spices
         })
 
@@ -204,7 +204,7 @@ const alimentationIngredient = async() => {
             price : 3,
             scarcity : 1,
             fSSIndex: 3,
-            unit : "",
+            unit : "piece",
             category : spices
         })
 

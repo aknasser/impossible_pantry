@@ -18,7 +18,7 @@ const App = () => {
   const API_ENDPOINT = "http://localhost:1993"
 
 
-  const [userLogged, setUserLogged] = useFetchModel(`${API_ENDPOINT}/users/620526c469cdb666b0b73bbf`);
+  const [userLogged, setUserLogged] = useFetchModel(`${API_ENDPOINT}/users/621137f1004a65cfd4fc4aee`);
   const [categories, dispatchCategories] = useFetchModel(`${API_ENDPOINT}/categories`);  // All the entries for the Categories model.
   const [recipes, dispatchRecipes] = useFetchModel(`${API_ENDPOINT}/recipes`);; // All the entries fort the Recipes model
   const [ingredients, dispatchIngredients] = useFetchModel(`${API_ENDPOINT}/ingredients`);;

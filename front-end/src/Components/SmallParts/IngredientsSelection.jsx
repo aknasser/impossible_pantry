@@ -65,9 +65,11 @@ const IngredientsSelection = ({category, endpoint, stock, setStock}) => {
 // This state will be passed as a props of IngredientsList (later in this code).   
 
     const [ingredientTyped, setIngredientTyped] = React.useState({
-        name : "",
-        quantity:"", 
-        unit : "N/A"
+        ingredient : {
+            name : "",
+            unit:"", 
+        },
+        quantity : "N/A"
     }); 
     
 // OWNEDINGREDIENTS -  food already owned by the user when start the app (come from user.content.stock)
@@ -85,7 +87,7 @@ const IngredientsSelection = ({category, endpoint, stock, setStock}) => {
     const checkValidation = (controller) =>  {
 
         for (let i = 0; i < categoryIng.length; i++) {
-            if (ingredientTyped.name === categoryIng[i].name) {
+            if (ingredientTyped.ingredient.name === categoryIng[i].name) {
                 // 2 - We execute the code below
                 controller = true;
                 console.log("We found a match"); 
@@ -102,7 +104,7 @@ const IngredientsSelection = ({category, endpoint, stock, setStock}) => {
         // We loop in the array to check...
         for (let i = 0; i < arrayToCheck.length; i++) {
             // If the ingredientTyped is already in the array to check...
-            if (ingredientTyped.name === arrayToCheck[i].name) {
+            if (ingredientTyped.ingredient.name === arrayToCheck[i].ingredient.name) {
                 controller = false;
                 break; // No need to keep looping if we find a duplicate. 
                 // Otherwise, if the array IS NOT in the array to check...
@@ -139,18 +141,18 @@ const IngredientsSelection = ({category, endpoint, stock, setStock}) => {
         // a - If we don't find any equality, validIngredient remains false = We sent an alert to the user. 
         if (!validIngredient) {
             console.log(validIngredient);
-            alert(`${ingredientTyped.name} is not a valid ingredient for this category. Please correct your entry or pick another category.`);
+            alert(`${ingredientTyped.ingredient.name} is not a valid ingredient for this category. Please correct your entry or pick another category.`);
         }
 
         // b - For the food recently added by the user :If we find an object with the same name , isUniqueNewIng IS false = We sent an alert to the user.         
         if (!isUniqueNewIng) {
-            alert(`you've added ${ingredientTyped.name} a bit earlier. Please pick another ingredient.`)
+            alert(`you've added ${ingredientTyped.ingredient.name} a bit earlier. Please pick another ingredient.`);
         }
 
         // c - For the food already owned by the user : If we find an object with the same name , isUniqueUserIng IS false = We sent an alert to the user.         
 
         if (!isUniqueUserIng) {
-            alert(`${ingredientTyped.name} is already in the food stock. Please add another ingredient.`)
+            alert(`${ingredientTyped.ingredient.name} is already in the food stock. Please add another ingredient.`);
         }
 
         // d - When these 3 conditions are met, we execute this code to add the ingredientTyped to the list of newIngredients.
@@ -175,7 +177,7 @@ const IngredientsSelection = ({category, endpoint, stock, setStock}) => {
                 try {
                     console.log("At least we are trying...")
                     // c - ingToSearch contains the value to look for (the ingredientTyped) if nothing has been typed yet, we give it the value oupsie. This tip enable us to bypass 404 error during the GET Request
-                    const ingToSearch = ingredientTyped.name || "oupsie";
+                    const ingToSearch = ingredientTyped.ingredient.name || "oupsie";
     
                     const fetchUnit = await axios.get(`${endpoint}/ingredients/unit/${ingToSearch}`, {crossdomain : true})
                     // d - we collect this unit and update the state of ingredientTyped. The value displayed for the unit input (read-only) change automatically as a consequence 
@@ -184,7 +186,10 @@ const IngredientsSelection = ({category, endpoint, stock, setStock}) => {
                         console.log (`unit updated`)            
                         setIngredientTyped({
                             ...ingredientTyped,
-                            unit : rightUnit
+                            ingredient : {
+                                ...ingredientTyped.ingredient,
+                                unit : rightUnit
+                            }
                             });
                     }
                 } catch (e) {
@@ -198,7 +203,7 @@ const IngredientsSelection = ({category, endpoint, stock, setStock}) => {
                 }
             }
         getRightUnit();
-    }, [endpoint, ingredientTyped.name])
+    }, [endpoint, ingredientTyped.ingredient.name])
 
 
 
@@ -207,71 +212,53 @@ const IngredientsSelection = ({category, endpoint, stock, setStock}) => {
     const ingredientUpdater = (event) => {
         setIngredientTyped({
             ...ingredientTyped,
-            [event.target.name] : event.target.value,
+            ingredient : 
+                {
+                ...ingredientTyped.ingredient,
+                [event.target.name] : event.target.value,
+                }
             })  
     };
 
+    const quantityUpdater = (event) => {
+        setIngredientTyped({
+            ...ingredientTyped,
+            quantity : event.target.value
+            })  
+    }
 
 
 // FEED THE STOCK - As the user update his stock( ownedIngredients and NewIngredient), we update the variable stock, with setStock.
 // we use stock in the parent component Pantry, during the POST Request
+// /!\ At this stage the stock contains duplicates. We will clean them when the user start the Post Request (in Pantry, parent component.)
 
-// TEST VALUE 
-
-
-
-     React.useEffect(() => {
-        // 1 - FILTER THE RESULTS TO AVOID DUPLICATE
-            // a - We create an array to store ownedIngredients and newIngredients
-            // b - We loop into this array and stock (current state of the stock).
-            // c-  If there is a mismatch for the name, we add the given ingredient to the array ingredientChecked
-
-        // 2 - UPDATE THE STOCK WITH THIS ARRAY
-            // a- We set the new value of stock, with ingredientChecked
-
-        // new state for stock  = we merge the cuurent stock, the new values of ownedIngredients and / or newingredients
-        setStock(stock => [...stock, ...ownedIngredients, ...newIngredients]);
-     }, [ownedIngredients, newIngredients])
-    
-
-// CHECK LOGS
-
-     // To check the current state of stock 
     React.useEffect( () => {
-        if (stock) {
-            console.log(`stock (${category.name}): ${stock.length} `)
-        } 
-         else  {
-            console.log("Fuck you Berkeley!!!");
-        }
-        if (stock.length >= 1 ) {
-            for(let i = 0; i < stock.length; i++) {
-                console.log (`In the stock : ${stock[i].name} `)
-            }
-        }
-    }, [stock]); 
+        setStock([...stock, ...ownedIngredients, ...newIngredients]);
+    console.log(`CONTENT NewIngredients: ${JSON.stringify(newIngredients)}`);
+    }, [ownedIngredients, newIngredients]); 
 
-    // To check the current state of stock 
-/*     React.useEffect( () => {
-        if (test) {
-            console.log(`test for ${category.name} : ${test.length} `)
-        } 
-         else  {
-            console.log("Fuck you Test!");
+
+// CHECKING LOG - With this useEffect, we check the value of stock everytime when there is a changed
+    React.useEffect( () => {
+        console.log(`QTY STOCK : ${stock.length}`)
+        console.log(`STOCK : ${JSON.stringify(stock)}`)
+        for (let food of stock) {
+            console.log(`Name of the ingredient :${JSON.stringify(food.ingredient.name)}`)
         }
-        if (test.length >= 1 ) {
-            for(let i = 0; i < test.length; i++) {
-                console.log (`Here is the first element : ${test[i].name} `)
-            }
-        }
-    }, [test]); */
+    }, [stock])
+
+
+
+
 
 
 
 
     return (
         <div>
-
+{/*         {stock.map(foodStock => (
+                <h6 key= {foodStock.ingredient.name}>{foodStock.ingredient.name}</h6>
+            ))} */}
             <h3>{category.name}</h3>
             <img src={category.categoryPicture} alt="Category" />
             <h4>{category.description}</h4>
@@ -284,9 +271,9 @@ const IngredientsSelection = ({category, endpoint, stock, setStock}) => {
                     ))} 
                 </datalist>
                 <label htmlFor="quantity">Quantity</label>
-                <input type="text" id="quantity" name="quantity" onChange={ingredientUpdater} />
+                <input type="text" id="quantity" name="quantity" onChange={quantityUpdater} />
                 <label htmlFor="unit">Unit</label>
-                <input type="text" id="unit" value={ingredientTyped.unit} name="unit" readOnly onChange={ingredientUpdater} />
+                <input type="text" id="unit" value={ingredientTyped.ingredient.unit} name="unit" readOnly onChange={ingredientUpdater} />
                 <input type="submit" />
             </form>
 

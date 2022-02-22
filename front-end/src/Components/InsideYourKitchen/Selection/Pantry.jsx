@@ -15,8 +15,9 @@ const Pantry = ({allCategories, endpoint}) => {
 // This data comes from the component INgredientsList. 
     const {userAccount, setUserAccount} = useContext(UserContext)
 
-// UPDATE USER FOOD STOCK WITH A POST REQUEST
-    const [stock, setStock] = React.useState([]);
+// we assign an initial value to stock. stock (initialValue) = userAccount.content.stock
+    const [stock, setStock] = React.useState([...userAccount.content.stock]);
+
 
 // START SUBMIT
 
@@ -26,29 +27,43 @@ const Pantry = ({allCategories, endpoint}) => {
         event.preventDefault();
         console.log("Let's go!");
      /*  2 - For each category, we collect ownedIngredients and newIngredients.
-        * Option1 : We create a new state / setState variable to manage it. See [stock, setStock] above
+        ==> We've created a new state / setState variable to manage it. See [stock, setStock] above
+        ==> At this stage, stock is likely to have duplicates. We will clean it and then include it in the userAccount.
     */ 
-        setUserAccount({
-            ...userAccount,
-            content : {
-                ...userAccount.content,
-                name : "Akande"
-            }
-        });
 
-// 3 - POST request to the endpoint dedicated to user udpdate
-        const updatingStock = await axios.post(`${endpoint}/users/update/${userAccount.content._id}`, userAccount.content);
+    // 3 - Cleaning STOCK state. Let's get rid of the duplicate
+        /* The hash table is super useful to get rid of duplicates :
+        If we try to store a key-value pair where the key already exists, it simply overwrites the old value while keeping the same key
+        In others words, our key can only once and the value will be equal to the most recent version of the value.
+        (Read it many times and you will understand how powerful this property is:D  ) 
+        */ 
+        
+        
+        const stockHashTable = {}; 
 
-// 4 - After saving the updated data, the server sends a response to the client. This is the signal to move forward and start the redirection towards the results page.
-        let confirmation ;
+        /*We add the content of stock to the hashTable.
+            key = the name of the ingredient |value = the ingredient and all its properties (name, quantity, unit),
+            the key is unique meaning that our hash table contains only ONE instance of each ingredient added to the stock
+            Bye bye troublesome duplicates. 
+        */  
+        for (let food of stock) {
+            stockHashTable[food.ingredient.name] = food;
+        }
+        console.log(`HASH TABLE : ${JSON.stringify(stockHashTable)}`)
 
-// 5  - Once the post is done and we get the confirmation, we redirect the user to the results using window.href("something").
+// 4 - POST request to the endpoint dedicated to user udpdate
+        const updatingStock = await axios.post(`${endpoint}/users/stockupdate/${userAccount.content._id}`, stockHashTable);
+
+// 6 - After saving the updated data, the server sends a response to the client. This is the signal to move forward and start the redirection towards the results page.
+    console.log(updatingStock.data);    
+    let confirmation = updatingStock.data;
+
+// 7  - Once the post is done and we get the confirmation, we redirect the user to the results using window.href("something").
     console.log("We good ?");
 
         if (confirmation) {
             window.location.href = "/";   
         }
-
     };
 
 // END - SUBMIT
@@ -57,6 +72,8 @@ const Pantry = ({allCategories, endpoint}) => {
     React.useEffect( () => {
         console.log(`check userAccount name : ${userAccount.content.name}`)
     }, [userAccount]);
+
+
 
 
 

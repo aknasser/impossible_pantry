@@ -28,9 +28,11 @@ const IngredientsList = ({ingredients, ingredientUpdater, catIng, ownedIngredien
                         setOwnedIngredients(ownedIngredients => [
                             ...ownedIngredients,
                             {
-                                name : userStock[j].ingredient.name,
+                                ingredient : {
+                                    name : userStock[j].ingredient.name,
+                                    unit : userStock[j].ingredient.unit
+                                },
                                 quantity : userStock[j].quantity,
-                                unit : userStock[j].unit
                             }
                             ]
                         )
@@ -55,7 +57,7 @@ const IngredientsList = ({ingredients, ingredientUpdater, catIng, ownedIngredien
 // DELETE NEW INGREDIENTS AND USER INGREDIENT WITH ONE CLICK
     // Argument 1 : The array in which the food to delete is located | Argument 2 : the food to delete | Argument 3 : We use this function to update the state and get an array WITHOUT the food to delete
     const deleteIngredient = (foodArray, foodToDelete, updatingFunction) => {
-
+        console.log(`foodToDelete: ${JSON.stringify(foodToDelete)}`);
         // 1 - select the ingredient (we already passed it as an argument of the function)
         // 2 - DELETE FROM INGREDIENT LIST
             // a - Create a filtered array WITHOUT the food to be deleted from the list (array.filter)
@@ -68,8 +70,8 @@ const IngredientsList = ({ingredients, ingredientUpdater, catIng, ownedIngredien
 
         // 3 - DELETE FROM THE STATE "STOCK"
             // a - Create a filtered array including the whole Stock WITHOUT the ingredient to be deleted
-            const stockUpdated = stock.filter(ingredient => {
-                return ingredient !== foodToDelete 
+            const stockUpdated = stock.filter(food => {
+                return food.ingredient.name !== foodToDelete.ingredient.name 
             })
             // b - We update the stock
             setStock(stockUpdated);
@@ -86,10 +88,10 @@ const IngredientsList = ({ingredients, ingredientUpdater, catIng, ownedIngredien
                     <p>Nada for now</p>
                 ) : (
                     ownedIngredients.map(currentIng => (
-                        <div key={currentIng.name}>
-                            <span>{currentIng.name}  </span>
+                        <div key={currentIng.ingredient.name}>
+                            <span>{currentIng.ingredient.name}  </span>
                             <span>{currentIng.quantity} </span>
-                            <span>{currentIng.unit}</span>
+                            <span>{currentIng.ingredient.unit}</span>
                             <button onClick={() => deleteIngredient(ownedIngredients, currentIng, setOwnedIngredients)}> - </button>
                             <br/>
                         </div>
@@ -98,12 +100,12 @@ const IngredientsList = ({ingredients, ingredientUpdater, catIng, ownedIngredien
             </div>
             <div>
                 <h4>Food added</h4>
-                {ingredients.map(ingredient => (
-                    <div key={ingredient.name}>
-                        <span>{ingredient.name} </span>
-                        <span>{ingredient.quantity} </span>
-                        <span>{ingredient.unit}</span>
-                        <button onClick={() => deleteIngredient(ingredients, ingredient, ingredientUpdater)}> - </button>
+                {ingredients.map(food => (
+                    <div key={food.ingredient.name}>
+                        <span>{food.ingredient.name} </span>
+                        <span>{food.quantity} </span>
+                        <span>{food.ingredient.unit}</span>
+                        <button onClick={() => deleteIngredient(ingredients, food, ingredientUpdater)}> - </button>
                         <br/>
                     </div>
                 ))}
