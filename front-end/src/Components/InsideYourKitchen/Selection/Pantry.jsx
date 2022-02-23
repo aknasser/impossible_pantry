@@ -62,7 +62,7 @@ const Pantry = ({allCategories, endpoint}) => {
     console.log("We good ?");
 
         if (confirmation) {
-            window.location.href = "/";   
+            window.location.href = "/recipesavailable";   
         }
     };
 

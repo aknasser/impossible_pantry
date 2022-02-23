@@ -84,8 +84,15 @@ const App = () => {
               )}
               
             </Route>
-            <Route path = "/inspiration">
-              <RecipesAvailable/>
+            <Route path = "/recipesavailable">
+              {/* We display "Loading" when userAccount is still Loading or the content is still empty */}
+              { userAccount.isLoading || !userAccount.content ? (
+                <p>Loading...</p>
+              ) : (
+                <RecipesAvailable
+                endpoint = {API_ENDPOINT}
+              />
+              )}
             </Route>
 
   {/* I WANNA EAT */}
