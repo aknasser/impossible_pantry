@@ -73,7 +73,7 @@ module.exports = {
         let newStock = [];
         let userId = req.params.id;
         let foodSubmitted = req.body;  // The hash table we have created using ingredient submitted by the user in the front-end.
-        console.log (`the stock updated : ${JSON.stringify(foodSubmitted)}`);
+/*         console.log (`the stock updated : ${JSON.stringify(foodSubmitted)}`); */
 
         // 1 - We add each ingredient collected from the request in the array newStock
 
@@ -92,7 +92,7 @@ module.exports = {
 
         };
 
-        console.log(`NEW STOCK ARRAY : ${JSON.stringify(newStock)}`);
+/*         console.log(`NEW STOCK ARRAY : ${JSON.stringify(newStock)}`); */
 
         // 2 - We update user.stock with newStock
         const userToUpdate = await User.findByIdAndUpdate(userId, {

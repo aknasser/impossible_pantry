@@ -48,8 +48,8 @@ const alimentationRecipe = async() => {
             },
             {
                 ingredient : await Ingredient.findOne({ name : "salt"}),
-                quantity : "1",
-                unit : "tea spoon "
+                quantity : "",
+                unit : ""
             },
         ]
 
@@ -139,8 +139,8 @@ const alimentationRecipe = async() => {
         ingredientsNeeded : [
             {
                 ingredient : await Ingredient.findOne({ name : "lemon juice"}),
-                quantity : 10,
-                unit : "table spoon"
+                quantity : 0.10,
+                unit : "l"
             },
             {
                 ingredient : await Ingredient.findOne({ name : "eggs"}),

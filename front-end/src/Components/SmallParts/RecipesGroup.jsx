@@ -1,20 +1,21 @@
-const RecipesGroup = ({recipeFound}) => {
+const RecipesGroup = ({recipesGroup}) => {
     return (
 
-/* 
-- We create an object containing 3 objects : PerfectMatch, Almost, A stretch
-- We run an array.map here
-- and then another array.map to get all the recipes by Category
-
-*/        
+        
         <div>
-{/* A map to get all the recipes */}
-            <a href={`recipe/${recipeFound._id}`}>
-                <h4>{recipeFound.name}</h4>
-            </a>
-            <h5>{recipeFound.style}</h5>
-            <h5>{recipeFound.difficulty}</h5>
-            <h5>{recipeFound.mainIngredient}</h5>
+            <h3>{recipesGroup.title}</h3>
+            
+            {/* A map to get all the recipes and their properties*/}
+             {recipesGroup.recipes.map(meal => (
+                <div key = {meal._id}>
+                    <a href={`recipe/${meal._id}`}>
+                        <h4>{meal.name}</h4>
+                    </a>
+                        <span>Style: {meal.style.name}</span>
+                        <span>Difficulty: {meal.difficulty}</span>
+                        <span>Main Ingredient: {meal.mainIngredient.name}</span>
+                </div>
+            ))} 
         </div>
     );
 }
