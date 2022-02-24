@@ -3,12 +3,10 @@ import PageTitle from "../SmallParts/PageTitle";
 import BlocPicture from "./BlocPicture"
 import Steps from "./Steps"
 import Suggestions from "./Suggestions"
-import { useParams } from "react-router";
 
 
-const RecipeDetails = () => {
+const RecipeDetails = ({recipeId}) => {
 
-    const { id } = useParams();  // permet de récupérer la valeur du paramètre utilisée pour arriver surc cette page
 
     const recipe = []; /* Choper with useRef de l'id or something. Gonna check later. */
 

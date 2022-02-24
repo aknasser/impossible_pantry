@@ -8,7 +8,7 @@ import * as React from 'react';
 
 
 
-const Pantry = ({allCategories, endpoint}) => {
+const Pantry = ({allCategories, endpoint, pantryUpdater}) => {
 
 // USER STOCK MANAGEMENT - here we control the current food stock for a given category. 
 // We update it with A POST REQUEST once the user click on let's go! 
@@ -62,8 +62,11 @@ const Pantry = ({allCategories, endpoint}) => {
     console.log("We good ?");
 
         if (confirmation) {
-            window.location.href = "/recipesavailable";   
-        }
+            pantryUpdater({
+                type : "FORM_SUBMITTED"
+            });
+/*             window.location.href = "/recipesavailable";   
+ */     }
     };
 
 // END - SUBMIT
