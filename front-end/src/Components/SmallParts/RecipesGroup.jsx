@@ -8,10 +8,10 @@ const RecipesGroup = ({recipesGroup, pantryUpdater}) => {
         - get recipePicked = true. 
         - we collect the id of the recipe selected in the payload. We will use it to display the right recipe with the Component RecipeDetails.
     */
-    const pickedRecipeHandler = (recipeId) => {
+    const pickedRecipeHandler = (recipe) => {
         pantryUpdater({
             type : "RECIPE_PICKED",
-            payload : recipeId
+            payload : recipe
         })
     };
 
@@ -24,7 +24,7 @@ const RecipesGroup = ({recipesGroup, pantryUpdater}) => {
             {/* A map to get all the recipes and their properties*/}
              {recipesGroup.recipes.map(meal => (
                 <div key = {meal._id}>
-                    <a onClick = { () => {pickedRecipeHandler(meal._id)}}>
+                    <a onClick = { () => {pickedRecipeHandler(meal)}}>
                         <h4>{meal.name}</h4>
                     </a>
                         <span>Style: {meal.style.name}</span>

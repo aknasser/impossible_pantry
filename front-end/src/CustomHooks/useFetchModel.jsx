@@ -31,7 +31,7 @@ const useFetchModel = (endpoint) => {
             case "FETCH_UNSUSCRIBE": // Useful to avoid the memory leak when we unmount the component.
                 return {
                     ...state,
-                    isLoading : true, // When the componend is dismounted and unsubscribing, we are actuallyloading the data. We want to display a loading message during this temporary state
+                    isLoading : true, // When the component is dismounted and unsubscribing, we are actually loading the data. We want to display a loading message during this temporary state
                     isError : false,
                     content : ""
 
@@ -42,7 +42,7 @@ const useFetchModel = (endpoint) => {
 
     const [modelList, dispatchModelList] = React.useReducer(
         modelReducer,
-        {content : "", isLoading : false, isError: false}
+        {content : "", isLoading : true, isError: false}
     )
 
 
@@ -63,6 +63,23 @@ const useFetchModel = (endpoint) => {
             if (isMounted) {
                 try {
                     const modelContent = await axios.get(apiLocation, {crossdomain: true})
+
+/*                 // TO SORT ENTRIES IN THE ASCENDANT ORDER BY NAME (FROM A TO Z) - All the models have a property "name", so it's perfect!
+                    const sortedEntry = modelContent.data.sort( (a, b) => {
+                        let entryNameA = a.name;
+                        let entryNameB = b.name;
+
+                        if ( entryNameA < entryNameB) {
+                            return -1;
+                        };
+
+                        if ( entryNameA > entryNameB) {
+                          return 1;
+                        };
+                        return 0;
+                    }) */
+
+                //ONCE THE ENTRIES ARE SORTED WE CAN UPDATE THE STATE PROPERLY 
                     dispatchModelList(
                         {
                             type : "FETCH_SUCCESS",

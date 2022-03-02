@@ -77,7 +77,6 @@ module.exports = {
         const userStock = await currentUser.stock;
         // b - Create a hash Table with user.stock
 
-        console.log(`check USERSTOCK : ${userStock}`);
         let stockHashTable = {};
 
         for (let food of userStock) {
@@ -94,7 +93,6 @@ module.exports = {
         // Here we populate style and mainIngredient to display them in the client interface
         const allRecipes = await Recipe.find({}).populate("style mainIngredient");
 
-        console.log(`All the recipes: ${allRecipes}`)
         // These array will be populated later with the corresponding recipe : perfectMatchRecipes : the user has all the ingredient needed in his stock | almostRecipes : the user has everything except 1 ingredient | complexRecipe : The user is missing 2 ingredients.
         let perfectMatchRecipes = {
             title : "Perfect Match",
@@ -118,7 +116,6 @@ module.exports = {
                     missingIngredient++ ;
                 }
             }
-            console.log(`missingIngredient for ${recipe.name} (after checking) = ${missingIngredient} `);
 
             /* d - at the end of the loop for is over, we check the variable missingIngredient with a switch.
             if missingIngredient = 0 we push the recipe in the object perfectMatch | = 1 in the object almost | = 2 a stretch */        
@@ -139,12 +136,56 @@ module.exports = {
                     break;
 
                 default:
-                    console.log(`Not enough ingredient for this recipe : ${recipe.name}`); 
                     break;
             }
         }
         // e - We send these 3 objects in the response (we store these 3 objects in one array).
         res.send(recipeAvailable = {perfectMatchRecipes, almostRecipes, complexRecipes})
+    },
+
+// TO PROVIDE THE INFORMATION NEEDED BY THE COMPONENT RECIPEDETAILS IN THE FRONT-END
+// We want to get 2 random recipes !== from the chosen recipe.
+// These recipes will be displayed in the front-end as suggestions at the bottom of the page (component RecipeDetails.jsx in the Front-end)
+    recipeDetails : async (req, res) => {
+        // 1 - Get the recipe chosen Id. We need it to check whether the suggestion is DIFFEREENT from$ the recipeChosen by the user.
+        const recipeChosenId = req.params.recipeId;
+        // This array will contains the suggestions.
+        const suggestions = []; 
+        const nmbrOfSuggestions = 2;
+
+        // We will use this hashTable to check if an ingredient is already part of the array suggestions, if yes we will skip it(we don't want duplicate).
+        const suggestionsHashTable = {};
+
+        const allRecipes = await Recipe.find({});
+        // 2 - Get Two random recipe !== recipe. If recipeSuggestion._id[i] = recipeChosenId, we look for another recipe.  
+            
+        // As long as we have less than nmbrOfSuggestions (here 2), we keep looping.
+        while (suggestions.length < nmbrOfSuggestions) {
+            // a - Create a random number
+            const randomNumber = Math.floor(Math.random() * allRecipes.length );  
+
+            // b - get a random element of the array allRecipes using the randomNumber
+            const randomRecipe = allRecipes[randomNumber];
+
+            // c - Check if the random recipe is different from the recipeChosenID. If yes, we push it in the array suggestions
+            // (we use a simple inequality here (!= because they randomRecipe._id and recipeChosenId are not supposed to exactly IDENTICAL))
+            if (randomRecipe._id != recipeChosenId && !suggestionsHashTable[randomRecipe._id] ) {
+                console.log(` randomRecipe :${randomRecipe._id}`);
+                console.log(` recipeChosenId :${recipeChosenId}`);
+                suggestions.push(randomRecipe);
+                // we add this recipe to the hashTable, suggestionsHashTable
+                suggestionsHashTable[randomRecipe._id] = true;
+            } else if (suggestionsHashTable[randomRecipe._id]) {
+                console.log("DUPLICATE INCOMING");
+            }
+        }
+        // d - once suggestions.length === nmbrOfSuggestions the while loop is completed.
+        for (meal of suggestions) {
+            console.log(`Suggestions : ${meal.name}`);
+        }
+
+        // 3 - The response (an array) 
+        res.send(suggestions); 
     },
 
 

@@ -71,17 +71,16 @@ const App = () => {
           ...state,
           isSubmitted : false,
           recipesPicked : true,
-          recipeChosenId : action.payload
+          recipeChosen : action.payload
         }
     }
   };
   
   const [pantryFlow, dispatchPantryFlow] = React.useReducer(
     pantryReducer, 
-    {isSubmitted : false, recipesPicked : false, recipeChosenId : ""}
+    {isSubmitted : false, recipesPicked : false, recipeChosen : ""}
   );
 
-  console.log(pantryFlow);
 
   return (
     <UserContext.Provider value={value}>
@@ -123,7 +122,8 @@ const App = () => {
                   />
                 ) : pantryFlow.recipesPicked ? (
                   <RecipeDetails
-                    recipeId = {pantryFlow.recipeChosenId}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
+                  endpoint = {API_ENDPOINT}
+                  recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
                   />
                 ) : (
                   null
@@ -133,11 +133,15 @@ const App = () => {
 
   {/* I WANNA EAT */}
             <Route path = "/search">
+              {recipes.isLoading || styles.isLoading || ingredients.isLoading  ? (
+                  <p>Loading...</p>
+              ) : (
               <SearchRecipes
-                allRecipes = {recipes}
-                allIngredients = {ingredients}
-                allStyles = {styles}
+                allIngredients = {ingredients.content}
+                allStyles = {styles.content}
               />
+              )}
+
             </Route>
 
   {/* RECIPES */}

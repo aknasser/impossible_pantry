@@ -17,7 +17,10 @@ router.post("/update/:id", recipesController.updatedRecipe);
 router.delete("/delete/:id", recipesController.deletedObject);
 
 // FETCH MATCHING RECIPES
-router.get("/matchingRecipes/:userId", recipesController.matchingRecipe);
+router.get("/matchingrecipes/:userId", recipesController.matchingRecipe);
+
+// FETCH DETAIL RECIPES
+router.get("/recipesdetails/:recipeId", recipesController.recipeDetails);
 
 
 
