@@ -137,8 +137,10 @@ const App = () => {
                   <p>Loading...</p>
               ) : (
               <SearchRecipes
+                endpoint = {API_ENDPOINT}
                 allIngredients = {ingredients.content}
                 allStyles = {styles.content}
+                recipesUpdater = {dispatchPantryFlow}
               />
               )}
 

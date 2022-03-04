@@ -8,11 +8,8 @@ import KeywordsFilter from "./SubFilters/KeywordsFilter";
 import CountryFilter from "./SubFilters/CountryFilter";
 
 
-const SearchRecipes = ({allIngredients, allStyles}) => {                   // allRecipes will be used to display the recipe available while the user types its request.
+const SearchRecipes = ({endpoint, allIngredients, allStyles, recipesUpdater}) => {                   // allRecipes will be used to display the recipe available while the user types its request.
 
-    const [recipesFiltered, setRecipesFiltered] = React.useState([]); //RESULT FETCHED WITH AN AUTO POST + REQUEST
-
-    //
     const [styles, setStyles] = React.useState(allStyles); 
     const [ingredients, setIngredients] = React.useState(allIngredients); 
 
@@ -20,16 +17,13 @@ const SearchRecipes = ({allIngredients, allStyles}) => {                   // al
     const [countries, setCountries] = React.useState();
     const [difficulties, setDifficulties] = React.useState([
         {
-            name : "LEVEL 1 - Easy",
-            level : 1
+            name : "1",
         }, 
         {
-            name : "LEVEL 2 - Doable",
-            level : 2
+            name : "2",
         }, 
         {
-            name : "LEVEL 3 - Master Chief",
-            level : 3
+            name : "3",
         }
     ]); 
 
@@ -80,7 +74,7 @@ const SearchRecipes = ({allIngredients, allStyles}) => {                   // al
                     ...state,
                     filters : {
                         ...state.filters,
-                        country : [...state.country, action.payload],
+                        [action.typeOfFilter] : [...state.filters[action.typeOfFilter], action.payload],
                     },
                     isLoading : false,
                     standby : false
@@ -120,7 +114,7 @@ const SearchRecipes = ({allIngredients, allStyles}) => {                   // al
                 country : [],
                 style : [],
                 difficulty : [],
-                ingredient : [],
+                ingredients : [],
                 keywords : [],
             },
             isLoading : false,
@@ -130,10 +124,76 @@ const SearchRecipes = ({allIngredients, allStyles}) => {                   // al
     );
 
 
-    // THIS FUNCTION IS USED TO SORT THE ENTRIES BEFORE DISPLAYING THEM.
-
+    // This useEffect check the new state of the filter
+    React.useEffect( () => {
+        console.log(`new State of Filter : ${JSON.stringify(filter)}`);
+    }, [filter])
 
     // END - STATE MANAGEMENT  FOR THE FILTER
+
+
+    // START - Action to add new filter
+    /* This function is passed to the following component : Filters, CountryFilter
+        When is it triggered : When the user "submit" the Filter selected and click on the button Filter
+        What does it do ? : 
+            1 - Prevent the form to reload the page.
+            2 - Collect the data typed by the user
+            3 - format the filterName to target the right property of filter
+            4 - Update
+        Final outcome(s) ? : A new filter is added to the search ==> A new element is added to the property targeted during the submit process. The new element is the filterTyped (with validation) by the user 
+     */
+
+    const submitFilter = (event, filterToUpdate, filterInTheInputField) => {
+        // 1 - Prevent the usual action of the submitted form (DONE!)
+        event.preventDefault();
+        console.log(`New Filter : ${filterInTheInputField}`)
+        // 2 - Collect the data submitted in an array AND the property to update (for instance, countryFilter, ingredientFilter)
+        const newFilter = filterInTheInputField;
+
+        // 3 - We change the format of the ... to make it match with the right property of filter (we just need to use lowercase())
+        const cleanPropertyFormat =  filterToUpdate.toLowerCase();
+
+        // 4 - Update the array filter using the dispatch function upddater (called filterUpdater in this component and use the type : ADD_NEW_FILTER)          
+        dispatchFilter({
+            type : "ADD_NEW_FILTER",
+            payload : newFilter,
+            typeOfFilter : cleanPropertyFormat
+        })
+    };
+    // END - Action to add new filter
+
+
+    // START - DISPLAYING THE RECIPES MATCHING THE FILTER
+    
+    // 1 - A state to contains the matching recipes
+    const [recipesFiltered, setRecipesFiltered] = React.useState([]);
+    
+    // 2 - USE EFFECT TO POST THE FILTER 
+    React.useEffect( async() => {
+        let isMounted = true;
+        try {
+            const matchingRecipes = await axios.post(`${endpoint}/recipes/filteredrecipes`, filter);
+            // 3 - Update recipesFiltered with the newRecipes
+            if (isMounted) {
+                setRecipesFiltered(matchingRecipes.data);
+            }
+        }catch (e) {
+            console.log(`Error to fetch the filtered Recipes : ${e}`);
+        }
+        return () => {
+            isMounted = false;
+            console.log("it's not time yet!")
+        }
+    }, [filter])
+    
+    // A mere useeffect() to check the value of recipes
+
+    React.useEffect( () => {
+        console.log(`recipesFiltered : ${JSON.stringify(recipesFiltered)}`)
+    }, [recipesFiltered])
+
+
+    // START - DISPLAYING THE RECIPES MATCHING THE FILTER
 
 
     return (
@@ -144,10 +204,11 @@ const SearchRecipes = ({allIngredients, allStyles}) => {                   // al
 
         {/* countries has a different data structure, to make it simple we "hardcode" here without using the Component Filter */}
             <CountryFilter
+                filterName = "Country"
                 countries={countries}
                 countriesUpdater = {setCountries}
-                filter = {filter}
-                filterUpdater = {dispatchFilter}
+                filter = {filter.filters.country}
+                submitFilter ={submitFilter}
             />
 
             <Filter
@@ -155,8 +216,8 @@ const SearchRecipes = ({allIngredients, allStyles}) => {                   // al
                 entries = {styles}
                 entriesUpdater = {setStyles}
                 dataToDisplay = "name"
-                filter = {filter}
-                filterUpdater = {dispatchFilter}
+                filter = {filter.filters.style}
+                submitFilter ={submitFilter}
             />
 
             <Filter
@@ -164,8 +225,8 @@ const SearchRecipes = ({allIngredients, allStyles}) => {                   // al
                 entries = {difficulties}
                 entriesUpdater = {setDifficulties}
                 dataToDisplay = "name"
-                filter = {filter}
-                filterUpdater = {dispatchFilter}
+                filter = {filter.filters.difficulty}
+                submitFilter = {submitFilter}
             />
 
             <Filter
@@ -173,13 +234,14 @@ const SearchRecipes = ({allIngredients, allStyles}) => {                   // al
                 entries = {ingredients}
                 entriesUpdater = {setIngredients}
                 dataToDisplay = "name"
-                filter = {filter}
-                filterUpdater = {dispatchFilter}
+                filter = {filter.filters.ingredients}
+                submitFilter = {submitFilter}
+
             />
 
 
             <KeywordsFilter
-                filter = {filter}
+                filter = {filter.filters.keywords}
                 filterUpdater = {dispatchFilter}
             />
             {/* the search by keywords is specific:
@@ -190,88 +252,12 @@ const SearchRecipes = ({allIngredients, allStyles}) => {                   // al
             
 
             {/* To display the recipes matching the selected filters */}
-            {recipesFiltered.map(recipe => (
-                <RecipesGroup recipeFound={recipe} key={recipe._id}/>
-            ))}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-{/* COPY JUST IN A CASE...
-
-            <form action="">
-            <h3>Search by keywords</h3>
-                <input type="text" />
-                <input type="submit" />
-            </form>
-
-
-            {!countries ? (
-                <p>Loading </p>
-            ) : (
-                <form>
-                    <h3>Country</h3>
-                    <label htmlFor="country"></label>
-                    <input list="allCountries" id="worldCountry" name="country" />
-                    <datalist id="allCountries">
-                        {countries.map(country => (
-                            <option value={country.name.common} key = {country.name.common}></option>
-                        ))}
-                    </datalist>
-                    <input type="submit" value="Filter"/>
-                </form>
-            )}
-
-            <form>
-                <h3>Style</h3>
-                <select name="" id="">
-                    {styles.map(style => (
-                        <option value={style.name} key={style._id}>{style.name}</option>
-                    ))}
-                </select>
-                <input type="submit" />
-            </form> 
-
-            <form>
-                <h3>Difficulty</h3>
-                <select name="" id="">
-                    {difficulties.map(difficulty => (
-                        <option value={difficulty} key={difficulty}>{difficulty}</option>
-                    ))}
-                </select>
-                <input type="submit" value="Filter" />
-            </form>
-
-            <form>
-                <h3>Ingredients</h3> 
-                <label htmlFor="ingredient"></label>
-                <input list="allIngredients" id="" name="ingredient"/>
-                <datalist id="allIngredients">
-                    {ingredients.map(ingredient => (
-                        <option value={ingredient.name} key={ingredient._id}/>
-                    ))}
-                </datalist>
-                <input type="submit" value="Filter" />
-            </form>
-
-
-
-
-            {recipesFiltered.map(recipe => (
-                <RecipesGroup recipeFound={recipe} key={recipe._id}/>
-            ))} */}
+{/*                 {!recipesFiltered ? (
+                    <p>No recipes found</p>
+                ) : 
+                (
+                    <RecipesGroup recipeFound={recipesFiltered} pantryUpdater={recipesUpdater}/>
+                )}   */}
         </>
     );
 }

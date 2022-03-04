@@ -22,6 +22,8 @@ router.get("/matchingrecipes/:userId", recipesController.matchingRecipe);
 // FETCH DETAIL RECIPES
 router.get("/recipesdetails/:recipeId", recipesController.recipeDetails);
 
+// FETCH RECIPES CORRESPONDING TO THE FILTER IN SEARCH / I WANNA EAT
+router.post("/filteredrecipes", recipesController.filteredRecipes)
 
 
 

@@ -188,6 +188,168 @@ module.exports = {
         res.send(suggestions); 
     },
 
+    filteredRecipes : async (req, res) => {
+        // 1 - retrieve the filter from the POST REQUEST
+        const filter = req.body.filters;
+        console.log (filter);
+
+        // 2 - Encapsule THE Sub-filters in variables to make things cleared
+        const countryFilter = filter.country;
+        const styleFilter = filter.style;
+        const difficultyFilter = filter.difficulty;
+        const ingredientsFilter = filter.ingredients;
+        
+        // 3 - We create empty Hash Tables for each subFilter. 
+        // We will use these hash table later on to check if the recipe match with this filter
+        let countryHt = {};
+        let styleHt = {};
+        let difficultyHt = {};
+        let ingredientsHt = {};
+
+
+        // 4 - This function will populate the hash tables above with key / value.
+        //  With this process, the element of the subFilter are included in the corresponding hash table as key
+        //  For example, let's say that "France" is an element of the filter countryFilter
+        //  using this function France will become a key of the countryHt and will get countryHt = {France = true};
+        //  This will help us to identify the matchingRecipes later.
+        const populateFilterHashTable = (subFilter, hashTable) => {
+            for (let element of subFilter) {
+                hashTable[element] = true; 
+            }
+            return hashTable;
+        };
+
+        // 5 -  we execute populateFilterHashTable to populate the hash Table
+        countryHt = populateFilterHashTable(countryFilter, countryHt);
+        styleHt = populateFilterHashTable(styleFilter, styleHt);
+        difficultyHt = populateFilterHashTable(difficultyFilter, difficultyHt);
+        ingredientsHt = populateFilterHashTable(ingredientsFilter, ingredientsHt);
+
+
+        // 6 - We get all the Recipes.
+        // We need to populate style to have access to its property "name" (we will use it to check the styleHt)
+        // Likewise, we need to populate ingredient (which is inside ingredientsNeeded) to access the property name of each ingredient. 
+        const allRecipes = await Recipe.find({})
+            .populate(
+                {
+                    path : "ingredientsNeeded",
+                    populate : 
+                        {
+                            path : "ingredient",
+                            model : "Ingredient"
+                        }
+                }
+            )
+            .populate(
+                "style"
+            ); 
+
+
+        // 7 - This function filters an array for a given filter (style, countries, ingredients, difficulty). It accepts 3 arguments: 
+            // arrayToFilter : this array contains the recipe to filter. At first allRecipes is the arrayToFilte
+            // correspondingHashTable : the hash Table associated to the property to Check.
+            // propertyToCheck : a string. Tell us what we are filtering, could be "style", "country", "ingredient", "difficulty" 
+        const filteringRecipes = (arrayToFilter, correspondingHashTable, propertyToCheck) => {
+
+            // this array lists all the key in the correspondingHashTable. If this array is empty (length = 0), there is no filter to use (see a2 below). We return the array to Filter unaltered.
+            let hashTableKeyList = Object.keys(correspondingHashTable);
+
+            // Two conditions to start the filter : 
+            // a1 - if arrayToFilter has at least one property, we have something to filter. Otherwise, it means that arrayToFilter is empty and we can return arrayFiltered as an empty array(it's the same).
+            // a2 - if correspondingHashTable is not empty  then there is at least one filter to apply. Otherwise, we return arrayFilter without any modifications
+            if (arrayToFilter.length > 0 && hashTableKeyList.length > 0) {
+                // b - this array will contains the value matching with the filter
+                const arrayFiltered = [];
+                // c -  We loop into the recipes in arrayToFilter...
+                for (let recipeToCheck of arrayToFilter) {
+                    // c1 - valueToCheck encapsulate the value to look up in the corresponding hashTable.
+                    // For example if the property to check is "style" and the recipes "Veggies Saute", valueToCheck = "Healthy" (the name of the property style for Veggie Saute).
+                    // Why we use A SWITCH STATEMENT ? Depending on the value of propertyToCheck we will check different level of the object.For instance country is easy to access (recipe.country) but for style we need to go deeper (recipe.style.name)                   
+                    let valueToCheck;
+                    switch (propertyToCheck) {
+                        case "style":
+                            valueToCheck = recipeToCheck[propertyToCheck].name;
+                            break;
+
+                        case "country":
+                            valueToCheck = recipeToCheck[propertyToCheck];
+                            break;
+
+                        case "difficulty":
+                            valueToCheck = recipeToCheck[propertyToCheck];
+                            break;
+                            
+                        default:
+                            break;
+                    }
+                    console.log("VALUE TO CHECK : " + valueToCheck);
+
+                    // d - We check whether this value is a key of the corresponding hash Table, if yes we add this recipe to the arrayFiltered. 
+                    if (correspondingHashTable[valueToCheck]) {
+                        arrayFiltered.push(recipeToCheck);
+                    }
+                };
+            // e1 - Finally, we return the arrayFiltered. The array filtered will then be used as arrayToFilter for the next filter and so on.
+            // e2 - If arrayToFilter is empty ([]), arrayFiltered is also empty([]). 
+                return arrayFiltered;
+            }
+            return arrayToFilter;
+        };
+
+        // 8 - Ingredient is a lil bit special. We create a specific function to check if a recipe pass the ingredient Filter test.
+        // This function follow the same logic as filteringRecipes
+        const filteringRecipesByIngredients = (arrayToFilter, correspondingHashTable) => {
+            let hashTableKeyList = Object.keys(correspondingHashTable);
+            if (arrayToFilter.length > 0 && hashTableKeyList.length > 0) {
+                const arrayFiltered = [];
+                for (let recipeToCheck of arrayToFilter) {
+        
+                    for (let ingredientSpecs of recipeToCheck.ingredientsNeeded) {
+                        let ingredientToCheck = ingredientSpecs.ingredient.name;
+                        console.log(`INGREDIENT TO CHECK : ${ingredientToCheck}`);
+                        if (correspondingHashTable[ingredientToCheck]) {
+                            arrayFiltered.push(recipeToCheck);
+                            break;
+                        }
+                    }
+                };
+                return arrayFiltered;
+            }
+            return arrayToFilter;
+        };
+
+        // 9 - Carry out the succesful filters :  First we clean the list with the style filters... then we clean the remaining recipes with the country filters...and so on...
+        let styleCleaner = await filteringRecipes(allRecipes, styleHt, "style");
+        let countryCleaner = await filteringRecipes(styleCleaner, countryHt, "country");
+        let difficultyCleaner = await filteringRecipes(countryCleaner, difficultyHt, "difficulty");
+        let ingredientCleaner = await filteringRecipesByIngredients(difficultyCleaner, ingredientsHt); 
+
+
+        // START - CHECK FILTER 
+        const resultsChecker = (array, filterName) => {
+            if (array.length <= 0) {
+                console.log (`NO MATCHING RECIPES WITH ${filterName}`);
+            } else {
+                for (let recipe of array) {
+                    console.log(`AFTER ${filterName} CLEANING : ${recipe.name}`);
+                }
+            }
+        };
+        const styleFilterChecker = resultsChecker(styleCleaner, "STYLE");
+        const countriesFilterChecker = resultsChecker(countryCleaner, "COUNTRIES");
+        const difficultyFilterChecker = resultsChecker(difficultyCleaner, "DIFFICULTY"); 
+        const ingredientFilterChecker = resultsChecker(ingredientCleaner, "INGREDIENT");
+
+        // END - CHECK FILTER 
+
+
+        // 10 - send the filtered recipes to the client
+        // We send the result of the last filter (aka ingredientCleaner in this context).
+        const filteredRecipes = ingredientCleaner;
+        console.log(`filteredRecipes from the BE: ${filteredRecipes}`);
+        res.send(filteredRecipes);
+    },
+
 
     convertJSON : (req, res) => {
         const properJSONObject = res.locals.toConvert;

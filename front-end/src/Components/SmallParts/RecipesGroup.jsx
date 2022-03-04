@@ -19,7 +19,8 @@ const RecipesGroup = ({recipesGroup, pantryUpdater}) => {
 
         
         <div>
-            <h3>{recipesGroup.title}</h3>
+            {/* This conditional is useful when we use this component inside SearchRecipes.jsx */}
+            <h3>{!recipesGroup.title ? ("Recipes Found") : (recipesGroup.title)}</h3>
             
             {/* A map to get all the recipes and their properties*/}
              {recipesGroup.recipes.map(meal => (
