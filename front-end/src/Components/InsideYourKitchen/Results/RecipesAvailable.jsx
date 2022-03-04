@@ -8,7 +8,7 @@ import  {useContext} from "react";
 
 
 
-const RecipesAvailable = ({endpoint}) => {
+const RecipesAvailable = ({endpoint, pantryUpdater}) => {
 
     // Some FETCH GET REQUEST
     /* STEPS TO COMPLETE THIS PART
@@ -119,9 +119,9 @@ const RecipesAvailable = ({endpoint}) => {
                     <p>Recipes incoming...</p>
                 ) : (
                 <div>
-                    <RecipesGroup recipesGroup={matchingRecipes.data.perfectMatchRecipes}/>
-                    <RecipesGroup recipesGroup={matchingRecipes.data.almostRecipes}/>
-                    <RecipesGroup recipesGroup={matchingRecipes.data.complexRecipes}/>
+                    <RecipesGroup recipesGroup = {matchingRecipes.data.perfectMatchRecipes} pantryUpdater = {pantryUpdater} />
+                    <RecipesGroup recipesGroup = {matchingRecipes.data.almostRecipes} pantryUpdater = {pantryUpdater}/>
+                    <RecipesGroup recipesGroup = {matchingRecipes.data.complexRecipes} pantryUpdater = {pantryUpdater}/>
                 </div> 
                 )}
         </>

@@ -17,7 +17,7 @@ const App = () => {
  
   const API_ENDPOINT = "http://localhost:1993"
 
-
+// To fetch the data related to these data models.
   const [userLogged, setUserLogged] = useFetchModel(`${API_ENDPOINT}/users/621137f1004a65cfd4fc4aee`);
   const [categories, dispatchCategories] = useFetchModel(`${API_ENDPOINT}/categories`);  // All the entries for the Categories model.
   const [recipes, dispatchRecipes] = useFetchModel(`${API_ENDPOINT}/recipes`);; // All the entries fort the Recipes model
@@ -56,6 +56,32 @@ const App = () => {
   ); 
 
 
+
+  // PANTRYFLOW : To check if the user has submitted his foodStock or picked a recipe among the choices available (in RecipesAvailabe )
+  
+  const pantryReducer = (state, action) => {
+    switch (action.type) {
+      case "FORM_SUBMITTED": 
+        return {
+          ...state,
+          isSubmitted : true,
+        };
+      case "RECIPE_PICKED": 
+        return {
+          ...state,
+          isSubmitted : false,
+          recipesPicked : true,
+          recipeChosen : action.payload
+        }
+    }
+  };
+  
+  const [pantryFlow, dispatchPantryFlow] = React.useReducer(
+    pantryReducer, 
+    {isSubmitted : false, recipesPicked : false, recipeChosen : ""}
+  );
+
+
   return (
     <UserContext.Provider value={value}>
       <Router>
@@ -72,36 +98,52 @@ const App = () => {
               )}
             </Route>
 
-  {/* YOUR KITCHEN */}
-            <Route path = "/yourkitchen">
-              {categories.isLoading || categories.content===""  || userAccount.isLoading   ? (
-                <p>Loading...</p>
-              ) : (
-                <Pantry 
-                  allCategories = {categories}
-                  endpoint = {API_ENDPOINT}
+  {/* YOUR KITCHEN
+  3 CASES :
+    a - categories and userAccount are still loading ==> Loading Message
+    b - The User start the form. At this point pantryFlow is in its intial State the properties isSubmitted and recipesPicked are false ==> Display component Pantry
+    c - The user just submitted the form. pantryFlow.isSubmmitted is now equal to true ==> Display component RecipesAvailable 
+    d - The user clicked on a recipe to see the instructions / details, recipesPicked is now equalt to true ==> Display the recipes instructions.
+    */}
+     
+             <Route path = "/yourkitchen">
+              {categories.isLoading || categories.content===""  || userAccount.isLoading  ? (
+                  <p>Loading...</p>
+                ) : !pantryFlow.isSubmitted && !pantryFlow.recipesPicked ?   (
+                  <Pantry 
+                    allCategories = {categories}
+                    endpoint = {API_ENDPOINT}
+                    pantryUpdater = {dispatchPantryFlow}
                 /> 
-              )}
-              
-            </Route>
-            <Route path = "/recipesavailable">
-              {/* We display "Loading" when userAccount is still Loading or the content is still empty */}
-              { userAccount.isLoading || !userAccount.content ? (
-                <p>Loading...</p>
-              ) : (
-                <RecipesAvailable
-                endpoint = {API_ENDPOINT}
-              />
-              )}
+                ) : pantryFlow.isSubmitted ? (
+                  <RecipesAvailable
+                    endpoint = {API_ENDPOINT}
+                    pantryUpdater = {dispatchPantryFlow}
+                  />
+                ) : pantryFlow.recipesPicked ? (
+                  <RecipeDetails
+                  endpoint = {API_ENDPOINT}
+                  recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
+                  />
+                ) : (
+                  null
+                )
+              }
             </Route>
 
   {/* I WANNA EAT */}
             <Route path = "/search">
+              {recipes.isLoading || styles.isLoading || ingredients.isLoading  ? (
+                  <p>Loading...</p>
+              ) : (
               <SearchRecipes
-                allRecipes = {recipes}
-                allIngredients = {ingredients}
-                allStyles = {styles}
+                endpoint = {API_ENDPOINT}
+                allIngredients = {ingredients.content}
+                allStyles = {styles.content}
+                recipesUpdater = {dispatchPantryFlow}
               />
+              )}
+
             </Route>
 
   {/* RECIPES */}
