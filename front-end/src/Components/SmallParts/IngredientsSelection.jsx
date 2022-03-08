@@ -5,7 +5,7 @@ import IngredientsList from "./IngredientsList";
 
 
 
-const IngredientsSelection = ({category, endpoint, stock, setStock}) => {
+const IngredientsSelection = ({category, endpoint, stock, setStock, checkValidation}) => {
 
 
 
@@ -77,26 +77,6 @@ const IngredientsSelection = ({category, endpoint, stock, setStock}) => {
     const [ownedIngredients, setOwnedIngredients] = React.useState([]);
 
 
-// VALID ENTRY CHECKER FUNCTION (called in validationIngredients) - to check if the typed ingredient is Valid (= part of categoryIng )
-/* We use it when :  
-1 - the user submit an ingredient after typing it
-2 - While the user his typing to fetch the corresponding unit IF we the ingredient is valid(meaning checkValidation return true).
- */  
-
-
-    const checkValidation = (controller) =>  {
-
-        for (let i = 0; i < categoryIng.length; i++) {
-            if (ingredientTyped.ingredient.name === categoryIng[i].name) {
-                // 2 - We execute the code below
-                controller = true;
-                console.log("We found a match"); 
-                break; // to escape the loop once we find a match among categorIng
-            }
-        }
-        return controller;      
-    }
-
 
 
 // DUPLICATE CHECKER FUNCTION (called in validationIngredients)
@@ -129,9 +109,12 @@ const IngredientsSelection = ({category, endpoint, stock, setStock}) => {
         let isUniqueNewIng = true;
         let isUniqueUserIng = true;
 
-    // A - CHECK IF INGREDIENT IS VALID
+    // A - CHECK IF INGREDIENT IS VALID (
+        // parameter 1 : validEntries : The array with all the accepted entries (countries, ingredients, style, difficulty)
+        // parameter 2 :  stringToCheck : here,the stringTyped by the user.
+        // Return... true if the ingredient match with one of ingredient of this category. Otherwise it returns false.
 
-        validIngredient = checkValidation(validIngredient);
+        validIngredient = checkValidation(categoryIng, ingredientTyped.ingredient.name);
 
     // B- CHECK IF INGREDIENT IS A DUPLICATE (NEW INGREDIENT)
 
@@ -169,13 +152,11 @@ const IngredientsSelection = ({category, endpoint, stock, setStock}) => {
         // 1 - We create a function to fetch the right unit. This effect is triggered eveytime ingredientTyped changed [dependency]. 
         const getRightUnit = async () => {
 
-            let ingTypedValid = false;
-            ingTypedValid = checkValidation(ingTypedValid);
+            let ingTypedValid = checkValidation(categoryIng, ingredientTyped.ingredient.name);
 
             // b - IF  ingredientTyped is a valid ingredient we start the request.  We check that with the function
             if (ingTypedValid) {
                 try {
-                    console.log("At least we are trying...")
                     // c - ingToSearch contains the value to look for (the ingredientTyped) if nothing has been typed yet, we give it the value oupsie. This tip enable us to bypass 404 error during the GET Request
                     const ingToSearch = ingredientTyped.ingredient.name || "oupsie";
     
@@ -239,13 +220,13 @@ const IngredientsSelection = ({category, endpoint, stock, setStock}) => {
 
 
 // CHECKING LOG - With this useEffect, we check the value of stock everytime when there is a changed
-    React.useEffect( () => {
+/*     React.useEffect( () => {
         console.log(`QTY STOCK : ${stock.length}`)
         console.log(`STOCK : ${JSON.stringify(stock)}`)
         for (let food of stock) {
             console.log(`Name of the ingredient :${JSON.stringify(food.ingredient.name)}`)
         }
-    }, [stock])
+    }, [stock]) */
 
 
 

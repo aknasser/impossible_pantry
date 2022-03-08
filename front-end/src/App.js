@@ -82,6 +82,50 @@ const App = () => {
   );
 
 
+
+  /* VALIDATION AND DUPLICATE FUNCTION
+    We use these functions in Pantry and SearchRecipes. They enable us to control : 
+      1 - the input typed by the user : The user can only ingredients available in our dataset
+      2 - check the duplicate : The user can only submit an ingredient once 
+  */
+  
+  // 1  - Validation Check
+        // parameter 1 : validEntries : The array with all the accepted entries (countries, ingredients, style, difficulty)
+        // parameter 2 :  stringToCheck : the stringTyped by the user.
+        // Return... true if the ingredient match with one of ingredient of this category. Otherwise it returns false.
+
+  const checkValidation = (validEntries, stringToCheck) =>  {
+    for (let i = 0; i < validEntries.length; i++) {
+        if (stringToCheck.toLowerCase() === validEntries[i].name.toLowerCase()) {
+            console.log("We found a matching filter!"); 
+            return true;      
+        }
+    }
+    return false; 
+  };
+
+  // 2  - Duplicate Check
+      // parameter 1 : validEntries : The array with all the accepted entries (countries, ingredients, style, difficulty)
+      // parameter 2 :  stringToCheck : the stringTyped by the user.
+      // Return... true if the ingredient match with one of ingredient of this category. Otherwise it returns false.
+
+  const checkDuplicate = (arrayToCheck, stringToCheck) => {
+    
+    if (arrayToCheck.length <= 0) {    // If the arrayToCheck is empty, we can't have duplicate, duh!
+      return true;
+    }
+    let hashTable = {};
+    for (let element of arrayToCheck) {
+      hashTable[element] = true;
+    }
+    if (hashTable[stringToCheck]) {
+      console.log("Duplicate found!");
+      return false;
+    }
+    return true;
+  }
+
+
   return (
     <UserContext.Provider value={value}>
       <Router>
@@ -114,7 +158,9 @@ const App = () => {
                     allCategories = {categories}
                     endpoint = {API_ENDPOINT}
                     pantryUpdater = {dispatchPantryFlow}
-                /> 
+                    checkValidation = {checkValidation}
+/*                     checkDuplicate = {checkDuplicate}
+ */                /> 
                 ) : pantryFlow.isSubmitted ? (
                   <RecipesAvailable
                     endpoint = {API_ENDPOINT}
@@ -141,6 +187,8 @@ const App = () => {
                 allIngredients = {ingredients.content}
                 allStyles = {styles.content}
                 recipesUpdater = {dispatchPantryFlow}
+                checkValidation = {checkValidation}
+                checkDuplicate = {checkDuplicate}
               />
               )}
 

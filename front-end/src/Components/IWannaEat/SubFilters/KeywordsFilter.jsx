@@ -3,13 +3,13 @@ import * as React from 'react';
 
 
 
-const KeywordsFilter = ({filter, filterUpdater}) => {
+const KeywordsFilter = ({filters, filterUpdater}) => {
 
 
     // EVERYTIME FILTER CHANGE WE UPDATE THIS COMPONENT TO DISPLAY THE NEW FILTER (OR THE FILTER DELETED).
     React.useEffect ( () => {
 
-    },[filter])
+    },[filters])
 
     return (  
         <>
@@ -23,7 +23,7 @@ const KeywordsFilter = ({filter, filterUpdater}) => {
             </form>
             </>
             <FilterList
-                selectedFilter = {filter}
+                selectedFilter = {filters}
             />
         </>
 

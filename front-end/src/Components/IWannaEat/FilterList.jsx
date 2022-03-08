@@ -2,17 +2,20 @@ import * as React from 'react';
 
 
 
-const FilterList = ({selectedFilters}) => {
+const FilterList = ({selectedFilters, deleteFilter, filterToUpdate}) => {
+
     return (
         <>
-        {/* Put a map here to loop into the array selectedFilter */}
-
-        {!selectedFilters ? (
-            <p>No Filters</p>
+        {/* If selectedFilters is undefined (in the case of keywords) OR if the array selectedFilters is empty
+        We display "no filters"
+        ...  */}
+        {!selectedFilters || selectedFilters.length === 0 ? (
+            <p>No Filter</p>
         ) : (
             selectedFilters.map(filter => (
                 <div key={filter}>
-                    <span >{filter}</span>
+                    <span>{filter}</span>
+                    <button onClick ={() => deleteFilter(filter, filterToUpdate)}> - </button>
                     <br/> 
                 </div>
 

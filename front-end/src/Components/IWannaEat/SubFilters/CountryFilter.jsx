@@ -2,7 +2,7 @@ import FilterList from "../FilterList";
 import * as React from 'react';
 
 
-const CountryFiltter = ({filterName, countries, filter, submitFilter}) => {
+const CountryFilterList = ({filterName, countries, filter, submitFilter, checkValidation}) => {
 
     // filterTyped contains the value typed by the user in the filter input
     const [filterTyped, setFilterTyped] = React.useState();
@@ -10,6 +10,7 @@ const CountryFiltter = ({filterName, countries, filter, submitFilter}) => {
     // this function enables us to update the value of the input typed by the user in the filter input
     const updateFilterTyped = (event) => {
         setFilterTyped(event.target.value);
+        checkValidation(countries, event.taget.value);
     };
 
     return (
@@ -23,7 +24,7 @@ const CountryFiltter = ({filterName, countries, filter, submitFilter}) => {
                     <input list="allCountries" id="worldCountry" name="country" onChange = {updateFilterTyped} />
                     <datalist id="allCountries">
                         {countries.map(country => (
-                            <option value={country.name.common} key = {country.name.common}></option>
+                            <option value={country.name} key = {country.name}></option>
                         ))}
                     </datalist>
                     <input type="submit" value="Filter"/>
@@ -37,4 +38,4 @@ const CountryFiltter = ({filterName, countries, filter, submitFilter}) => {
     );
 }
  
-export default CountryFiltter;
+export default CountryFilterList;

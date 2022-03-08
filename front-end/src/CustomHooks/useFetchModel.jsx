@@ -63,21 +63,26 @@ const useFetchModel = (endpoint) => {
             if (isMounted) {
                 try {
                     const modelContent = await axios.get(apiLocation, {crossdomain: true})
+                 // TO SORT ENTRIES IN THE ASCENDANT ORDER BY NAME (FROM A TO Z) - All the models have a property "name", so it's perfect!
+                    // If the data fetched is iterable (an array then), we want to order the element by name. 
+                    // Why this extra conditional ?
+                    // If we just fetch a specific user we don't want to sort it(otherwise the code might break).
+                    if (modelContent.data.length > 0) {
+                        const sortedEntry =  modelContent.data.sort( (a, b) => {
+                            let entryNameA = a.name;
+                            let entryNameB = b.name;
+    
+                            if ( entryNameA < entryNameB) {
+                                return -1;
+                            };
+    
+                            if ( entryNameA > entryNameB) {
+                              return 1;
+                            };
+                            return 0;
+                        }) 
+                    }
 
-/*                 // TO SORT ENTRIES IN THE ASCENDANT ORDER BY NAME (FROM A TO Z) - All the models have a property "name", so it's perfect!
-                    const sortedEntry = modelContent.data.sort( (a, b) => {
-                        let entryNameA = a.name;
-                        let entryNameB = b.name;
-
-                        if ( entryNameA < entryNameB) {
-                            return -1;
-                        };
-
-                        if ( entryNameA > entryNameB) {
-                          return 1;
-                        };
-                        return 0;
-                    }) */
 
                 //ONCE THE ENTRIES ARE SORTED WE CAN UPDATE THE STATE PROPERLY 
                     dispatchModelList(
