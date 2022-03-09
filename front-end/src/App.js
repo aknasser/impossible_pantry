@@ -168,8 +168,8 @@ const App = () => {
                   />
                 ) : pantryFlow.recipesPicked ? (
                   <RecipeDetails
-                  endpoint = {API_ENDPOINT}
-                  recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
+                    endpoint = {API_ENDPOINT}
+                    recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
                   />
                 ) : (
                   null
@@ -181,7 +181,7 @@ const App = () => {
             <Route path = "/search">
               {recipes.isLoading || styles.isLoading || ingredients.isLoading  ? (
                   <p>Loading...</p>
-              ) : (
+              ) : !pantryFlow.isSubmitted && !pantryFlow.recipesPicked ? (
               <SearchRecipes
                 endpoint = {API_ENDPOINT}
                 allIngredients = {ingredients.content}
@@ -190,8 +190,14 @@ const App = () => {
                 checkValidation = {checkValidation}
                 checkDuplicate = {checkDuplicate}
               />
+              ) : pantryFlow.recipesPicked ? (
+                <RecipeDetails
+                endpoint = {API_ENDPOINT}
+                recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
+                />
+              ) : (
+                null
               )}
-
             </Route>
 
   {/* RECIPES */}

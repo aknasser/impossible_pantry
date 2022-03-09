@@ -351,6 +351,32 @@ module.exports = {
     },
 
 
+    searchedKeywords : async(req, res) => {
+        // 1 - get the keyword typed by the user
+        const keywords = req.params.keywords;
+        console.log(`Keywords : ${keywords}`);
+
+        // 2 - look for the recipes containing this keyword
+        const recipesKeywords = await Recipe.find({ name : 
+            {
+            "$regex" : keywords,
+            "$options" : "i"  
+            }
+        });
+
+        // REMINDER : REGEX SYNTAX
+        // property - The property we want to explore (could be name, content, whatever)
+        // "$regex" : variable - the variable to look for in the property
+        // "$options" : i : means that we don't care about the case. Check the MongoDB link(in the title of this section) to find out others options
+
+        console.log(`recipes found : ${recipesKeywords}`);
+
+        // 3 - send this object to the user
+        res.send(recipesKeywords);
+    },
+
+
+    
     convertJSON : (req, res) => {
         const properJSONObject = res.locals.toConvert;
         res.json(properJSONObject);

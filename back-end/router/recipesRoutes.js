@@ -22,8 +22,13 @@ router.get("/matchingrecipes/:userId", recipesController.matchingRecipe);
 // FETCH DETAIL RECIPES
 router.get("/recipesdetails/:recipeId", recipesController.recipeDetails);
 
-// FETCH RECIPES CORRESPONDING TO THE FILTER IN SEARCH / I WANNA EAT
+// FETCH RECIPES CORRESPONDING TO THE FILTER IN SEARCH / I WANNA EAT (EXCEPT KEYWORKDS)
 router.post("/filteredrecipes", recipesController.filteredRecipes)
+
+// FETCH RECIPES CORRESPONDING TO THE KEYWORDS TYPED BY THE USER
+router.get("/search/:keywords", recipesController.searchedKeywords);
+
+
 
 
 

@@ -137,7 +137,7 @@ const SearchRecipes = ({endpoint, allIngredients, allStyles, recipesUpdater, che
                 style : [],
                 difficulty : [],
                 ingredients : [],
-                keywords : [],
+                keywords : "",    // keywords is only a couple of string. An array isn't neccesary here. 
             },
             isLoading : false,
             isError : false,
@@ -247,7 +247,30 @@ const SearchRecipes = ({endpoint, allIngredients, allStyles, recipesUpdater, che
     // START - DISPLAYING THE RECIPES MATCHING THE FILTER
     
     // 1 - A state to contains the matching recipes
-    const [recipesFiltered, setRecipesFiltered] = React.useState([]);
+
+
+    const recipesFilteredReducer = (state, action) => {
+        switch (action.type) {
+            case "FILTERING_START":
+                return {
+                    ...state,
+                    isLoading : true,
+                };
+            case "FILTERING_SUCCESS":
+                return {
+                    ...state,
+                    isLoading : false,
+                    recipes : action.payload
+                };
+            default:
+                break;
+        }
+    }
+
+    const [recipesFiltered, dispatchRecipesFiltered] = React.useReducer(
+        recipesFilteredReducer,
+        {isLoading : false, isError : false}
+    );
     
     // 2 - USE EFFECT TO POST THE FILTER 
     React.useEffect( async() => {
@@ -256,9 +279,12 @@ const SearchRecipes = ({endpoint, allIngredients, allStyles, recipesUpdater, che
             const matchingRecipes = await axios.post(`${endpoint}/recipes/filteredrecipes`, filter);
             // 3 - Update recipesFiltered with the newRecipes
             if (isMounted) {
-                setRecipesFiltered(matchingRecipes.data);
+                dispatchRecipesFiltered({
+                    type : "FILTERING_SUCCESS",
+                    payload : matchingRecipes.data
+                });
             }
-        }catch (e) {
+        } catch (e) {
             console.log(`Error to fetch the filtered Recipes : ${e}`);
         }
         return () => {
@@ -269,9 +295,9 @@ const SearchRecipes = ({endpoint, allIngredients, allStyles, recipesUpdater, che
     
     // A mere useeffect() to check the value of recipes
 
-/*     React.useEffect( () => {
+    React.useEffect( () => {
         console.log(`recipesFiltered : ${JSON.stringify(recipesFiltered)}`)
-    }, [recipesFiltered]) */
+    }, [recipesFiltered])
 
 
 
@@ -334,24 +360,22 @@ const SearchRecipes = ({endpoint, allIngredients, allStyles, recipesUpdater, che
                     <KeywordsFilter
                         filters = {filter.filters.keywords}
                         filterUpdater = {dispatchFilter}
+                        endpoint = {endpoint}
+                        dispatchRecipesFiltered ={dispatchRecipesFiltered}
                     />
                 </>
             )}
 
-            {/* the search by keywords is specific:
-            1 - appear if the user click on a given button.
-            2 - Unlike the other filter, it's a search bar (input text) 
-           */}
-
-            
-
             {/* To display the recipes matching the selected filters */}
-{/*                 {!recipesFiltered ? (
-                    <p>No recipes found</p>
+            {recipesFiltered.isLoading || !recipesFiltered.recipes  ? (
+                <>
+                    <p>No Recipes found</p>
+                </>
                 ) : 
                 (
-                    <RecipesGroup recipeFound={recipesFiltered} pantryUpdater={recipesUpdater}/>
-                )}   */}
+                     <RecipesGroup recipesGroup={recipesFiltered} pantryUpdater={recipesUpdater}/>
+                )
+            }
         </>
     );
 }
