@@ -11,6 +11,7 @@ import RecipeDetails from './Components/Recipe/RecipeDetails';
 import NotFound from './Components/NotFound';
 import UserContext from './Context/UserContext';
 import useFetchModel from './CustomHooks/useFetchModel';
+import Admin from './Components/CRUD/Admin';
 
 
 const App = () => {
@@ -20,10 +21,13 @@ const App = () => {
 // To fetch the data related to these data models.
   const [userLogged, setUserLogged] = useFetchModel(`${API_ENDPOINT}/users/621137f1004a65cfd4fc4aee`);
   const [categories, dispatchCategories] = useFetchModel(`${API_ENDPOINT}/categories`);  // All the entries for the Categories model.
-  const [recipes, dispatchRecipes] = useFetchModel(`${API_ENDPOINT}/recipes`);; // All the entries fort the Recipes model
-  const [ingredients, dispatchIngredients] = useFetchModel(`${API_ENDPOINT}/ingredients`);;
-  const [styles, dispatchStyles] = useFetchModel(`${API_ENDPOINT}/styles`);;
- 
+  const [recipes, dispatchRecipes] = useFetchModel(`${API_ENDPOINT}/recipes`); // All the entries fort the Recipes model
+  const [ingredients, dispatchIngredients] = useFetchModel(`${API_ENDPOINT}/ingredients`);
+  const [styles, dispatchStyles] = useFetchModel(`${API_ENDPOINT}/styles`);
+  const [users, dispatchUsers] = useFetchModel(`${API_ENDPOINT}/users`);
+
+
+
 
   // USER ACCOUNT MGMT IN THE APP. Initially value = userAccount.
 
@@ -82,6 +86,50 @@ const App = () => {
   );
 
 
+
+  /* VALIDATION AND DUPLICATE FUNCTION
+    We use these functions in Pantry and SearchRecipes. They enable us to control : 
+      1 - the input typed by the user : The user can only ingredients available in our dataset
+      2 - check the duplicate : The user can only submit an ingredient once 
+  */
+  
+  // 1  - Validation Check
+        // parameter 1 : validEntries : The array with all the accepted entries (countries, ingredients, style, difficulty)
+        // parameter 2 :  stringToCheck : the stringTyped by the user.
+        // Return... true if the ingredient match with one of ingredient of this category. Otherwise it returns false.
+
+  const checkValidation = (validEntries, stringToCheck) =>  {
+    for (let i = 0; i < validEntries.length; i++) {
+        if (stringToCheck.toLowerCase() === validEntries[i].name.toLowerCase()) {
+            console.log("We found a matching filter!"); 
+            return true;      
+        }
+    }
+    return false; 
+  };
+
+  // 2  - Duplicate Check
+      // parameter 1 : validEntries : The array with all the accepted entries (countries, ingredients, style, difficulty)
+      // parameter 2 :  stringToCheck : the stringTyped by the user.
+      // Return... true if the ingredient match with one of ingredient of this category. Otherwise it returns false.
+
+  const checkDuplicate = (arrayToCheck, stringToCheck) => {
+    
+    if (arrayToCheck.length <= 0) {    // If the arrayToCheck is empty, we can't have duplicate, duh!
+      return true;
+    }
+    let hashTable = {};
+    for (let element of arrayToCheck) {
+      hashTable[element] = true;
+    }
+    if (hashTable[stringToCheck]) {
+      console.log("Duplicate found!");
+      return false;
+    }
+    return true;
+  }
+
+
   return (
     <UserContext.Provider value={value}>
       <Router>
@@ -93,9 +141,16 @@ const App = () => {
               {/* This conditions is important : We are loading while userAccount get updated with the value of userLogged(from data fetched using the customHook) */}
               {userAccount.isLoading || !userAccount.content ? (
                   <p>Loading...</p>
-                ) : (
+                ) : userAccount.content && !pantryFlow.recipesPicked ? (
                   <Home/>
-              )}
+                ) : pantryFlow.recipesPicked ? (
+                  <RecipeDetails
+                    endpoint = {API_ENDPOINT}
+                    recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
+                  />
+                ) : (
+                  null
+                )}
             </Route>
 
   {/* YOUR KITCHEN
@@ -114,7 +169,9 @@ const App = () => {
                     allCategories = {categories}
                     endpoint = {API_ENDPOINT}
                     pantryUpdater = {dispatchPantryFlow}
-                /> 
+                    checkValidation = {checkValidation}
+/*                     checkDuplicate = {checkDuplicate}
+ */                /> 
                 ) : pantryFlow.isSubmitted ? (
                   <RecipesAvailable
                     endpoint = {API_ENDPOINT}
@@ -122,8 +179,8 @@ const App = () => {
                   />
                 ) : pantryFlow.recipesPicked ? (
                   <RecipeDetails
-                  endpoint = {API_ENDPOINT}
-                  recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
+                    endpoint = {API_ENDPOINT}
+                    recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
                   />
                 ) : (
                   null
@@ -135,26 +192,41 @@ const App = () => {
             <Route path = "/search">
               {recipes.isLoading || styles.isLoading || ingredients.isLoading  ? (
                   <p>Loading...</p>
-              ) : (
+              ) : !pantryFlow.isSubmitted && !pantryFlow.recipesPicked ? (
               <SearchRecipes
                 endpoint = {API_ENDPOINT}
                 allIngredients = {ingredients.content}
                 allStyles = {styles.content}
                 recipesUpdater = {dispatchPantryFlow}
+                checkValidation = {checkValidation}
+                checkDuplicate = {checkDuplicate}
               />
+              ) : pantryFlow.recipesPicked ? (
+                <RecipeDetails
+                  endpoint = {API_ENDPOINT}
+                  recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
+                />
+              ) : (
+                null
               )}
-
             </Route>
 
-  {/* RECIPES */}
+  {/* RECIPES TBC (might be redundant) */}
             <Route path = "/recipe/:id">
               <RecipeDetails />
             </Route>
 
 
   {/* CRUD */}
-            <Route path = "recipe">
-              <RecipeDetails/>
+            <Route path = "/admin">
+              <Admin
+                endpoint = {API_ENDPOINT}
+                allCategories = {categories.content}
+                allIngredients = {ingredients.content}
+                allRecipes = {recipes.content}
+                allStyles = {styles.content}
+                allUsers = {users.content}
+              />
             </Route>
 
   {/*NOT FOUND -404 */}
@@ -163,7 +235,10 @@ const App = () => {
             </Route>
 
           </Switch>
-        <Footer/>
+        <Footer
+          endpoint = {API_ENDPOINT}
+          recipeTrigger = {dispatchPantryFlow} // to display the daily recipe when the user clicks on it.
+        />
       </Router>
     </UserContext.Provider>
 

@@ -8,7 +8,7 @@ import * as React from 'react';
 
 
 
-const Pantry = ({allCategories, endpoint, pantryUpdater}) => {
+const Pantry = ({allCategories, endpoint, pantryUpdater, checkValidation}) => {
 
 // USER STOCK MANAGEMENT - here we control the current food stock for a given category. 
 // We update it with A POST REQUEST once the user click on let's go! 
@@ -100,6 +100,7 @@ const Pantry = ({allCategories, endpoint, pantryUpdater}) => {
                     endpoint = {endpoint} 
                     stock = {stock}
                     setStock = {setStock}
+                    checkValidation = {checkValidation}
                 />
             ))} 
             <form onSubmit={completedStock}>

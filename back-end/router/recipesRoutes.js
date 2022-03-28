@@ -14,7 +14,7 @@ router.post("/create", recipesController.newRecipe);
 router.post("/update/:id", recipesController.updatedRecipe);
 
 // D du CRUD
-router.delete("/delete/:id", recipesController.deletedObject);
+router.post("/delete/:id", recipesController.deletedObject);
 
 // FETCH MATCHING RECIPES
 router.get("/matchingrecipes/:userId", recipesController.matchingRecipe);
@@ -22,8 +22,15 @@ router.get("/matchingrecipes/:userId", recipesController.matchingRecipe);
 // FETCH DETAIL RECIPES
 router.get("/recipesdetails/:recipeId", recipesController.recipeDetails);
 
-// FETCH RECIPES CORRESPONDING TO THE FILTER IN SEARCH / I WANNA EAT
+// FETCH RECIPES CORRESPONDING TO THE FILTER IN SEARCH / I WANNA EAT (EXCEPT KEYWORKDS)
 router.post("/filteredrecipes", recipesController.filteredRecipes)
+
+// FETCH RECIPES CORRESPONDING TO THE KEYWORDS TYPED BY THE USER
+router.get("/search/:keywords", recipesController.searchedKeywords);
+
+router.get("/dailyrecipe", recipesController.randomRecipe);
+
+
 
 
 

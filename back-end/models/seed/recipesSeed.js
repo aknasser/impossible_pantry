@@ -19,7 +19,7 @@ const alimentationRecipe = async() => {
     const veggieSaute = await Recipe.create({
         name : "Veggies Saute",
         intro : "It doesn't look like much but these veggies will save your life. Literraly!",
-        steps : "Blablablba",
+        steps : ["Wash the veggies with clean water", "cut the carrots, and courgettes in small dices", "throw them in a frying pan with a bit of vegetal oil (medium fire)"],
         country: "France",
         style : await Style.findOne({ name : "Healthy"}),
         difficulty : 1,
@@ -59,7 +59,7 @@ const alimentationRecipe = async() => {
     const bologneseSpaghettis = await Recipe.create({
         name : "Bolognese Spaghettis",
         intro : "An all-time classic, easy to cook but hard to master! Can you cook them like la mama ?",
-        steps : "Blablablba",
+        steps : ["Mix the meat with a bit of pepper and salt. Mix it thorougly. Let it rest", "put a saucing pan full of water on the stove", "while the water is boiling, cut onions in thin piece, carrots in dice and crush the garlic"],
         country: "Italy",
         style : await Style.findOne({ name : "Yummy"}),
         difficulty : 1,
@@ -130,7 +130,7 @@ const alimentationRecipe = async() => {
     const lemonBiscuit = await Recipe.create({
         name : "Lemon Biscuit",
         intro : "A sweet lemon cookie. Even better with a warm tea and a good movie!",
-        steps : "Blablablba",
+        steps : ["Melt the butter in the microwave (30 sec is enough)", "mix the melted butter with the brown sugar", "once you get a fluid mixture, add the lemon juice"],
         country: "Ireland",
         style : await Style.findOne({ name : "Sweet"}),
         difficulty : 1.5,

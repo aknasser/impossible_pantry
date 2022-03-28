@@ -1,8 +1,9 @@
 const Ingredient = require("../models/ingredients");
-
+const Category = require("../models/categories");
+const helpers = require("./helpers_functions/ingredients_functions");
+const recipe_helpers = require("./helpers_functions/recipes_functions");
 
 module.exports = {
-
 
     testCookie : async(req, res) => {
         res.cookie("Hero", "Nass La Menace");
@@ -11,7 +12,7 @@ module.exports = {
 
 // (R OF THE CRUD)
     retrieveIngredient : async (req, res, next) => {
-        const allIngredients = await Ingredient.find({});
+        const allIngredients = await Ingredient.find({}).populate("category");
         res.locals.toConvert = allIngredients;   
         next(); 
      },
@@ -44,47 +45,85 @@ module.exports = {
 // C OF THE CRUD
     newIngredient : async(req, res) => {
         const newIngredient = req.body;
+
+        // 1 - we look for the category selected in the DB
+        const categorySelected = await Category.findOne({name :newIngredient.category})
+        console.log(categorySelected);
+
         
+        // 2 - We create the new ingredient
         const newEntry = await Ingredient.create({
             name : newIngredient.name,
             price : newIngredient.price,
             scarcity : newIngredient.scarcity,
             fSSIndex : newIngredient.fSSIndex,
-            category : newIngredient.category,
+            unit : newIngredient.unit,
+            category : categorySelected,
             
-        })
-        res.send("new entry created!");
+            
+        });
+
+        console.log (`the new entry : ${newEntry}`);
+
+        // 3 - we add this new ingredient to the selected category 
+         const categoryToUpdate = await Category.findOneAndUpdate({name :newIngredient.category}, {
+            $push : {
+                ingredients: newEntry
+            }
+        },
+        {new : true}
+        );
+        console.log(`The category updated : ${categoryToUpdate}`); 
+
+        res.send("new ingredient created and category updated");
 
     },
 
 // U OF TH CRUD
     updatedIngredient : async(req, res) => {
         let ingredientUpdated = req.body;
-        console.log(`L'auteur de la citation updaté : ${ingredientUpdated.author}`);
-        let objectId = req.params.id;
-        console.log(`L'id: ${objectId}`);
+        let ingredientId = ingredientUpdated._id;
+        
+        // 1 - we identify the matching category in the DB. 
+        const rightCategory = await Category.findOne({name : ingredientUpdated.category});
 
-        const entryToUpdate = await Ingredient.findByIdAndUpdate(objectId, {
+        // 2 - we update the ingredient.
+        const ing_to_update = await Ingredient.findByIdAndUpdate(ingredientId, {
             $set : {
                 name : ingredientUpdated.name,
                 price : ingredientUpdated.price,
                 scarcity : ingredientUpdated.scarcity,
                 fSSIndex : ingredientUpdated.fSSIndex,
-                category : ingredientUpdated.category,
+                unit : ingredientUpdated.unit,
+                category : await rightCategory,
             },
         },
         {new : true}
         )
-        console.log(`la nouvelle entrée : ${entryToUpdate}`)
-        res.send("entry updated!");
 
+        // 3 - we add this ingredient to the property "ingredients" of the right category.
+        const category_to_update = await Category.findByIdAndUpdate(rightCategory._id, {
+            $push : {
+                ingredients : ing_to_update
+            },
+        },
+        {new : true}
+        ) 
+        // 4 - we check if this ingredient is also part of another category. If yes, we delete it from the category identified 
+        //==>  1 ingredient can only be in one category.   
+        helpers.check_ingredients_in_categories(ingredientId, await category_to_update);
+
+        console.log(`the new ingredient : ${ing_to_update}`)
+        res.send("entry updated!");
     },
 
 // D OF TH CRUD
     deletedObject : async(req, res) => {
-        const targetId = req.params.id;
-        console.log(`ID de l'élément à supprimer : ${targetId}`);
-        const entryToDelete = await Ingredient.findByIdAndRemove(targetId);
+        const ingredient_to_delete = req.body;
+        // 1 - We delete the occurence of this ingredient in the property 'ingredients' for all the objects of the collection categories.
+        recipe_helpers.clean_others_collection_arrays_after_deletion("ingredients",ingredient_to_delete._id, Category);
+        //2 - We delete the ingredient.
+        const entryToDelete = await Ingredient.findByIdAndRemove(ingredient_to_delete._id);
         res.send("entry removed!");
     },
 

@@ -27,12 +27,6 @@ const userSchema = new Schema(
                 ref:"Recipe"
             },
         ],
-        recipesSearched: [
-            {
-                type: mongoose.Schema.Types.ObjectId,
-                ref:"Recipe"
-            },
-        ],
         recipesCooked: [
             {
                 type: mongoose.Schema.Types.ObjectId,

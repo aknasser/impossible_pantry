@@ -14,7 +14,7 @@ router.post("/create", categoriesController.newCategory);
 router.post("/update/:id", categoriesController.updatedCategory);
 
 // D du CRUD
-router.delete("/delete/:id", categoriesController.deletedObject);
+router.post("/delete/:id", categoriesController.deletedObject);
 
 
 

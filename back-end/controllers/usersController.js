@@ -1,6 +1,22 @@
 const User = require("../models/users");
 const Ingredient = require("../models/ingredients");
-const { findOne } = require("../models/users");
+const Recipe = require("../models/recipes");
+
+
+/////// HELPERS FUNCTIONS /////////////
+
+// FIND THE RECIPES ID CHOSEN BY THE USER FOR "RECIPES COOKED" AND "RECIPES SAVED".
+// Return the object_id  of these recipes.
+const find_recipes = async(recipes_cooked_or_saved) => {
+    const recipesFound = [];
+    for (let i = 0; i < recipes_cooked_or_saved.length; i++) {
+        const searchingRecipe = await Recipe.findOne({name : recipes_cooked_or_saved[i]});
+        recipesFound.push(searchingRecipe);
+    };
+    console.log("dodou" + recipesFound);
+    return recipesFound;
+};
+
 
 module.exports = {
 
@@ -30,19 +46,21 @@ module.exports = {
 
     newUser : async(req, res) => {
         const newUser = req.body;
-        console.log(`le titre de la citation : ${newUser.quote}`)
         
-        const newEntry = await User.create({
+        //1 - We find the Object ID for the recipes stored in recipesSearched and recipesCooked
+        let recipesSaved = await find_recipes(newUser.recipesSaved);
+        let recipesCooked = await find_recipes(newUser.recipesCooked);
+        
+        // 2 - We create the new user in the DB
+         const newEntry = await User.create({
             name : newUser.name,
             surname : newUser.surname,
             username : newUser.username,
-            recipesSaved : newUser.recipesSaved,
-            recipesSearched : newUser.recipesSearched,
-            recipesCooked : newUser.recipesCooked,
+            recipesSaved : recipesSaved,
+            recipesCooked : recipesCooked,
             stock : newUser.stock
         })
-        res.send("new entry created!");
-
+        res.send("new user created!"); 
     },
 
     updatedUser : async(req, res) => {
@@ -107,10 +125,10 @@ module.exports = {
     },
 
     deletedObject : async(req, res) => {
-        const targetId = req.params.id;
-        console.log(`ID de l'élément à supprimer : ${targetId}`);
-        const entryToDelete = await User.findByIdAndRemove(targetId);
-        res.send("entry removed!");
+        console.log("ready to start the deletion process!");
+        const object_to_delete_id = req.body._id;
+        const entryToDelete = await User.findByIdAndRemove(object_to_delete_id);
+        res.send("user removed!");
     },
 
 

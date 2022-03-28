@@ -1,9 +1,10 @@
 const Style = require("../models/styles");
+const Recipe = require("../models/recipes");
+const helpers = require("./helpers_functions/styles_functions");
+
 
 
 module.exports = {
-
-
 
     retrieveStyle : async (req, res, next) => {
         const allStyle = await Style.find({});
@@ -20,7 +21,7 @@ module.exports = {
 
     newStyle : async(req, res) => {
         const newStyle = req.body;
-        console.log(`le titre de la citation : ${newStyle.quote}`)
+        console.log(`le titre de la citation : ${newStyle.name}`)
         
         const newEntry = await Style.create({
             name : newStyle.name,
@@ -31,15 +32,14 @@ module.exports = {
     },
 
     updatedStyle : async(req, res) => {
-        let categoryUpdated = req.body
-        console.log(`L'auteur de la citation updaté : ${categoryUpdated.author}`);
-        let objectId = req.params.id;
-        console.log(`L'id: ${objectId}`);
+        let styleUpdated = req.body
+        console.log(`style to update : ${styleUpdated.name}`);
+        console.log(`L'id: ${styleUpdated._id}`);
 
-        const entryToUpdate = await Style.findByIdAndUpdate(objectId, {
+        const entryToUpdate = await Style.findByIdAndUpdate(styleUpdated._id, {
             $set : {
-                name : categoryUpdated.name,
-                stylePicture : categoryUpdated.stylePicture,
+                name : styleUpdated.name,
+                stylePicture : styleUpdated.stylePicture,
             },
         },
         {new : true}
@@ -50,10 +50,11 @@ module.exports = {
     },
 
     deletedObject : async(req, res) => {
-        const targetId = req.params.id;
-        console.log(`ID de l'élément à supprimer : ${targetId}`);
-        const entryToDelete = await Style.findByIdAndRemove(targetId);
-        res.send("entry removed!");
+        console.log("ready to start the deletion process!");
+        const object_to_delete_id = req.body._id;
+        helpers.clean_entries_in_others_collections_after_deletion("style", object_to_delete_id, Style, Recipe, "No Style");
+        const entryToDelete = await Style.findByIdAndRemove(object_to_delete_id);
+        res.send("style removed!");
     },
 
 

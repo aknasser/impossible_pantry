@@ -1,8 +1,12 @@
 const Steps = ({recipeSteps}) => {
+
     return (
-        <span>
-            {recipeSteps}
-        </span>
+            recipeSteps.map((step, index) => (
+                <div key = {step}>
+                    <span>{index + 1} - {step}</span>
+                    <br/>
+                </div>
+            ))
     );
 }
  
