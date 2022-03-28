@@ -18,7 +18,7 @@ router.post("/create", ingredientsController.newIngredient);
 router.post("/update/:id", ingredientsController.updatedIngredient);
 
 // D du CRUD
-router.delete("/delete/:id", ingredientsController.deletedObject);
+router.post("/delete/:id", ingredientsController.deletedObject);
 
 
 

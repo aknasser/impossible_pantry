@@ -13,8 +13,14 @@ const PUV = () => {
          <span>{userAccount.content.name}</span>
          <h1>Find your Next Cooking experience in a flash</h1>
           <HeroPicture/>
-          <Cta cta="Looking for inspiration"></Cta>
-          <Cta cta="I want to eat..."></Cta>
+          <Cta 
+            cta="Your Food Stock" 
+            href = "yourkitchen"
+          />
+          <Cta 
+            cta="Looking for inspiration" 
+            href = "search"
+          />
         </>
       );
 }

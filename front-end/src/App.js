@@ -11,6 +11,7 @@ import RecipeDetails from './Components/Recipe/RecipeDetails';
 import NotFound from './Components/NotFound';
 import UserContext from './Context/UserContext';
 import useFetchModel from './CustomHooks/useFetchModel';
+import Admin from './Components/CRUD/Admin';
 
 
 const App = () => {
@@ -20,10 +21,13 @@ const App = () => {
 // To fetch the data related to these data models.
   const [userLogged, setUserLogged] = useFetchModel(`${API_ENDPOINT}/users/621137f1004a65cfd4fc4aee`);
   const [categories, dispatchCategories] = useFetchModel(`${API_ENDPOINT}/categories`);  // All the entries for the Categories model.
-  const [recipes, dispatchRecipes] = useFetchModel(`${API_ENDPOINT}/recipes`);; // All the entries fort the Recipes model
-  const [ingredients, dispatchIngredients] = useFetchModel(`${API_ENDPOINT}/ingredients`);;
-  const [styles, dispatchStyles] = useFetchModel(`${API_ENDPOINT}/styles`);;
- 
+  const [recipes, dispatchRecipes] = useFetchModel(`${API_ENDPOINT}/recipes`); // All the entries fort the Recipes model
+  const [ingredients, dispatchIngredients] = useFetchModel(`${API_ENDPOINT}/ingredients`);
+  const [styles, dispatchStyles] = useFetchModel(`${API_ENDPOINT}/styles`);
+  const [users, dispatchUsers] = useFetchModel(`${API_ENDPOINT}/users`);
+
+
+
 
   // USER ACCOUNT MGMT IN THE APP. Initially value = userAccount.
 
@@ -137,9 +141,16 @@ const App = () => {
               {/* This conditions is important : We are loading while userAccount get updated with the value of userLogged(from data fetched using the customHook) */}
               {userAccount.isLoading || !userAccount.content ? (
                   <p>Loading...</p>
-                ) : (
+                ) : userAccount.content && !pantryFlow.recipesPicked ? (
                   <Home/>
-              )}
+                ) : pantryFlow.recipesPicked ? (
+                  <RecipeDetails
+                    endpoint = {API_ENDPOINT}
+                    recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
+                  />
+                ) : (
+                  null
+                )}
             </Route>
 
   {/* YOUR KITCHEN
@@ -192,23 +203,30 @@ const App = () => {
               />
               ) : pantryFlow.recipesPicked ? (
                 <RecipeDetails
-                endpoint = {API_ENDPOINT}
-                recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
+                  endpoint = {API_ENDPOINT}
+                  recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
                 />
               ) : (
                 null
               )}
             </Route>
 
-  {/* RECIPES */}
+  {/* RECIPES TBC (might be redundant) */}
             <Route path = "/recipe/:id">
               <RecipeDetails />
             </Route>
 
 
   {/* CRUD */}
-            <Route path = "recipe">
-              <RecipeDetails/>
+            <Route path = "/admin">
+              <Admin
+                endpoint = {API_ENDPOINT}
+                allCategories = {categories.content}
+                allIngredients = {ingredients.content}
+                allRecipes = {recipes.content}
+                allStyles = {styles.content}
+                allUsers = {users.content}
+              />
             </Route>
 
   {/*NOT FOUND -404 */}
@@ -217,7 +235,10 @@ const App = () => {
             </Route>
 
           </Switch>
-        <Footer/>
+        <Footer
+          endpoint = {API_ENDPOINT}
+          recipeTrigger = {dispatchPantryFlow} // to display the daily recipe when the user clicks on it.
+        />
       </Router>
     </UserContext.Provider>
 

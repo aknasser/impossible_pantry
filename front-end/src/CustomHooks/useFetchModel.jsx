@@ -51,7 +51,7 @@ const useFetchModel = (endpoint) => {
 
 
 
-// 3 - THE USEEFFECT TO TRIGGER THE DATA
+// 3 - THE USEEFFECT TO GET THE DATA
 
     React.useEffect( () => {
 
@@ -116,6 +116,8 @@ const useFetchModel = (endpoint) => {
         }
         }, []); 
 
+
+           
 
 // 4 - EXPORT THE CUSTOM HOOK
 

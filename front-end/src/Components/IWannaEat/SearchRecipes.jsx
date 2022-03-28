@@ -5,6 +5,7 @@ import * as React from 'react';
 import axios from "axios";
 import Filter from "./SubFilters/Filter";
 import KeywordsFilter from "./SubFilters/KeywordsFilter";
+import useCountries from "../../CustomHooks/useCountries";
 
 
 const SearchRecipes = ({endpoint, allIngredients, allStyles, recipesUpdater, checkValidation, checkDuplicate}) => {                   // allRecipes will be used to display the recipe available while the user types its request.
@@ -12,8 +13,8 @@ const SearchRecipes = ({endpoint, allIngredients, allStyles, recipesUpdater, che
     const [styles, setStyles] = React.useState(allStyles); 
     const [ingredients, setIngredients] = React.useState(allIngredients); 
 
-    // We update the countries using by calling an API with the countries name.
-    const [countries, setCountries] = React.useState();
+    // We use our customHook useCountries() to get the countries.
+    const [countries, setCountries] = useCountries();
     const [difficulties, setDifficulties] = React.useState([
         {
             name : "1",
@@ -27,7 +28,7 @@ const SearchRecipes = ({endpoint, allIngredients, allStyles, recipesUpdater, che
     ]); 
 
 
-    React.useEffect(() => {
+    /* React.useEffect(() => {
         let isMounted = true;
         const fetchCountries = async() => {
 
@@ -69,7 +70,7 @@ const SearchRecipes = ({endpoint, allIngredients, allStyles, recipesUpdater, che
             isMounted = false;
             console.log("ça laggggggg ouin ouin!!")
         }
-    }, [])
+    }, []); */
 
 
     // START - STATE MANAGEMENT  FOR THE FILTER

@@ -1,3 +1,9 @@
+##### QUICK HEADS-UP
+The code itself is already full of comments.
+So you won't find that much code in this documentation. It 's more about explaining the purpose of the functions, code blocks and modules.
+It's more about the WHY than the HOW.
+
+
 ### VISION  & GOAL
 An app to figure out what to cook with the food stock available!
 
@@ -173,7 +179,46 @@ D : Yes, the user can delete his / her account on the dashboard (double verifica
 
 Introduction
 
+In this app, the server provide the API ENDPOINT to the front-end and achieve the CRUD operations with the Database (MongoDB)
+The server is NOT involved in the rendering / view.
+The structure of the back-end follows the MVC (without the View)
+To top it off, there are as well a router folder to manage the different route in a clean way. It helps us "declutter" the code of the controller.
+
+
 [INDEX.JS]
+
+## MODULES
+Express ==> the best framework to deal with server management
+Passport ==> to manage the user authentification
+Mongoose ==> to carry out DB operations faster
+bodyParser ==> to parse the data posted by the user as JSON easily
+cookieParser ==> to manage the cookies
+Express ==>
+DotEnv ==> To set environmental variables and ease their management
+router ==> a JS file we will use to manage the API routes
+
+
+## CODE SECTIONS
+
+# SERVER
+const app = express();
+To create an express server.
+
+# DB CONNECTION
+Done with mongoose.connect
+
+
+# COOKIE MANAGEMENT AND PARSING
+The cookie_secret is defined in the .env file (it contains the environmental variable).
+
+# PASSPORT AND AUTHENTIFICATION
+TBD
+
+# ROUTER SETTINGS
+app.use("/", router);
+==> The server express, will use router when we call / reach this url "/" (main page).
+In other words, it means everytime we use an url with this server, router manage the action (GET, POST, DELETE, etc).
+
 
 [ROUTERS]
 
@@ -182,7 +227,7 @@ Introduction
 ["LOGIN-AND-AUTHENTICATION"]
 
 
-### FRONT-END STRUCTURE (REACT)
+### FRONT-END STRUCTURE AND COMPONENTS (REACT)
 
 Introduction
 
@@ -195,7 +240,91 @@ Introduction
 
 [RECIPES_DETAILS]
 
-[FOOTER AND NAVBAR]
+[FOOTER_AND_NAVBAR]
+
+
+[ADMIN_AND_BACK-OFFICE]
+
+## ADMIN.JSX
+
+## HOMEADMIN
+
+## CREATEORUPDATE
+
+## ADDENTRY
+
+## READENTRIES
+
+## UPDATEENTRY
+
+
+
+
+## CRUD ACTIONS BY MODEL
+
+# CATEGORIES
+<CREATE>
+When we create a new category, we want it to be empty at the beginning. We add ingredients eventually when we update the category. 
+
+WHY THIS RESTRICTION ?
+We don't want to have 1 ingredient binded to several categories. It would get messy.
+
+<READ>
+Nothing worth mentionning.
+
+<UPDATE>
+Same Component as for CREATE operations but this time the alt value exists in the state newCategory.
+Here is an example with the CATEGORY Model : 
+
+const [newCategory, setNewCategory] = React.useState(
+    categoryToUpdate || {
+        name : "",
+        categoryPicture : "",
+        description : ""
+    }
+)
+
+Once again we can't add / remove ingredients to/from this category.
+
+<DELETE>
+
+
+# INGREDIENTS
+<CREATE>
+When we add a new ingredients, we bind it to an existing category ==> We add this ingredient to a given category.
+(see ingredientsController == newIngredient).
+ 
+<READ>
+
+<UPDATE>
+<DELETE>
+
+# STYLES
+<CREATE>
+ 
+<READ>
+
+<UPDATE>
+<DELETE>
+
+
+# RECIPES
+<CREATE>
+ 
+<READ>
+
+<UPDATE>
+<DELETE>
+
+
+# USERS
+<CREATE>
+ 
+<READ>
+
+<UPDATE>
+<DELETE>
+
 
 
 

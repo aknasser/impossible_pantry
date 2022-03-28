@@ -1,7 +1,7 @@
-const Cta = ({cta}) => {
+const Cta = ({cta, href}) => {
     return (
         <>
-            <a href="something">
+            <a href={`/${href}`}>
                 <h4>{cta}</h4>
             </a>
         </>

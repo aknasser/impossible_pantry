@@ -14,7 +14,7 @@ router.post("/create", stylesController.newStyle);
 router.post("/update/:id", stylesController.updatedStyle);
 
 // D du CRUD
-router.delete("/delete/:id", stylesController.deletedObject);
+router.post("/delete/:id", stylesController.deletedObject);
 
 
 

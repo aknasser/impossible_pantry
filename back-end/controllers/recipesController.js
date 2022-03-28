@@ -1,12 +1,31 @@
 const Recipe = require("../models/recipes");
 const User = require("../models/users");
+const Style = require("../models/styles");
+const Ingredient = require("../models/ingredients");
+const helpers = require("./helpers_functions/recipes_functions")
+
+
+
+
 
 module.exports = {
 
-
-
+    
     retrieveRecipe : async (req, res, next) => {
-        const allRecipe = await Recipe.find({}).sort({createdAt : -1});
+        const allRecipe = await Recipe.find({}).sort({createdAt : -1}).populate(
+            {
+                path : "ingredientsNeeded",
+                populate : 
+                    {
+                        path : "ingredient",
+                        model : "Ingredient"
+                    }
+            }
+        )
+        .populate(
+            "style mainIngredient"
+        );
+
         res.locals.toConvert = allRecipe;   // On cale allRecipe dans la variable locale "toConvertJSON". Cette variable est ensuite utilisée dans la middleware
         next(); 
      },
@@ -20,52 +39,54 @@ module.exports = {
 
     newRecipe : async(req, res) => {
         const newRecipe = req.body;
-        console.log(`le titre de la citation : ${newRecipe.quote}`)
+        console.log(`FULL :  ${JSON.stringify(newRecipe)}`)
         
-        const newEntry = await Recipe.create({
-            name : newRecipe.quote,
-            steps : newRecipe.author,
+         const newEntry = await Recipe.create({
+            name : newRecipe.name,
+            intro : newRecipe.intro,
+            steps : newRecipe.steps,
             country : newRecipe.country,
-            style : newRecipe.style,
+            style : await helpers.findMatchingId(Style, "style", newRecipe),                            //Object_ID
             difficulty : newRecipe.difficulty,
             pictureUrl : newRecipe.pictureUrl,
-            mainIngredient : newRecipe.mainIngredient,
-            ingredientsNeeded : newRecipe.ingredientsNeeded,
-        })
-        res.send("new entry created!");
+            mainIngredient : await helpers.findMatchingId(Ingredient, "mainIngredient", newRecipe),          //Object_ID
+            ingredientsNeeded : await helpers.findAllIngredientsNeededId(newRecipe),    //Object_ID
+        });
+        res.send("new recipe created!"); 
 
     },
 
     updatedRecipe : async(req, res) => {
         let recipeUpdated = req.body
-        console.log(`L'auteur de la citation updaté : ${RecipeUpdated.author}`);
-        let objectId = req.params.id;
-        console.log(`L'id: ${objectId}`);
-
+        let objectId = recipeUpdated._id;
+ 
         const entryToUpdate = await Recipe.findByIdAndUpdate(objectId, {
             $set : {
-                name : recipeUpdated.quote,
-                steps : recipeUpdated.author,
+                name : recipeUpdated.name,
+                steps : recipeUpdated.steps,
                 country : recipeUpdated.country,
-                style : recipeUpdated.style,
+                style : await helpers.findMatchingId(Style, "style", recipeUpdated),            // NOOB TIP : without "await" we get a promise. 
                 difficulty : recipeUpdated.difficulty,
                 pictureUrl : recipeUpdated.pictureUrl,
-                mainIngredient : recipeUpdated.mainIngredient,
-                ingredientsNeeded : recipeUpdated.ingredientsNeeded,
+                mainIngredient : await helpers.findMatchingId(Ingredient, "mainIngredient", recipeUpdated),
+                ingredientsNeeded : await helpers.findAllIngredientsNeededId(recipeUpdated),
             },
         },
         {new : true}
         )
         console.log(`la nouvelle entrée : ${entryToUpdate}`)
         res.send("entry updated!");
-
     },
 
     deletedObject : async(req, res) => {
-        const targetId = req.params.id;
-        console.log(`ID de l'élément à supprimer : ${targetId}`);
-        const entryToDelete = await Recipe.findByIdAndRemove(targetId);
-        res.send("entry removed!");
+        console.log("ready to start the deletion process!");
+        const object_to_delete_id = req.body._id;
+        // 1 - We delete this entry from the array recipesCooked / recipesSaved for the Users.
+        helpers.clean_others_collection_arrays_after_deletion("recipesCooked", object_to_delete_id, User);
+        helpers.clean_others_collection_arrays_after_deletion("recipesSaved", object_to_delete_id, User);
+        // 2 - We delete the entry.
+        const entryToDelete = await Recipe.findByIdAndRemove(object_to_delete_id);
+        res.send("style removed!");
     },
 
     matchingRecipe : async(req, res) => {
@@ -170,7 +191,6 @@ module.exports = {
             // c - Check if the random recipe is different from the recipeChosenID. If yes, we push it in the array suggestions
             // (we use a simple inequality here (!= because they randomRecipe._id and recipeChosenId are not supposed to exactly IDENTICAL))
             if (randomRecipe._id != recipeChosenId && !suggestionsHashTable[randomRecipe._id] ) {
-                console.log(` randomRecipe :${randomRecipe._id}`);
                 console.log(` recipeChosenId :${recipeChosenId}`);
                 suggestions.push(randomRecipe);
                 // we add this recipe to the hashTable, suggestionsHashTable
@@ -373,6 +393,15 @@ module.exports = {
 
         // 3 - send this object to the user
         res.send(recipesKeywords);
+    },
+
+
+    randomRecipe : async(req, res) => {
+        const allRecipes = await Recipe.find({});
+        const randomIndex = Math.floor(Math.random() * allRecipes.length);
+        const randomRecipe = allRecipes[randomIndex];
+        console.log(`randomRecipe : ${randomRecipe}`);
+        res.send(randomRecipe);
     },
 
 

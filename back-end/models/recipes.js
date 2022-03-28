@@ -14,11 +14,11 @@ const recipeSchema = new Schema(
             type : String,
             required : true,
         },
-        steps: {
+        steps: [{
             type: String,
             required: true,
             lowercase: true
-        },
+        }],
         country : {
             type : String,
             required : true,

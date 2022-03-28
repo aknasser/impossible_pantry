@@ -14,7 +14,7 @@ router.post("/create", usersController.newUser);
 router.post("/update/:id", usersController.updatedUser);
 
 // D du CRUD
-router.delete("/delete/:id", usersController.deletedObject); 
+router.post("/delete/:id", usersController.deletedObject); 
 
 // MANAGE STOCK UPDATE AT THE END OF INSIDE YOUR STOCK FORM
 router.post("/stockupdate/:id", usersController.updateStock);

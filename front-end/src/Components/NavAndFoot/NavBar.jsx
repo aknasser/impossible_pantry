@@ -46,23 +46,18 @@ const NavBar = () => {
                 /* yposition = {visibilityNavBar.data.top}  */
             >
                     <Link to="/" /* onClick = {navBarHandler} */ >
-                        <span>Accueil</span>
+                        <span>Dashboard</span>
                     </Link>
-                    <a href="/#form" /* onClick = {navBarHandler} */>
-                        <span>Un Café Ensemble</span>
+                    <a href="/#foodStock" /* onClick = {navBarHandler} */>
+                        <span>Your Food Stock</span>
                     </a>
-                    <a href="/#why" /* onClick = {navBarHandler} */>
-                        <span>Pourquoi ?</span>
+                    <a href="/#discover" /* onClick = {navBarHandler} */>
+                        <span>Discover</span>
                     </a>
-                    <a href="/#approche" /* onClick = {navBarHandler} */>
-                        <span>Mon Approche</span>
+                    <a href="/#signOut" /* onClick = {navBarHandler} */>
+                        <span>Sign out</span>
                     </a>
-                    <a href="/projectsList" /* onClick = {navBarHandler} */>
-                        <span>Projets</span>
-                    </a>
-                    <a href="/blog" /* onClick = {navBarHandler} */>
-                    <span>Blog</span>
-                    </a>
+
             </div>
         </div>
         </>
