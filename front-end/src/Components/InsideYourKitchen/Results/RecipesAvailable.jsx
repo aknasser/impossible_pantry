@@ -19,7 +19,7 @@ const RecipesAvailable = ({endpoint, pantryUpdater}) => {
     5 - IN PANTRY, CHANGE THE REDIRECTION TARGET IN THE submit handler function.
     */
 
-    // We will the user to sent the GET request to the right endpoint
+    // We need the user to sent the GET request to the right endpoint
     const {userAccount, setUserAccount} = useContext(UserContext);
 
 
@@ -64,11 +64,11 @@ const RecipesAvailable = ({endpoint, pantryUpdater}) => {
         const getRecipes = async() => {
             if(isMounted) {
                 try {
-                    console.log(`userId : ${userAccount.content._id}`)
+                    console.log(`userId : ${userAccount._id}`)
                     dispatchMatchingRecipes({
                         type : "FETCH_MATCHED_RECIPES_START"
                     })
-                    const fetchRecipe = await axios.get(`${endpoint}/recipes/matchingRecipes/${userAccount.content._id}`, {crossdomain : true});
+                    const fetchRecipe = await axios.get(`${endpoint}/recipes/matchingRecipes/${userAccount.user_details._id}`, {crossdomain : true});
                     const availableRecipes = await fetchRecipe.data;
                     dispatchMatchingRecipes({
                         type : "FETCH_MATCHED_RECIPES_SUCCESS",
@@ -93,7 +93,7 @@ const RecipesAvailable = ({endpoint, pantryUpdater}) => {
                 type : "FETCH_MATCHED_RECIPES_START"
             })
         }
-    }, [endpoint, userAccount.content._id]);
+    }, [endpoint, userAccount._id]);
 
     // To check the state "availableRecipes" if needed.
     React.useEffect( () => {

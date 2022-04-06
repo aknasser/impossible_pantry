@@ -6,7 +6,6 @@ This default value can be helpful for testing components in isolation without wr
 */
 
 
-
 const UserContext = React.createContext({
     userAccount :"",
     setUserAccount: () => {}

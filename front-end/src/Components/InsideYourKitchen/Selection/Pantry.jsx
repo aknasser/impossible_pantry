@@ -15,8 +15,8 @@ const Pantry = ({allCategories, endpoint, pantryUpdater, checkValidation}) => {
 // This data comes from the component INgredientsList. 
     const {userAccount, setUserAccount} = useContext(UserContext)
 
-// we assign an initial value to stock. stock (initialValue) = userAccount.content.stock
-    const [stock, setStock] = React.useState([...userAccount.content.stock]);
+// we assign an initial value to stock. stock (initialValue) = userAccount.stock
+    const [stock, setStock] = React.useState([...userAccount.user_details.stock]);
 
 
 // START SUBMIT
@@ -52,28 +52,43 @@ const Pantry = ({allCategories, endpoint, pantryUpdater, checkValidation}) => {
         console.log(`HASH TABLE : ${JSON.stringify(stockHashTable)}`)
 
 // 4 - POST request to the endpoint dedicated to user udpdate
-        const updatingStock = await axios.post(`${endpoint}/users/stockupdate/${userAccount.content._id}`, stockHashTable);
+        const userId = userAccount.user_details._id;
+        console.log(`userAccount : ${JSON.stringify(userAccount.user_details)}`);
+        const updatingStock = await axios.post(`${endpoint}/users/stockupdate/${userId}`, stockHashTable);
 
-// 6 - After saving the updated data, the server sends a response to the client. This is the signal to move forward and start the redirection towards the results page.
+// 6 - After cleaning, updating and saving the updated data, we collect the new state of the user from the response.
     console.log(updatingStock.data);    
-    let confirmation = updatingStock.data;
+    const user_updated = updatingStock.data.user;
 
-// 7  - Once the post is done and we get the confirmation, we redirect the user to the results using window.href("something").
+
+// 7  - Once the post is done and we get the confirmation, we... : 
+
+
     console.log("We good ?");
 
-        if (confirmation) {
+        if (user_updated) {
+            // a - ...we update the userAccount_userdetails.stock
+            setUserAccount({
+                ...userAccount,
+                user_details : {
+                    ...userAccount.user_details,
+                    stock : user_updated.stock,
+                }
+            }) 
+
+            // b - ...move the user to the results. We update the ui with the pantryUpdater.
             pantryUpdater({
-                type : "FORM_SUBMITTED"
+                type : "UI_FLOW",
+                page_name : "recipes_available"
             });
-/*             window.location.href = "/recipesavailable";   
- */     }
+        }
     };
 
 // END - SUBMIT
 
 // To check the current state of userAccount 
     React.useEffect( () => {
-        console.log(`check userAccount name : ${userAccount.content.name}`)
+        console.log(`check userAccount name : ${userAccount.user_details.name}`)
     }, [userAccount]);
 
 
@@ -109,5 +124,4 @@ const Pantry = ({allCategories, endpoint, pantryUpdater, checkValidation}) => {
         </>
     );
 }   
- export default Pantry
-;
+ export default Pantry;

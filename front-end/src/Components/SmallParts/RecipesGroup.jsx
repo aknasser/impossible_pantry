@@ -5,7 +5,6 @@ import * as React from 'react';
 const RecipesGroup = ({recipesGroup, pantryUpdater}) => {
 
     /* When the user click on the link, we trigger this function. Change happens in the state pantryFlow in the App: 
-        - get recipePicked = true. 
         - we collect the id of the recipe selected in the payload. 
         - As a result we display the right recipe with the Component RecipeDetails.
     */
@@ -13,13 +12,10 @@ const RecipesGroup = ({recipesGroup, pantryUpdater}) => {
         console.log(recipe)
         pantryUpdater({
             type : "RECIPE_PICKED",
-            payload : recipe
+            recipe : recipe
         })
     };
 
-    React.useEffect ( () => {
-        console.log("doo" + recipesGroup);
-    }, [])
 
     return (
         <div>

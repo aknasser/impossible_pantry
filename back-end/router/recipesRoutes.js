@@ -28,8 +28,11 @@ router.post("/filteredrecipes", recipesController.filteredRecipes)
 // FETCH RECIPES CORRESPONDING TO THE KEYWORDS TYPED BY THE USER
 router.get("/search/:keywords", recipesController.searchedKeywords);
 
+// DISPLAY A RANDOM RECIPE IN THE FOOTER.
 router.get("/dailyrecipe", recipesController.randomRecipe);
 
+// ALLOW THE USER TO BOOKMARK / SAVE A RECIPE IN THE PROPERTY RECIPESSAVED OR RECIPESCOOKED (depend on its choice)
+router.post("/savedrecipe", recipesController.savedRecipe)
 
 
 

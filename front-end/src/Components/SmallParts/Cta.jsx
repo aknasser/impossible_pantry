@@ -1,9 +1,12 @@
+import { Link } from "react-router-dom";
+
+
 const Cta = ({cta, href}) => {
     return (
         <>
-            <a href={`/${href}`}>
+            <Link to={`/${href}`}>
                 <h4>{cta}</h4>
-            </a>
+            </Link>
         </>
     );
 }

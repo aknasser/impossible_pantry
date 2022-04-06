@@ -9,13 +9,17 @@ const cookieParser = require("cookie-parser");
 
 require("dotenv").config()
 
+require("./authentification/JWTStrategy");
+require("./authentification/localStrategy");
+require("./authentification/authenticate");
+
 
 
 // LE SERVER
 const app = express();
 
 // PORT DE L'APPLICATION
-app.set("port", process.env.PORT || 1993);   // Si l'environnement ne définit pas de valeur spécifique alors PORT= 1993
+app.set("port", process.env.PORT || 2022);   // Si l'environnement ne définit pas de valeur spécifique alors PORT= 1993
 
 
 // PREPARER A ECOUTER LE SERVEUR
@@ -51,6 +55,7 @@ app.use(cookieParser(process.env.COOKIE_SECRET))  // cookieParser utilise COOKIE
 // PASSPORT INITIALISATION
 
 app.use(passport.initialize());
+
 
 
 

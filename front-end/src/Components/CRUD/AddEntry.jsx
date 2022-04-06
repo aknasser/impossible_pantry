@@ -132,7 +132,7 @@ const AddEntry = ({adminManagement, dispatchAdminManagement, endpoint, allCatego
                 break;
         
             case "update":
-                const updateEntry = await axios.post(`${endpoint}/${modelType}/update/${entry._id}`, entry);
+                const updateEntry = await axios.post(`${endpoint}/${modelType}/update/${entry._id}`, entry, {withCredentials: true}); // if buggy delete withCredentials ? 
                 dispatchAdminManagement({
                     type: "REDIRECTION_ENTRY_UPDATED/DELETED"
                 })
