@@ -12,19 +12,19 @@ const IngredientsList = ({ingredients, ingredientUpdater, catIng, ownedIngredien
     // 1 - Take all the ingredients from the given category
     // We get them using catIng (props from IngredientsSelection)
 
-    const userStock = userAccount.content.stock;
+    const userStock = userAccount.user_details.stock;
 
     // 2 - Check the user stock with FOR - FOR - IF (The performance can be improved here - gonna check that later)
     const superLoops = () => {
-
-
-        // if(userStock) is super useful. With that, we can wait that the userStock is loaded before executing "the meat of the code"
-        if (userAccount.content) {
+        // if(userAccount) is super useful. With that, we can wait that the userStock is loaded before executing "the meat of the code"
+        if (userAccount) {
+            console.log(`userStock : ${JSON.stringify(userStock)}`);
             for (let i = 0 ; i < catIng.length ; i++) {
                 for (let j = 0 ; j < userStock.length ; j++) {
                     // When there is a match,it means that an ingredients from the user stock belongs to this category.
                     // We add the name of the food owned by the user to the state ownedIngredients (using setOwnedIngredients) 
                     if (catIng[i] === userStock[j].ingredient._id) {
+                        console.log("good LOOP!");
                         setOwnedIngredients(ownedIngredients => [
                             ...ownedIngredients,
                             {
@@ -46,6 +46,7 @@ const IngredientsList = ({ingredients, ingredientUpdater, catIng, ownedIngredien
 
 
     React.useEffect(() => {
+        console.log("SUPALOOP!!!!");
         superLoops();
         return () => {
             // to clean the function when the component is unmounted. Super important to avoid duplicates in the array ownedIngredients.

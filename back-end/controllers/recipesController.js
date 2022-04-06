@@ -164,6 +164,7 @@ module.exports = {
         res.send(recipeAvailable = {perfectMatchRecipes, almostRecipes, complexRecipes})
     },
 
+    
 // TO PROVIDE THE INFORMATION NEEDED BY THE COMPONENT RECIPEDETAILS IN THE FRONT-END
 // We want to get 2 random recipes !== from the chosen recipe.
 // These recipes will be displayed in the front-end as suggestions at the bottom of the page (component RecipeDetails.jsx in the Front-end)
@@ -400,8 +401,45 @@ module.exports = {
         const allRecipes = await Recipe.find({});
         const randomIndex = Math.floor(Math.random() * allRecipes.length);
         const randomRecipe = allRecipes[randomIndex];
-        console.log(`randomRecipe : ${randomRecipe}`);
         res.send(randomRecipe);
+    },
+
+    savedRecipe : async(req, res) => {
+        const recipe_to_saved = req.body.recipe;
+        const user = req.body.user;
+        const bookmarked_or_cooked = req.body.type_of_recipe;
+        const already_in_user = req.body.already_in_user_recipes_property; // A boolean, if it's true we remove the recipe from the property | if it's false, we add this recipe to the property
+
+        console.log(`already_in_user: ${already_in_user}`);
+        // 1 - We find the id of the corresponding recipe
+        const recipe_to_add_to_user = await Recipe.findById(recipe_to_saved._id);
+        console.log(`recipe found : ${recipe_to_add_to_user}`);
+        // 2  - We update the right property of the user object 
+        // 2a -  We add the recipe in the user object
+        if (!already_in_user) { 
+            console.log("insertion scenario");
+            const saving_new_recipe_for_user = await User.findByIdAndUpdate(user._id, {
+                $push : {
+                    [bookmarked_or_cooked] : recipe_to_add_to_user,
+                } 
+            },
+            {new :true}
+            )
+            res.send({success : true, user : saving_new_recipe_for_user});
+
+        } else { 
+            console.log("deletion scenario");
+        // 2b - we remove the recipe from the user object
+        const removing_from_user = await User.findByIdAndUpdate(user._id, {
+            $pull : {
+                [bookmarked_or_cooked] : recipe_to_add_to_user._id,
+            } 
+        },
+        {new :true}
+        )
+        console.log(`the new user : ${removing_from_user}` );
+        res.send({success : true, user : removing_from_user});
+        }
     },
 
 

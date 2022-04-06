@@ -3,7 +3,7 @@ const DailyRecipe = ({recipeTrigger, dailyRecipe}) => {
     const displayRandomRecipe = () => {
         recipeTrigger({
             type : "RECIPE_PICKED",
-            payload : dailyRecipe 
+            recipe : dailyRecipe 
         })
     }
     

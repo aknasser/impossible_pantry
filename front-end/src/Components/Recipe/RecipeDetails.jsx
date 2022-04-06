@@ -8,7 +8,7 @@ import axios from "axios";
 
 
 // reciped is required to send the good Id to the back-end
-const RecipeDetails = ({endpoint, recipe}) => {
+const RecipeDetails = ({endpoint, recipe, go_to_recipe_featured}) => {
 
     const [randomRecipes, setRandomRecipes] = React.useState([]);
     const [nmbrOfStars, setnmbrOfStars] = React.useState();
@@ -35,7 +35,6 @@ const RecipeDetails = ({endpoint, recipe}) => {
             const difficultyLevel = [];
             for (let i = 0; i < recipe.difficulty; i++) {
                 difficultyLevel.push("aStar.jpg");
-                console.log("dodo")
             }
             console.log(difficultyLevel);
             setnmbrOfStars(difficultyLevel);
@@ -49,7 +48,10 @@ const RecipeDetails = ({endpoint, recipe}) => {
         <>
             <PageTitle title={recipe.name}/>
             <PageInstructions instructions={recipe.intro}/>
-            <BlocPicture recipe={recipe}/>
+            <BlocPicture 
+                recipe={recipe}
+                endpoint = {endpoint}
+            />
 
             {/* The number of star will depend on the number of the difficulty */}   
             {nmbrOfStars &&
@@ -63,7 +65,11 @@ const RecipeDetails = ({endpoint, recipe}) => {
             <Steps recipeSteps={recipe.steps}/>
 
         {randomRecipes.map(mysteriousRecipe => (
-            <Suggestions randomRecipe={mysteriousRecipe} key={mysteriousRecipe._id}/>            
+            <Suggestions 
+                randomRecipe={mysteriousRecipe}
+                go_to_recipe_featured = {go_to_recipe_featured}
+                key={mysteriousRecipe._id}
+            />            
         ))}
         </>
     );

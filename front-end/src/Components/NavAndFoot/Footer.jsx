@@ -7,12 +7,12 @@ const Footer = ({recipeTrigger, endpoint}) => {
 
     const [dailyRecipe, setDailyRecipe] = React.useState("");
 
+    // TO get the random recipe from the API.
     React.useEffect ( async() => {
             try {
                 const fetchRecipes = await axios.get(`${endpoint}/recipes/dailyrecipe`, {crossdomain : true});
                 const randomRecipe = await fetchRecipes.data;
                 setDailyRecipe(randomRecipe);
-                console.log(randomRecipe);
             } catch (e) {
                 console.log (`Error in the footer (daily Recipe) : ${e}`);
             };

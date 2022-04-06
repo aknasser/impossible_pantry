@@ -12,6 +12,9 @@ import NotFound from './Components/NotFound';
 import UserContext from './Context/UserContext';
 import useFetchModel from './CustomHooks/useFetchModel';
 import Admin from './Components/CRUD/Admin';
+import Login from './UserMgmt/Login'
+import UserDashboard from './UserMgmt/UserDashboard'
+import axios from "axios";
 
 
 const App = () => {
@@ -19,7 +22,6 @@ const App = () => {
   const API_ENDPOINT = "http://localhost:1993"
 
 // To fetch the data related to these data models.
-  const [userLogged, setUserLogged] = useFetchModel(`${API_ENDPOINT}/users/621137f1004a65cfd4fc4aee`);
   const [categories, dispatchCategories] = useFetchModel(`${API_ENDPOINT}/categories`);  // All the entries for the Categories model.
   const [recipes, dispatchRecipes] = useFetchModel(`${API_ENDPOINT}/recipes`); // All the entries fort the Recipes model
   const [ingredients, dispatchIngredients] = useFetchModel(`${API_ENDPOINT}/ingredients`);
@@ -32,60 +34,116 @@ const App = () => {
   // USER ACCOUNT MGMT IN THE APP. Initially value = userAccount.
 
   // 1 - We create the useState. We will use to manage and update the state in the App.
-  const [userAccount, setUserAccount] = React.useState({});
+  const [userAccount, setUserAccount] = React.useState({
+      user_details: {},
+      token : null,
+      isLoading : false  // Switch to "true" when are checking the token and loading the user details from the DB 
+  });
 
-  //2 - Use effect. Triggered when the value of the userLogged changes
-  React.useEffect(() => {
-    // a - we create userReady. When this value is true, we carry on with the update
-    let userReady = true;
-    if (userReady) {
-      // b - We attribute to userAccount the value of the user Logged (fetched with the custom hook).
-      setUserAccount(userLogged);
-    };
-
-
-    // c - CLEAN-UP FUNCTION - Triggered when the componnent is unmounted.
-    return () => {
-      // because userReady is false we don't update (yet) the value of userAccount
-      userReady = false;
-      console.log("user not ready yet in the useEffect");
-    }
-  }, [userLogged])
-
-
-  //3 - We encapsule userAccount and setUserAccount in the variable value. To improve the performane we use useMemo ==> The variable "value" is memoized as long as user userAccount remains the same.
+  // 2 - We encapsule userAccount and setUserAccount in the variable value. To improve the performane we use useMemo ==> The variable "value" is memoized as long as user userAccount remains the same.
   const value = React.useMemo(
     () => ({ userAccount, setUserAccount }), 
     [userAccount]
   ); 
+  // 3 - Refresh token - Everytime we reload the page, we update / check the token to maintain the user session
+  // Note that the useCallback is just here to "optimize the performance" (reduce the number of renders)
+  const verify_user = React.useCallback(async() => {
+    console.log("TRIGGERED!!!")
+    // We are loading the user data and checking if the token is still "fresh"
+    setUserAccount(oldValues => ({
+      ...oldValues,
+      isLoading : true,
+    }))
+    const token_refresher = await axios.post(`${API_ENDPOINT}/users/refreshToken`, null, {withCredentials : true}) // /!\ withCredentials is needed to send cookie to the server!!
+    // If refreshToken find a valid token in the cookies and generate a new token , the status will be ok
+    // We can update userAccount with this newToken 
+    if (token_refresher.data.success) {
+      console.log("TOKEN REFRESHED!")
+      const user_data = await token_refresher.data.user_info;
+      setUserAccount({       // With this syntax We keep the old value of the state and update it with the token
+        user_details: user_data,
+        token : token_refresher.data.token,
+        isLoading : false
+      })
+    // If the status is not okay, we collect the message from the back-end and logout the user
+    // To log out the user we set userAccount to "null"
+    } else {
+      console.log("heyo!")
+      console.log(`${token_refresher.data.message}`)
+      setUserAccount({
+        user_details : {},
+        token: null,
+        isLoading : false
+      })
+      dispatchPantryFlow({  // TO LOG OUT the user
+        type : "USER_LOGOUT"
+      })
+    }
+    // Timer to Refresh token - every 5 minutes, we refresh the user Token (yeah verify_user is calling itself with a timer to create repetitive call).
+    setTimeout(verify_user, 1000 * 60 *5);
 
+  }, [setUserAccount]) 
 
+// This effect is triggered when we launch the app. verify_user() repeat itself every 5mn(check the function statement above)
+  React.useEffect (() => {
+    verify_user()
+  }, [verify_user]); 
+
+  
+
+  React.useEffect( () => {
+    console.log(`USER ACCOUNT : ${JSON.stringify(userAccount)}`);
+  }, [userAccount])
 
   // PANTRYFLOW : To check if the user has submitted his foodStock or picked a recipe among the choices available (in RecipesAvailabe )
   
+  // In this object, we store the different stages of the pantry (for instance, homePage, user_dashboard, recipe_details, etc... )
+  const pantry_stages = {
+    main_page : "home",
+    user_dashboard : "dashboard",
+    food_stock : "pantry",
+    recipes_available : "recipes_available",
+    search_recipe : "search",
+    recipe_details : "recipe"
+  }
+
+
   const pantryReducer = (state, action) => {
     switch (action.type) {
-      case "FORM_SUBMITTED": 
+      case "UI_FLOW": 
         return {
-          ...state,
-          isSubmitted : true,
+          ui_to_display : action.page_name,
+          display_recipe : false, 
+          recipeChosen : ""
         };
+
       case "RECIPE_PICKED": 
         return {
-          ...state,
-          isSubmitted : false,
-          recipesPicked : true,
-          recipeChosen : action.payload
+          ui_to_display : pantry_stages.recipe_details,
+          display_recipe : true,
+          recipeChosen : action.recipe
         }
+      case "USER_LOGOUT": 
+        return {
+          ...state,
+          user_main_page : false,
+        };
     }
   };
   
   const [pantryFlow, dispatchPantryFlow] = React.useReducer(
     pantryReducer, 
-    {isSubmitted : false, recipesPicked : false, recipeChosen : ""}
+    {
+      ui_to_display : pantry_stages.main_page,
+      display_recipe : false,
+      recipeChosen : ""
+    }
   );
 
 
+React.useEffect( () => {
+  console.log(`PANTRTFLOW STATE : ${JSON.stringify(pantryFlow)}`);
+}, [pantryFlow])
 
   /* VALIDATION AND DUPLICATE FUNCTION
     We use these functions in Pantry and SearchRecipes. They enable us to control : 
@@ -133,26 +191,27 @@ const App = () => {
   return (
     <UserContext.Provider value={value}>
       <Router>
-        <Navbar/>
+        <Navbar
+          endpoint = {API_ENDPOINT}
+          pantryUpdater = {dispatchPantryFlow}
+        />
           <Switch>
 
   {/* HOME */}
             <Route exact path = "/">
-              {/* This conditions is important : We are loading while userAccount get updated with the value of userLogged(from data fetched using the customHook) */}
-              {userAccount.isLoading || !userAccount.content ? (
-                  <p>Loading...</p>
-                ) : userAccount.content && !pantryFlow.recipesPicked ? (
-                  <Home/>
-                ) : pantryFlow.recipesPicked ? (
+                 {pantryFlow.ui_to_display === pantry_stages.recipe_details ? (
                   <RecipeDetails
                     endpoint = {API_ENDPOINT}
                     recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
+                    go_to_recipe_featured = {dispatchPantryFlow}
                   />
                 ) : (
-                  null
+                  <Home
+                  pantry_flow = {dispatchPantryFlow}
+                  />
                 )}
             </Route>
-
+        
   {/* YOUR KITCHEN
   3 CASES :
     a - categories and userAccount are still loading ==> Loading Message
@@ -161,30 +220,46 @@ const App = () => {
     d - The user clicked on a recipe to see the instructions / details, recipesPicked is now equalt to true ==> Display the recipes instructions.
     */}
      
-             <Route path = "/yourkitchen">
-              {categories.isLoading || categories.content===""  || userAccount.isLoading  ? (
-                  <p>Loading...</p>
-                ) : !pantryFlow.isSubmitted && !pantryFlow.recipesPicked ?   (
-                  <Pantry 
-                    allCategories = {categories}
-                    endpoint = {API_ENDPOINT}
-                    pantryUpdater = {dispatchPantryFlow}
-                    checkValidation = {checkValidation}
-/*                     checkDuplicate = {checkDuplicate}
- */                /> 
-                ) : pantryFlow.isSubmitted ? (
-                  <RecipesAvailable
-                    endpoint = {API_ENDPOINT}
-                    pantryUpdater = {dispatchPantryFlow}
-                  />
-                ) : pantryFlow.recipesPicked ? (
-                  <RecipeDetails
-                    endpoint = {API_ENDPOINT}
-                    recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
-                  />
-                ) : (
-                  null
-                )
+            <Route path = "/yourkitchen">
+              { pantryFlow.ui_to_display === pantry_stages.recipe_details ? (
+                <RecipeDetails
+                  endpoint = {API_ENDPOINT}
+                  recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
+                  go_to_recipe_featured = {dispatchPantryFlow}
+                />
+              ) : pantryFlow.ui_to_display === pantry_stages.recipes_available ? (
+                <RecipesAvailable
+                  endpoint = {API_ENDPOINT}
+                  pantryUpdater = {dispatchPantryFlow}
+                />
+              ) : pantryFlow.ui_to_display === pantry_stages.food_stock ? (
+                <Pantry
+                  allCategories = {categories}
+                  endpoint = {API_ENDPOINT}
+                  pantryUpdater = {dispatchPantryFlow}
+                  checkValidation = {checkValidation}
+                />
+              ) : !userAccount.token  ? (
+                <Login
+                  endpoint = {API_ENDPOINT}
+                  pantryUpdater = {dispatchPantryFlow}
+                />
+              ) : userAccount.token  ? (
+                <UserDashboard
+                  pantryUpdater = {dispatchPantryFlow}
+                  endpoint = {API_ENDPOINT}
+                />
+              ) : userAccount.isLoading ? (
+                <p>Loading</p>
+              ) : pantryFlow.ui_to_display === pantry_stages.recipe_details ? (
+                <RecipeDetails
+                  endpoint = {API_ENDPOINT}
+                  recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
+                  go_to_recipe_featured = {dispatchPantryFlow}
+                />
+              ) : (
+                <p>Doggo</p>
+              )
               }
             </Route>
 
@@ -192,22 +267,21 @@ const App = () => {
             <Route path = "/search">
               {recipes.isLoading || styles.isLoading || ingredients.isLoading  ? (
                   <p>Loading...</p>
-              ) : !pantryFlow.isSubmitted && !pantryFlow.recipesPicked ? (
-              <SearchRecipes
-                endpoint = {API_ENDPOINT}
-                allIngredients = {ingredients.content}
-                allStyles = {styles.content}
-                recipesUpdater = {dispatchPantryFlow}
-                checkValidation = {checkValidation}
-                checkDuplicate = {checkDuplicate}
-              />
-              ) : pantryFlow.recipesPicked ? (
+              ) : pantryFlow.ui_to_display === pantry_stages.recipe_details ? (
                 <RecipeDetails
                   endpoint = {API_ENDPOINT}
                   recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
+                  go_to_recipe_featured = {dispatchPantryFlow}
                 />
               ) : (
-                null
+                  <SearchRecipes
+                    endpoint = {API_ENDPOINT}
+                    allIngredients = {ingredients.content}
+                    allStyles = {styles.content}
+                    recipesUpdater = {dispatchPantryFlow}
+                    checkValidation = {checkValidation}
+                    checkDuplicate = {checkDuplicate}
+                  />
               )}
             </Route>
 

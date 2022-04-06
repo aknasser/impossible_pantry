@@ -1,25 +1,24 @@
-import { useContext } from "react";
-import UserContext from "../../Context/UserContext";
+
 import Cta from "../SmallParts/Cta";
 import HeroPicture from "./HeroPicture";
 
 
 
-const PUV = () => {
-  const {userAccount, setUserAccount} = useContext(UserContext)
+const PUV = ({pantry_flow}) => {
 
     return (
         <>
-         <span>{userAccount.content.name}</span>
          <h1>Find your Next Cooking experience in a flash</h1>
           <HeroPicture/>
           <Cta 
             cta="Your Food Stock" 
             href = "yourkitchen"
+            pantry_flow = {pantry_flow}
           />
           <Cta 
             cta="Looking for inspiration" 
             href = "search"
+            pantry_flow = {pantry_flow}
           />
         </>
       );

@@ -4,7 +4,7 @@ import ActivityDetails from "./ActivityDetails"
 
 
 
-const Home = () => {
+const Home = ({pantry_flow}) => {
     const activities = [{
         title: "Inspiration",
         pic :"ingredients.jpg",
@@ -21,7 +21,9 @@ const Home = () => {
 
     return (
         <>
-            <PUV/>
+            <PUV
+                pantry_flow = {pantry_flow} // To manage the flow of the app when thge user click on a link.
+            />
             {activities.map(activity => (
                 <ActivityDetails activity={activity} key={activity.title}/>
             ))}
