@@ -5,7 +5,7 @@ import axios from "axios"
 import  {useContext} from "react";
 import UserContext from "../../../Context/UserContext";
 import * as React from 'react';
-
+import * as ButtonStyle from '../../../Style/ButtonStyle'
 
 
 const Pantry = ({allCategories, endpoint, pantryUpdater, checkValidation}) => {
@@ -102,7 +102,6 @@ const Pantry = ({allCategories, endpoint, pantryUpdater, checkValidation}) => {
     return ( 
         <>
             <PageTitle title= "Your Food Stock"></PageTitle>
-            
             <PageInstructions instructions= "What do you have at home ?" />
 
 
@@ -119,7 +118,7 @@ const Pantry = ({allCategories, endpoint, pantryUpdater, checkValidation}) => {
                 />
             ))} 
             <form onSubmit={completedStock}>
-                <input type="submit" />
+                <ButtonStyle.Submit_Food_stock type="submit" value="Confirm your stock" />
             </form>
         </>
     );

@@ -1,3 +1,5 @@
+import * as DivStyle from "../../Style/DivStyle";
+
 const Suggestions = ({randomRecipe, go_to_recipe_featured}) => {
 
     const go_to_recipe = (recipe) => {
@@ -8,12 +10,12 @@ const Suggestions = ({randomRecipe, go_to_recipe_featured}) => {
     };
 
     return (
-        <div onClick={() => go_to_recipe(randomRecipe)}>
+        <DivStyle.Suggestion onClick={() => go_to_recipe(randomRecipe)}>
             <h3>{randomRecipe.name}</h3>
             <a href ={`recipe/${randomRecipe._id}`}>
                 <img src={randomRecipe.pic} alt="RecipePic" />
             </a>
-        </div>
+        </DivStyle.Suggestion>
     );
 }
  

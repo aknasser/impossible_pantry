@@ -1,7 +1,9 @@
+import * as TextStyle from '../../Style/TextStyle'
+
 const PageTitle = ({title}) => {
     return (
         <>
-            <h1>{title}</h1>
+            <TextStyle.Page_title>{title}</TextStyle.Page_title>
         </>
     );
 }

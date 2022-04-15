@@ -1,5 +1,9 @@
 import FilterList from "../FilterList";
 import * as React from 'react';
+import * as DivStyle from "../../../Style/DivStyle";
+import * as FormStyle from "../../../Style/FormStyle";
+import * as TextStyle from "../../../Style/TextStyle";
+import * as ButtonStyle from "../../../Style/ButtonStyle";
 
 
 const Filter = ({filterName, entries, entriesUpdater, filters, addFilter, deleteFilter, resetFilter, checkValidation}) => {
@@ -23,17 +27,22 @@ const Filter = ({filterName, entries, entriesUpdater, filters, addFilter, delete
             ) : (
                 <>
                     <form onSubmit={(event) => addFilter(event, entries, filterName, filterTyped)}>
-                        <h3>{filterName}</h3>
-                        <label htmlFor={filterName}></label>
-                        <input list={`${filterName}_name`} id="filter" name={filterName} onChange = {updateFilterTyped}  />
-                        <datalist id={`${filterName}_name`}>
-                            {entries.map(entry => (
-                                <option value={entry.name} key = {entry.name}></option>
-                            ))}
-                        </datalist>
-                        <input type="submit" value="Filter"/>
+                        <DivStyle.Filter_intro>
+                            <TextStyle.Filter_name>{filterName}</TextStyle.Filter_name>
+                            <img src="" alt="pika.png" />
+                        </DivStyle.Filter_intro>
+                            <FormStyle.Login_input list={`${filterName}_name`} id="filter" name={filterName} onChange = {updateFilterTyped}  />
+                            <datalist id={`${filterName}_name`}>
+                                {entries.map(entry => (
+                                    <option value={entry.name} key = {entry.name}></option>
+                                ))}
+                            </datalist>
+                        <DivStyle.Double_button>
+                            <ButtonStyle.Main_button type="submit" value="Filter"/>
+                            <ButtonStyle.Secundary_button onClick={() => resetFilter(filterName)}>Reset</ButtonStyle.Secundary_button>
+                        </DivStyle.Double_button>
+
                     </form>
-                    <button onClick={() => resetFilter(filterName)}>Reset</button>
                 </>
 
 

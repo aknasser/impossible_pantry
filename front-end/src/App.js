@@ -1,4 +1,3 @@
-import './App.css';
 import * as React from 'react';
 import Navbar from './Components/NavAndFoot/NavBar'
 import Footer from './Components/NavAndFoot/Footer'
@@ -12,10 +11,11 @@ import NotFound from './Components/NotFound';
 import UserContext from './Context/UserContext';
 import useFetchModel from './CustomHooks/useFetchModel';
 import Admin from './Components/CRUD/Admin';
-import Login from './UserMgmt/Login'
-import UserDashboard from './UserMgmt/UserDashboard'
+import Login from './Components/UserMgmt/Login'
+import UserDashboard from './Components/UserMgmt/UserDashboard'
 import axios from "axios";
-
+import MainStyle from "./Style/MainStyle"
+import StyleContext from "./Context/StyleContext"
 
 const App = () => {
  
@@ -37,7 +37,7 @@ const App = () => {
   const [userAccount, setUserAccount] = React.useState({
       user_details: {},
       token : null,
-      isLoading : false  // Switch to "true" when are checking the token and loading the user details from the DB 
+      isLoading : false  // Switch to "true" when we are checking the token and loading the user details from the DB 
   });
 
   // 2 - We encapsule userAccount and setUserAccount in the variable value. To improve the performane we use useMemo ==> The variable "value" is memoized as long as user userAccount remains the same.
@@ -187,133 +187,149 @@ React.useEffect( () => {
     return true;
   }
 
+// STYLE CONTEXT
+const [style, setStyle] = React.useState({
+  color_theme : {
+    primary_color : "rgb(25, 42, 81)", // Navy Blue
+    secundary_color : "rgb(234, 224, 204)", // Cream
+    third_color : "rgb(123, 62, 25)", // Dark brown
+    drawing_color : "rgb(205, 236, 247)",  // light Blue
+  }
+});
+
+const theme = {style, setStyle}
+
+
 
   return (
-    <UserContext.Provider value={value}>
-      <Router>
-        <Navbar
-          endpoint = {API_ENDPOINT}
-          pantryUpdater = {dispatchPantryFlow}
-        />
-          <Switch>
+    <UserContext.Provider value = {value}>
+      <StyleContext.Provider value = {theme}>
+        <Router>
+          <MainStyle/> {/* To import the global styles */}
+          <Navbar
+            endpoint = {API_ENDPOINT}
+            pantryUpdater = {dispatchPantryFlow}
+          />
+            <Switch>
 
-  {/* HOME */}
-            <Route exact path = "/">
-                 {pantryFlow.ui_to_display === pantry_stages.recipe_details ? (
+    {/* HOME */}
+              <Route exact path = "/">
+                  {pantryFlow.ui_to_display === pantry_stages.recipe_details ? (
+                    <RecipeDetails
+                      endpoint = {API_ENDPOINT}
+                      recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
+                      go_to_recipe_featured = {dispatchPantryFlow}
+                    />
+                  ) : (
+                    <Home
+                    pantry_flow = {dispatchPantryFlow}
+                    />
+                  )}
+              </Route>
+          
+    {/* YOUR KITCHEN
+    3 CASES :
+      a - categories and userAccount are still loading ==> Loading Message
+      b - The User start the form. At this point pantryFlow is in its intial State the properties isSubmitted and recipesPicked are false ==> Display component Pantry
+      c - The user just submitted the form. pantryFlow.isSubmmitted is now equal to true ==> Display component RecipesAvailable 
+      d - The user clicked on a recipe to see the instructions / details, recipesPicked is now equalt to true ==> Display the recipes instructions.
+      */}
+      
+              <Route path = "/yourkitchen">
+                { pantryFlow.ui_to_display === pantry_stages.recipe_details ? (
+                  <RecipeDetails
+                    endpoint = {API_ENDPOINT}
+                    recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
+                    go_to_recipe_featured = {dispatchPantryFlow}
+                  />
+                ) : pantryFlow.ui_to_display === pantry_stages.recipes_available ? (
+                  <RecipesAvailable
+                    endpoint = {API_ENDPOINT}
+                    pantryUpdater = {dispatchPantryFlow}
+                  />
+                ) : pantryFlow.ui_to_display === pantry_stages.food_stock ? (
+                  <Pantry
+                    allCategories = {categories}
+                    endpoint = {API_ENDPOINT}
+                    pantryUpdater = {dispatchPantryFlow}
+                    checkValidation = {checkValidation}
+                  />
+                ) : !userAccount.token  ? (
+                  <Login
+                    endpoint = {API_ENDPOINT}
+                    pantryUpdater = {dispatchPantryFlow}
+                  />
+                ) : userAccount.token  ? (
+                  <UserDashboard
+                    pantryUpdater = {dispatchPantryFlow}
+                    endpoint = {API_ENDPOINT}
+                  />
+                ) : userAccount.isLoading ? (
+                  <p>Loading</p>
+                ) : pantryFlow.ui_to_display === pantry_stages.recipe_details ? (
                   <RecipeDetails
                     endpoint = {API_ENDPOINT}
                     recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
                     go_to_recipe_featured = {dispatchPantryFlow}
                   />
                 ) : (
-                  <Home
-                  pantry_flow = {dispatchPantryFlow}
-                  />
-                )}
-            </Route>
-        
-  {/* YOUR KITCHEN
-  3 CASES :
-    a - categories and userAccount are still loading ==> Loading Message
-    b - The User start the form. At this point pantryFlow is in its intial State the properties isSubmitted and recipesPicked are false ==> Display component Pantry
-    c - The user just submitted the form. pantryFlow.isSubmmitted is now equal to true ==> Display component RecipesAvailable 
-    d - The user clicked on a recipe to see the instructions / details, recipesPicked is now equalt to true ==> Display the recipes instructions.
-    */}
-     
-            <Route path = "/yourkitchen">
-              { pantryFlow.ui_to_display === pantry_stages.recipe_details ? (
-                <RecipeDetails
-                  endpoint = {API_ENDPOINT}
-                  recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
-                  go_to_recipe_featured = {dispatchPantryFlow}
-                />
-              ) : pantryFlow.ui_to_display === pantry_stages.recipes_available ? (
-                <RecipesAvailable
-                  endpoint = {API_ENDPOINT}
-                  pantryUpdater = {dispatchPantryFlow}
-                />
-              ) : pantryFlow.ui_to_display === pantry_stages.food_stock ? (
-                <Pantry
-                  allCategories = {categories}
-                  endpoint = {API_ENDPOINT}
-                  pantryUpdater = {dispatchPantryFlow}
-                  checkValidation = {checkValidation}
-                />
-              ) : !userAccount.token  ? (
-                <Login
-                  endpoint = {API_ENDPOINT}
-                  pantryUpdater = {dispatchPantryFlow}
-                />
-              ) : userAccount.token  ? (
-                <UserDashboard
-                  pantryUpdater = {dispatchPantryFlow}
-                  endpoint = {API_ENDPOINT}
-                />
-              ) : userAccount.isLoading ? (
-                <p>Loading</p>
-              ) : pantryFlow.ui_to_display === pantry_stages.recipe_details ? (
-                <RecipeDetails
-                  endpoint = {API_ENDPOINT}
-                  recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
-                  go_to_recipe_featured = {dispatchPantryFlow}
-                />
-              ) : (
-                <p>Doggo</p>
-              )
-              }
-            </Route>
+                  <p>Doggo</p>
+                )
+                }
+              </Route>
 
-  {/* I WANNA EAT */}
-            <Route path = "/search">
-              {recipes.isLoading || styles.isLoading || ingredients.isLoading  ? (
-                  <p>Loading...</p>
-              ) : pantryFlow.ui_to_display === pantry_stages.recipe_details ? (
-                <RecipeDetails
-                  endpoint = {API_ENDPOINT}
-                  recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
-                  go_to_recipe_featured = {dispatchPantryFlow}
-                />
-              ) : (
-                  <SearchRecipes
+    {/* I WANNA EAT */}
+              <Route path = "/search">
+                {recipes.isLoading || styles.isLoading || ingredients.isLoading  ? (
+                    <p>Loading...</p>
+                ) : pantryFlow.ui_to_display === pantry_stages.recipe_details ? (
+                  <RecipeDetails
                     endpoint = {API_ENDPOINT}
-                    allIngredients = {ingredients.content}
-                    allStyles = {styles.content}
-                    recipesUpdater = {dispatchPantryFlow}
-                    checkValidation = {checkValidation}
-                    checkDuplicate = {checkDuplicate}
+                    recipe = {pantryFlow.recipeChosen}  // We get recipeChosenId when the user click on a recipe in RecipesAvailable.
+                    go_to_recipe_featured = {dispatchPantryFlow}
                   />
-              )}
-            </Route>
+                ) : (
+                    <SearchRecipes
+                      endpoint = {API_ENDPOINT}
+                      allIngredients = {ingredients.content}
+                      allStyles = {styles.content}
+                      recipesUpdater = {dispatchPantryFlow}
+                      checkValidation = {checkValidation}
+                      checkDuplicate = {checkDuplicate}
+                    />
+                )}
+              </Route>
 
-  {/* RECIPES TBC (might be redundant) */}
-            <Route path = "/recipe/:id">
-              <RecipeDetails />
-            </Route>
+    {/* RECIPES TBC (might be redundant) */}
+              <Route path = "/recipe/:id">
+                <RecipeDetails />
+              </Route>
 
 
-  {/* CRUD */}
-            <Route path = "/admin">
-              <Admin
-                endpoint = {API_ENDPOINT}
-                allCategories = {categories.content}
-                allIngredients = {ingredients.content}
-                allRecipes = {recipes.content}
-                allStyles = {styles.content}
-                allUsers = {users.content}
-              />
-            </Route>
+    {/* CRUD */}
+              <Route path = "/admin">
+                <Admin
+                  endpoint = {API_ENDPOINT}
+                  allCategories = {categories.content}
+                  allIngredients = {ingredients.content}
+                  allRecipes = {recipes.content}
+                  allStyles = {styles.content}
+                  allUsers = {users.content}
+                />
+              </Route>
 
-  {/*NOT FOUND -404 */}
-            <Route>
-              <NotFound/>
-            </Route>
+    {/*NOT FOUND -404 */}
+              <Route>
+                <NotFound/>
+              </Route>
 
-          </Switch>
-        <Footer
-          endpoint = {API_ENDPOINT}
-          recipeTrigger = {dispatchPantryFlow} // to display the daily recipe when the user clicks on it.
-        />
-      </Router>
+            </Switch>
+          <Footer
+            endpoint = {API_ENDPOINT}
+            recipeTrigger = {dispatchPantryFlow} // to display the daily recipe when the user clicks on it.
+          />
+        </Router>
+      </StyleContext.Provider>
     </UserContext.Provider>
 
   );

@@ -274,19 +274,24 @@ const SearchRecipes = ({endpoint, allIngredients, allStyles, recipesUpdater, che
     );
     
     // 2 - USE EFFECT TO POST THE FILTER 
-    React.useEffect( async() => {
+    React.useEffect(() => {
         let isMounted = true;
-        try {
-            const matchingRecipes = await axios.post(`${endpoint}/recipes/filteredrecipes`, filter);
-            // 3 - Update recipesFiltered with the newRecipes
-            if (isMounted) {
-                dispatchRecipesFiltered({
-                    type : "FILTERING_SUCCESS",
-                    payload : matchingRecipes.data
-                });
+        const filtering_api_call = async() => {
+            try {
+                const matchingRecipes = await axios.post(`${endpoint}/recipes/filteredrecipes`, filter);
+                // 3 - Update recipesFiltered with the newRecipes
+                if (isMounted) {
+                    dispatchRecipesFiltered({
+                        type : "FILTERING_SUCCESS",
+                        payload : matchingRecipes.data
+                    });
+                }
+            } catch (e) {
+                console.log(`Error to fetch the filtered Recipes : ${e}`);
             }
-        } catch (e) {
-            console.log(`Error to fetch the filtered Recipes : ${e}`);
+        }
+        if (isMounted) {
+            filtering_api_call();
         }
         return () => {
             isMounted = false;

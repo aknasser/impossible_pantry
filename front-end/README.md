@@ -221,8 +221,13 @@ In other words, it means everytime we use an url with this server, router manage
 
 
 [ROUTERS]
-
+See code. StraightForward.
+Note that we set the cors Option in the file indexRouter.js. 
+We need that to execute API CALLS with the front-end located on a different port.
 [CONTROLLERS]
+
+
+
 
 ["LOGIN-AND-AUTHENTICATION"]
 
@@ -264,10 +269,7 @@ Introduction
 
 # CATEGORIES
 <CREATE>
-When we create a new category, we want it to be empty at the beginning. We add ingredients eventually when we update the category. 
-
-WHY THIS RESTRICTION ?
-We don't want to have 1 ingredient binded to several categories. It would get messy.
+When we add ingredient to a brand new category we  add this category to the ingredient. the new category remplace the former category of the ingredient.
 
 <READ>
 Nothing worth mentionning.
@@ -293,8 +295,10 @@ Once again we can't add / remove ingredients to/from this category.
 <CREATE>
 When we add a new ingredients, we bind it to an existing category ==> We add this ingredient to a given category.
 (see ingredientsController == newIngredient).
+An ingredient without category is automatically added to the garbage Category : "NO CATEGORY"
  
 <READ>
+Nothing worth mentionning.
 
 <UPDATE>
 <DELETE>
@@ -303,28 +307,65 @@ When we add a new ingredients, we bind it to an existing category ==> We add thi
 <CREATE>
  
 <READ>
+Nothing worth mentionning.
 
 <UPDATE>
 <DELETE>
+
+
+# STLE
+<CREATE>
+Nothing worth mentionning.
+
+ 
+<READ>
+Nothing worth mentionning.
+
+<UPDATE>
+<DELETE>
+
+# STYLES
+<CREATE>
+ 
+<READ>
+Nothing worth mentionning.
+
+<UPDATE>
+<DELETE>
+
 
 
 # RECIPES
 <CREATE>
- 
+ A recipe without style is automatically added to the garbage Style : "NO STYLE"
+
 <READ>
+Nothing worth mentionning.
 
 <UPDATE>
+ A recipe without style is automatically added to the garbage Style : "NO STYLE"
+
 <DELETE>
+Nothing worth mentionning.
 
 
 # USERS
 <CREATE>
- 
+The users can be created in two different ways :
+the "normal" way : An user create his account. He can choose his/her 
+    - username
+    - name
+    - surname
+    - password.
+The "admin" way : from the admin space we can create an user and add from the get go value to the properties recipesCooked and recipesSaved.
+
 <READ>
+Nothing worth mentionning.
 
 <UPDATE>
-<DELETE>
 
+<DELETE>
+Nothing worth mentionning.
 
 
 

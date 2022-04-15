@@ -1,5 +1,5 @@
 // REMOVE THE DELETED STYLE FROM THE poperrtySTYLE  OF THE RECIPE.
-// ARG 1 : String - "the name of the property storing the recipes in the model" (for instance "category", "style") | ARG 2 : ID of the object to delete |ARG 3 : model of the object being deleted | ARG 4 : The model to check(for ex: Recipe, User...etc,) | ARG 5 : String - Name of the dummy object that will store the object without category / Style defined
+// param 1 : String - "the name of the property storing the recipes in the model" (for instance "category", "style") | param 2 : ID of the object to delete |param 3 : model of the object being deleted | param 4 : The model to check(for ex: Recipe, User...etc,) | param 5 : String - Name of the dummy object that will store the object without category / Style defined. (it's either "NO CATEGORY" OR "NO STYLE")
 // RETURN ==> Nada
 
 const clean_entries_in_others_collections_after_deletion = async(property_to_update, object_to_delete_id, model_of_object_to_delete, model_collection_to_check, dummy_object_name) => {

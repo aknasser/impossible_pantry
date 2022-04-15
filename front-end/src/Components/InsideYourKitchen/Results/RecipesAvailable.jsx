@@ -108,6 +108,11 @@ const RecipesAvailable = ({endpoint, pantryUpdater}) => {
         }
     }, [matchingRecipes])
 
+    const recipe_group_description = {
+        perfect_match : "You have enough of everything to cook it !",
+        almost : "only 1 ingredient missing...",
+        stretch :"More than 2 ingredients are missing"
+    }
 
 
     return (
@@ -119,9 +124,9 @@ const RecipesAvailable = ({endpoint, pantryUpdater}) => {
                     <p>Recipes incoming...</p>
                 ) : (
                 <div>
-                    <RecipesGroup recipesGroup = {matchingRecipes.data.perfectMatchRecipes} pantryUpdater = {pantryUpdater} />
-                    <RecipesGroup recipesGroup = {matchingRecipes.data.almostRecipes} pantryUpdater = {pantryUpdater}/>
-                    <RecipesGroup recipesGroup = {matchingRecipes.data.complexRecipes} pantryUpdater = {pantryUpdater}/>
+                    <RecipesGroup recipesGroup = {matchingRecipes.data.perfectMatchRecipes} pantryUpdater = {pantryUpdater} group_description = {recipe_group_description.perfect_match} />
+                    <RecipesGroup recipesGroup = {matchingRecipes.data.almostRecipes} pantryUpdater = {pantryUpdater} group_description = {recipe_group_description.almost}/>
+                    <RecipesGroup recipesGroup = {matchingRecipes.data.complexRecipes} pantryUpdater = {pantryUpdater} group_description = {recipe_group_description.stretch}/>
                 </div> 
                 )}
         </>

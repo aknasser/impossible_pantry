@@ -1,8 +1,9 @@
 import * as React from 'react';
+import * as TextStyle from '../../Style/TextStyle';
 
 
 
-const RecipesGroup = ({recipesGroup, pantryUpdater}) => {
+const RecipesGroup = ({recipesGroup, pantryUpdater, group_description}) => {
 
     /* When the user click on the link, we trigger this function. Change happens in the state pantryFlow in the App: 
         - we collect the id of the recipe selected in the payload. 
@@ -20,18 +21,20 @@ const RecipesGroup = ({recipesGroup, pantryUpdater}) => {
     return (
         <div>
             {/* This conditional is useful when we use this component inside SearchRecipes.jsx */}
-            <h3>{!recipesGroup.title ? ("Recipes Found") : (recipesGroup.title)}</h3>
-            
+            <TextStyle.Recipe_group_title>{!recipesGroup.title ? ("Recipes Found") : (recipesGroup.title)}</TextStyle.Recipe_group_title>
+            <TextStyle.Recipes_group_description>{group_description}</TextStyle.Recipes_group_description>
             {/* A map to get all the recipes and their properties*/}
              {recipesGroup.recipes.map(meal => (
-                <div key = {meal._id}>
-                    <a onClick = { () => {pickedRecipeHandler(meal)}}>
-                        <h4>{meal.name}</h4>
-                    </a>
-                        <span>Style: {meal.style.name}</span>
-                        <span>Difficulty: {meal.difficulty}</span>
-                        <span>Main Ingredient: {meal.mainIngredient.name}</span>
-                </div>
+                <a onClick = { () => {pickedRecipeHandler(meal)}} key = {meal._id}>
+                    <div>
+                        <TextStyle.Recipe_available_title>{meal.name}</TextStyle.Recipe_available_title>
+                        <div>
+                            <TextStyle.Recipe_available_spec>Style: {meal.style.name}</TextStyle.Recipe_available_spec>
+                            <TextStyle.Recipe_available_spec>Difficulty: {meal.difficulty}</TextStyle.Recipe_available_spec>
+                            <TextStyle.Recipe_available_spec>Main Ingredient: {meal.mainIngredient.name}</TextStyle.Recipe_available_spec>
+                        </div>
+                    </div>
+                </a>
             ))} 
         </div>
     );

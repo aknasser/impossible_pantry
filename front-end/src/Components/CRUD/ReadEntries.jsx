@@ -42,13 +42,16 @@ const ReadEntries = ({adminManagement, dispatchAdminManagement, endpoint}) => {
 
 
     // To fetch all entries of this model.
-    React.useEffect ( async() => {
-        try {
-            const fetchEntries = await axios.get(`${endpoint}/${plural_name()}`, {crossdomain :true});
-            setModelEntries(fetchEntries.data);
-        } catch (e) {
-            console.log(`Trouble to fetch data (R of the CRUD) : ${e}`);
+    React.useEffect ( () => {
+        const fetch_all_entries = async() => {
+            try {
+                const fetchEntries = await axios.get(`${endpoint}/${plural_name()}`, {crossdomain :true});
+                setModelEntries(fetchEntries.data);
+            } catch (e) {
+                console.log(`Trouble to fetch data (R of the CRUD) : ${e}`);
+            };
         };
+        fetch_all_entries();
     }, [delete_entry]); // To refresh the list of entries everytime we delete something.  
 
 
