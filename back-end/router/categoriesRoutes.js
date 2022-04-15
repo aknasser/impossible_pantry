@@ -8,7 +8,7 @@ router.get("/",  categoriesController.retrieveCategory, categoriesController.con
 router.get("/:id", categoriesController.selectedCategory, categoriesController.convertJSON);
 
 // C DU CRUD
-router.post("/create", categoriesController.newCategory);
+router.post("/create", categoriesController.new_category);
 
 //U DU CRUD
 router.post("/update/:id", categoriesController.updatedCategory);

@@ -1,22 +1,34 @@
 import PUV from "./PUV";
 import ActivityDetails from "./ActivityDetails"
+import StyleContext from "../../Context/StyleContext";
+import * as React from 'react';
 
 
 
 
 const Home = ({pantry_flow}) => {
+
+    const {style, set_style} = React.useContext(StyleContext);
+
+
     const activities = [{
         title: "Inspiration",
         pic :"ingredients.jpg",
         benefits :"Find what to cook with what you have right now. You have more food than you think.",
+        bg_color: style.color_theme.secundary_color,
+        txt_color : style.color_theme.primary_color
     },
     {
         title: "Discover new recipes",
         pic :"originalFood.jpg",
         benefits :"Discover new recipes and impress your guests!",
+        bg_color: style.color_theme.third_color,
+        txt_color : "white"
     }
 
     ];
+
+
 
 
     return (

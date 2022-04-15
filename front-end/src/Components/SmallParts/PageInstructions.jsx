@@ -1,7 +1,9 @@
+import * as TextStyle from '../../Style/TextStyle'
+
 const PageInstructions = ({instructions}) => {
     return (
         <>
-            <h2>{instructions}</h2>
+            <TextStyle.Page_description>{instructions}</TextStyle.Page_description>
         </>
     );
 }

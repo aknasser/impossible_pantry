@@ -1,6 +1,7 @@
 import axios from "axios";
 import * as React from 'react';
 import UserContext from "../../Context/UserContext";
+import * as DivStyle from "../../Style/DivStyle";
 
 
 const BlocPicture = ({recipe, endpoint}) => {
@@ -20,38 +21,42 @@ const BlocPicture = ({recipe, endpoint}) => {
     });
 
 
-    // TO CHECK IF THE RECIPE IS ALREADY PART OF THE PROPERTY
-    React.useEffect( async() => {
-        // 1 - create and feed two hash tables with respectively recipesSaved and recipesCooked as key 
-        const recipes_saved_ht = {};
-        const recipes_cooked_ht = {};
-        for (let recipe of userAccount.user_details.recipesSaved) {
-            recipes_saved_ht[recipe] = true;
+    // TO CHECK IF THE RECIPE IS ALREADY PART OF THE PROPERTY "recipesSaved" or "recipesCooked"
+    React.useEffect(() => {
+        const check_recipes = async() => {
+            // 1 - create and feed two hash tables with respectively recipesSaved and recipesCooked as key 
+            const recipes_saved_ht = {};
+            const recipes_cooked_ht = {};
+            for (let recipe of userAccount.user_details.recipesSaved) {
+                recipes_saved_ht[recipe] = true;
+            };
+            for (let recipe of userAccount.user_details.recipesCooked) {
+                recipes_cooked_ht[recipe] = true;
+            }
+            
+            // 2 - If the recipe id is part of these hashTable ==> the user has already saved or cooked this dish.
+            if (recipes_saved_ht[recipe._id]) {
+                console.log("already saved")
+                set_saved_recipe({
+                    ...saved_recipe,
+                    already_in_user : true,
+                })
+            } else {
+                console.log("first timer savedd ?")
+            }
+            if (recipes_cooked_ht[recipe._id]) {
+                console.log("already cooked")
+                set_cooked_recipe({
+                    ...cooked_recipe,
+                    already_in_user : true,
+                })
+            } else {
+                console.log("first timer cooked ?")
+            }
         };
-        for (let recipe of userAccount.user_details.recipesCooked) {
-            recipes_cooked_ht[recipe] = true;
-        }
-        
-        // 2 - If the recipe id is part of these hashTable ==> the user has already saved or cooked this dish.
-        if (recipes_saved_ht[recipe._id]) {
-            console.log("already saved")
-            set_saved_recipe({
-                ...saved_recipe,
-                already_in_user : true,
-            })
-        } else {
-            console.log("first timer savedd ?")
-        }
-        if (recipes_cooked_ht[recipe._id]) {
-            console.log("already cooked")
-            set_cooked_recipe({
-                ...cooked_recipe,
-                already_in_user : true,
-            })
-        } else {
-            console.log("first timer cooked ?")
-        }
-
+        if (userAccount.user_details.recipesSaved || userAccount.user_details.recipesSaved) {
+            check_recipes();
+        } 
     }, [])
 
     React.useEffect ( () => {
@@ -100,13 +105,16 @@ const BlocPicture = ({recipe, endpoint}) => {
 
     return (
         <div>
-            <img src="bookmark_not_saved.png" alt="bookmark" onClick={() => bookmark_recipe(saved_recipe, set_saved_recipe)} />
-            <img src="bookmark_not_saved.png" alt="star" onClick={() => bookmark_recipe(cooked_recipe, set_cooked_recipe)} />
             <img src={recipe.pictureUrl} alt={recipe.name} />
-            <div>
+            <DivStyle.Bookmark_and_tick>
+                <img src="bookmark_not_saved.png" alt="bookmark" onClick={() => bookmark_recipe(saved_recipe, set_saved_recipe)} />
+                <img src="bookmark_not_saved.png" alt="star" onClick={() => bookmark_recipe(cooked_recipe, set_cooked_recipe)} />
+            </DivStyle.Bookmark_and_tick>
+
+            <DivStyle.Bookmark_and_tick>
                 <img src={country.pic} alt="RecipeCountry" />
                 <img src={style.pic} alt="RecipeStyle" />
-            </div>
+            </DivStyle.Bookmark_and_tick>
         </div>
     );
 }

@@ -68,6 +68,15 @@ const alimentationCategorie = async() => {
         description: "Because life needs to be sweet (sometimes)."
 
     })
+
+    const no_category = await Categorie.create({
+        name : "No Category",
+        ingredients : [],
+        categoryPicture: "void.png",
+        description: "I am...the void."
+
+    })
+
 }
 
 alimentationCategorie();

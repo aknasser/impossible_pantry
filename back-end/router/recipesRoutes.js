@@ -19,8 +19,8 @@ router.post("/delete/:id", recipesController.deletedObject);
 // FETCH MATCHING RECIPES
 router.get("/matchingrecipes/:userId", recipesController.matchingRecipe);
 
-// FETCH DETAIL RECIPES
-router.get("/recipesdetails/:recipeId", recipesController.recipeDetails);
+// FETCH 2 FEATURED RECIPES IN RECIPES DETAILS
+router.get("/recipesdetails/:recipeId", recipesController.featuredRecipes);
 
 // FETCH RECIPES CORRESPONDING TO THE FILTER IN SEARCH / I WANNA EAT (EXCEPT KEYWORKDS)
 router.post("/filteredrecipes", recipesController.filteredRecipes)

@@ -1,5 +1,8 @@
 import UserContext from "../../Context/UserContext"
 import React, { useContext} from "react";
+import * as DivStyle from "../../Style/DivStyle";
+import * as TextStyle from "../../Style/TextStyle";
+import * as ButtonStyle from "../../Style/ButtonStyle";
 
 
 const IngredientsList = ({ingredients, ingredientUpdater, catIng, ownedIngredients, setOwnedIngredients, stock, setStock}) => {
@@ -81,39 +84,35 @@ const IngredientsList = ({ingredients, ingredientUpdater, catIng, ownedIngredien
 
 
     return ( 
-        <>
-            <div>
+        <DivStyle.Double_food_list>
+            <DivStyle.Food_list>
                 {/*If there the user has no food stock for this category(in other words if the array ownedIngredients has no length) we display "Nada for Now", otherwise, we map the array.  */}
                 <h4>You current food stock</h4>
                 {ownedIngredients.length === 0 ? (
                     <p>Nada for now</p>
                 ) : (
                     ownedIngredients.map(currentIng => (
-                        <div key={currentIng.ingredient.name}>
-                            <span>{currentIng.ingredient.name}  </span>
+                        <DivStyle.Ingredient key={currentIng.ingredient.name}>
+                            <ButtonStyle.Minus_button onClick={() => deleteIngredient(ownedIngredients, currentIng, setOwnedIngredients)}> - </ButtonStyle.Minus_button>
+                            <TextStyle.Ingredient_list_element>{currentIng.ingredient.name}  </TextStyle.Ingredient_list_element>
                             <span>{currentIng.quantity} </span>
                             <span>{currentIng.ingredient.unit}</span>
-                            <button onClick={() => deleteIngredient(ownedIngredients, currentIng, setOwnedIngredients)}> - </button>
-                            <br/>
-                        </div>
+                        </DivStyle.Ingredient>
                     ))
                 )}  
-            </div>
-            <div>
+            </DivStyle.Food_list>
+            <DivStyle.Food_list>
                 <h4>Food added</h4>
                 {ingredients.map(food => (
-                    <div key={food.ingredient.name}>
-                        <span>{food.ingredient.name} </span>
-                        <span>{food.quantity} </span>
+                    <DivStyle.Ingredient key={food.ingredient.name}>
+                        <ButtonStyle.Minus_button onClick={() => deleteIngredient(ingredients, food, ingredientUpdater)}> - </ButtonStyle.Minus_button>
+                        <TextStyle.Ingredient_list_element>{food.ingredient.name} </TextStyle.Ingredient_list_element>
+                        <span>{food.quantity}</span>
                         <span>{food.ingredient.unit}</span>
-                        <button onClick={() => deleteIngredient(ingredients, food, ingredientUpdater)}> - </button>
-                        <br/>
-                    </div>
+                    </DivStyle.Ingredient>
                 ))}
-            </div>
-        </>
-    /* We use array.map here to cycle in the ingredients chosen by the user */
-
+            </DivStyle.Food_list>
+        </DivStyle.Double_food_list>
     );
 }
  

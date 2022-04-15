@@ -19,18 +19,18 @@ module.exports = {
         next();
     },
 
-    newCategory : async(req, res) => {
-        const newCategory = req.body;
+    new_category : async(req, res) => {
+        const new_category = req.body;
 
     // We want to make sure that one ingredient is present in only 1 category.
         // 1 - We check the properties ingredients of the existing categories       
-        helpers.checkDuplicateIngredientsInCategories(newCategory);
+        helpers.check_duplicate_ingredients_in_categories(new_category);
                 
         // 2 - We create the new entry for category
-        const newEntry = await helpers.create_category(newCategory);
+        const new_entry = await helpers.create_category(new_category);
 
-        // 3 - We add this new category to the ingredients included in newCategory.ingredients
-        helpers.add_category_to_ing(newEntry);
+        // 3 - We add this new category to the ingredients included in new_category.ingredients
+        helpers.add_category_to_ing(new_entry);
         res.send("new entry created!");
     },
 
@@ -45,19 +45,19 @@ module.exports = {
         console.log(`RRRRRRRR : ${ingredients_of_category_before_update}`);
         
         // 2 - We check the properties ingredients of the existing categories       
-        helpers.checkDuplicateIngredientsInCategories(categoryUpdated);
+        helpers.check_duplicate_ingredients_in_categories(categoryUpdated);
 
         // 3a - We add the ingredients confirmed by the user to the category targeted.
-        const updated_category = await helpers.update_category(categoryUpdated, await helpers.find_matching_ingredient(categoryUpdated));
+        const updated_category = await helpers.update_category(categoryUpdated, await helpers.find_ingredient_id_category(categoryUpdated));
 
         // 3b - We define this category as the property "category" of the related ingredients(To connect them)
         helpers.add_category_to_ing(updated_category);
 
-        // 4 - We store all the ingredients to remove from the updated category in this variable.
+        // 4 - We store all the ingredients to remove from the updated category in this variable. X
         const ingredient_for_no_category = await helpers.get_ingredients_for_no_category(categoryUpdated, ingredients_of_category_before_update);
         console.log(`ingredient_for_no_category : ${ingredient_for_no_category}`);
 
-        // 5a - We add the ingredients discarded to the category "NO CATEGORY"
+        // 5a - We add the ingredients discarded to the category "NO CATEGORY". ingredients_id_for_this_category
         const updated_garbage_category = await helpers.update_category(no_category, ingredient_for_no_category);
 
         // 5b - We define No Category as the property "category" of these ingredients(To connect them)

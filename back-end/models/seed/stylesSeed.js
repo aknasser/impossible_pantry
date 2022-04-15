@@ -53,6 +53,10 @@ const alimentationStyle = async() => {
         name : "Classy",
         stylePicture: "cake.png"
     })
+    const no_style = await Style.create({
+        name : "No Style",
+        stylePicture: "nothingness.png"
+    })
 }
 
 alimentationStyle();

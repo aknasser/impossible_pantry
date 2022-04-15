@@ -2,7 +2,7 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import UserContext from "../../Context/UserContext";
 import * as React from 'react';
-
+import * as DivStyle from '../../Style/DivStyle'
 
 const NavBar = ({endpoint, pantryUpdater}) => {
         const {userAccount, setUserAccount} = React.useContext(UserContext); // To get the user info in the navBar
@@ -54,22 +54,21 @@ const NavBar = ({endpoint, pantryUpdater}) => {
 
 
     return (
-        <>
         <div>
-            <div>
+            <DivStyle.NavBar_compact>
                 <div /* onClick = {navBarHandler} */ >
-                    <img src="/RectangleNavbar.svg" alt="whiteRect" />
-                    <img src="/RectangleNavbar.svg" alt="whiteRect" />
-                    <img src="/RectangleNavbar.svg" alt="whiteRect" />
+                    <img src="/RectangleNavbar.svg" alt="dark_blue_rect" />
+                    <img src="/RectangleNavbar.svg" alt="dark_blue_rect" />
+                    <img src="/RectangleNavbar.svg" alt="dark_blue_rect" />
                 </div>
-                <Link to="/contact">
-                    <span>GO!</span>
+                <Link to="/yourkitchen" onClick={() => update_app_flow("dashboard")}>
+                    <button>Login / SignUp</button>
                 </Link>
-            </div>
+            </DivStyle.NavBar_compact>
             
             {userAccount.isLoading ? (
                 <div>
-                    <p>Loading</p>
+                    {null}
                 </div>
             
             ) : userAccount.token && !userAccount.isLoading ? (
@@ -105,9 +104,7 @@ const NavBar = ({endpoint, pantryUpdater}) => {
             ) : (
                 null
             )}
-
         </div>
-        </>
     );
 }
  

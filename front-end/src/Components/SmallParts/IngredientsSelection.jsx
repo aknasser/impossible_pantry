@@ -1,6 +1,9 @@
 import axios from 'axios';
 import * as React from 'react';
 import IngredientsList from "./IngredientsList";
+import * as DivStyle from "../../Style/DivStyle";
+import * as FormStyle from "../../Style/FormStyle";
+import * as ButtonStyle from "../../Style/ButtonStyle";
 
 
 
@@ -237,25 +240,28 @@ const IngredientsSelection = ({category, endpoint, stock, setStock, checkValidat
 
     return (
         <div>
-{/*         {stock.map(foodStock => (
-                <h6 key= {foodStock.ingredient.name}>{foodStock.ingredient.name}</h6>
-            ))} */}
             <h3>{category.name}</h3>
             <img src={category.categoryPicture} alt="Category" />
-            <h4>{category.description}</h4>
+            <h5>{category.description}</h5>
             <form action="" onSubmit={validationIngredients}>
-                <label htmlFor="name">In your kitchen...</label>
-                <input list={category.name} id={category._id} name="name" onChange={ingredientUpdater} />
-                <datalist id={category.name}>
-                    {categoryIng.map(ingredient => (
-                        <option value={ingredient.name}  key={ingredient._id}  />
-                    ))} 
-                </datalist>
-                <label htmlFor="quantity">Quantity</label>
-                <input type="text" id="quantity" name="quantity" onChange={quantityUpdater} />
-                <label htmlFor="unit">Unit</label>
-                <input type="text" id="unit" value={ingredientTyped.ingredient.unit} name="unit" readOnly onChange={ingredientUpdater} />
-                <input type="submit" />
+                <DivStyle.Ingredient_list_input>
+                    <FormStyle.Login_label htmlFor="name">Name</FormStyle.Login_label>
+                    <FormStyle.Login_input list={category.name} id={category._id} name="name" onChange={ingredientUpdater} />
+                    <datalist id={category.name}>
+                        {categoryIng.map(ingredient => (
+                            <option value={ingredient.name}  key={ingredient._id}  />
+                        ))} 
+                    </datalist>
+                </DivStyle.Ingredient_list_input>
+                <DivStyle.Ingredient_list_input>
+                    <FormStyle.Login_label htmlFor="quantity">Quantity</FormStyle.Login_label>
+                    <FormStyle.Login_input type="text" id="quantity" name="quantity" onChange={quantityUpdater} />
+                </DivStyle.Ingredient_list_input>
+                <DivStyle.Ingredient_list_input>
+                    <FormStyle.Login_label htmlFor="unit">Unit</FormStyle.Login_label>
+                    <FormStyle.Login_input type="text" id="unit" value={ingredientTyped.ingredient.unit} name="unit" readOnly onChange={ingredientUpdater} />
+                </DivStyle.Ingredient_list_input>
+                <ButtonStyle.Plus_button type="submit" value="+" />
             </form>
 
             {/* This component display the food available for the user (ingredients already owned + ingredients added recently) */}

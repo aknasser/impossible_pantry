@@ -96,7 +96,7 @@ module.exports = {
 
         const currentUser = await User.findById(userId);
         const userStock = await currentUser.stock;
-        // b - Create a hash Table with user.stock
+        // b - Create a hash Table with user.stock (here the stock is up to date).
 
         let stockHashTable = {};
 
@@ -107,12 +107,24 @@ module.exports = {
                 quantity : food.quantity
             };
         }
-        // --CHECKED - Should be a collection of objectID (ingredients collection)
+        // --CHECKED - This hashtable is a collection of object_ID (key) and  ingredient quantity (value).
     
     // 2 - CHECK WHICH RECIPE MATCH THE USERSTOCK
         // a -  For each recipe check if their property "ingredientNeeded" is contained in the hashTable created with user.stock
         // Here we populate style and mainIngredient to display them in the client interface
-        const allRecipes = await Recipe.find({}).populate("style mainIngredient");
+        const allRecipes = await Recipe.find({}).populate(
+            {
+                path : "ingredientsNeeded",
+                populate : 
+                    {
+                        path : "ingredient",
+                        model : "Ingredient"
+                    }
+            }
+        )
+        .populate(
+            "style mainIngredient"
+        );
 
         // These array will be populated later with the corresponding recipe : perfectMatchRecipes : the user has all the ingredient needed in his stock | almostRecipes : the user has everything except 1 ingredient | complexRecipe : The user is missing 2 ingredients.
         let perfectMatchRecipes = {
@@ -120,7 +132,7 @@ module.exports = {
             recipes : []
         } ;
         let almostRecipes = {
-            title : "Almost...only 1 ingredient missing",
+            title : "Almost...",
             recipes : []
         };
         let complexRecipes = {
@@ -133,7 +145,7 @@ module.exports = {
             let missingIngredient = 0;
             for (let foodNeeded of recipe.ingredientsNeeded) {
                 // c - everytime, an ingredient is absent from the hashtable OR the quantity available is lower than the quantity needed  ==> missingingredient++ (it increases by 1).
-                if (!stockHashTable[foodNeeded.ingredient] || stockHashTable[foodNeeded.ingredient].quantity < foodNeeded.quantity) {
+                if (!stockHashTable[foodNeeded.ingredient._id] || stockHashTable[foodNeeded.ingredient._id].quantity < foodNeeded.quantity) {
                     missingIngredient++ ;
                 }
             }
@@ -168,7 +180,7 @@ module.exports = {
 // TO PROVIDE THE INFORMATION NEEDED BY THE COMPONENT RECIPEDETAILS IN THE FRONT-END
 // We want to get 2 random recipes !== from the chosen recipe.
 // These recipes will be displayed in the front-end as suggestions at the bottom of the page (component RecipeDetails.jsx in the Front-end)
-    recipeDetails : async (req, res) => {
+    featuredRecipes : async (req, res) => {
         // 1 - Get the recipe chosen Id. We need it to check whether the suggestion is DIFFEREENT from$ the recipeChosen by the user.
         const recipeChosenId = req.params.recipeId;
         // This array will contains the suggestions.
@@ -178,7 +190,16 @@ module.exports = {
         // We will use this hashTable to check if an ingredient is already part of the array suggestions, if yes we will skip it(we don't want duplicate).
         const suggestionsHashTable = {};
 
-        const allRecipes = await Recipe.find({});
+        const allRecipes = await Recipe.find({}).populate(
+            {
+                path : "ingredientsNeeded",
+                populate : 
+                    {
+                        path : "ingredient",
+                        model : "Ingredient"
+                    }
+            }
+        );
         // 2 - Get Two random recipe !== recipe. If recipeSuggestion._id[i] = recipeChosenId, we look for another recipe.  
             
         // As long as we have less than nmbrOfSuggestions (here 2), we keep looping.
@@ -398,9 +419,19 @@ module.exports = {
 
 
     randomRecipe : async(req, res) => {
-        const allRecipes = await Recipe.find({});
+        const allRecipes = await Recipe.find({}).populate(
+            {
+                path : "ingredientsNeeded",
+                populate : 
+                    {
+                        path : "ingredient",
+                        model : "Ingredient"
+                    }
+            }
+        );
         const randomIndex = Math.floor(Math.random() * allRecipes.length);
         const randomRecipe = allRecipes[randomIndex];
+        console.log(`RANDOM RECIPE ING NEEDED : ${randomRecipe.ingredientsNeeded}`);
         res.send(randomRecipe);
     },
 
