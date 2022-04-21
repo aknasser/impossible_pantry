@@ -1,4 +1,6 @@
 import * as React from 'react';
+import * as TextStyle from '../../Style/TextStyle';
+
 
 const DailyRecipe = ({recipeTrigger, dailyRecipe}) => {
     
@@ -15,8 +17,8 @@ const DailyRecipe = ({recipeTrigger, dailyRecipe}) => {
     return (
         <>
             <h3>Recipe of the day</h3>
-            <h5 onClick = {displayRandomRecipe}>{dailyRecipe.name}</h5>
-            <h6>{dailyRecipe.intro}</h6>
+            <TextStyle.Recipe_title_footer onClick = {displayRandomRecipe}>{dailyRecipe.name}</TextStyle.Recipe_title_footer>
+            <TextStyle.Recipe_description_footer>{dailyRecipe.intro}</TextStyle.Recipe_description_footer>
         </>
     );
 }

@@ -1,34 +1,47 @@
 import axios from "axios";
 import { Link } from "react-router-dom";
 import UserContext from "../../Context/UserContext";
+import StyleContext from "../../Context/StyleContext";
 import * as React from 'react';
 import * as DivStyle from '../../Style/DivStyle'
+import * as ButtonStyle from '../../Style/ButtonStyle'
+import * as PictureStyle from '../../Style/PictureStyle'
+import BarNavButton from "./BarNavButton";
+
+
 
 const NavBar = ({endpoint, pantryUpdater}) => {
         const {userAccount, setUserAccount} = React.useContext(UserContext); // To get the user info in the navBar
+        const {style, set_style} = React.useContext(StyleContext);
 
 
-/*      const [visibilityNavBar, dispatchVisibility] = useRevealContent();
+    const [visibility_navBar, set_visibility_navBar] = React.useState({
+        display :"none",
+        position : "100%",
+        bg_button_color: style.color_theme.primary_color,
+        txt_button_color : "white"
+    });
 
-    const navBarHandler = () => {
-        if (visibilityNavBar.data.top === "-30rem") {
-            dispatchVisibility({
-                type :"NAVBAR_SLIDE",
-                payload : 
-                    {
-                        top : "0rem",
-                    }
+    // to display / hide the details of the navbar
+    const switch_navbar = () => {
+        if (visibility_navBar.display === "none") {
+            set_visibility_navBar({
+                display : "flex",
+                position : "0%",
+                bg_button_color: "white",
+                txt_button_color : style.color_theme.primary_color
             });
         } else {
-            dispatchVisibility({
-                type :"NAVBAR_SLIDE",
-                payload : 
-                    {
-                        top : "-30rem",
-                    }
+            set_visibility_navBar({
+                display : "none",
+                position : "100%",
+                bg_button_color: style.color_theme.primary_color,
+                txt_button_color : "white"
             });
-        }; 
-    }; */
+
+        }
+    };
+
 
     // TO update the page when we click on a link in the navbar
     const update_app_flow = (page_to_display) => {
@@ -54,15 +67,36 @@ const NavBar = ({endpoint, pantryUpdater}) => {
 
 
     return (
-        <div>
+        <DivStyle.NavBar_grid>
             <DivStyle.NavBar_compact>
-                <div /* onClick = {navBarHandler} */ >
-                    <img src="/RectangleNavbar.svg" alt="dark_blue_rect" />
-                    <img src="/RectangleNavbar.svg" alt="dark_blue_rect" />
-                    <img src="/RectangleNavbar.svg" alt="dark_blue_rect" />
-                </div>
+                <DivStyle.navbar_three_rect onClick = {switch_navbar}  >
+                    <PictureStyle.navBar_rect xmlns="http://www.w3.org/2000/svg" viewBox="0 0 149.99 20.35">
+                        <BarNavButton bar_color={visibility_navBar.bg_button_color}/>
+                    </PictureStyle.navBar_rect>
+                    <PictureStyle.navBar_rect xmlns="http://www.w3.org/2000/svg" viewBox="0 0 149.99 20.35">
+                        <BarNavButton bar_color={visibility_navBar.bg_button_color}/>
+                    </PictureStyle.navBar_rect>                  
+                    <PictureStyle.navBar_rect xmlns="http://www.w3.org/2000/svg" viewBox="0 0 149.99 20.35">
+                        <BarNavButton bar_color={visibility_navBar.bg_button_color}/>
+                    </PictureStyle.navBar_rect>
+                </DivStyle.navbar_three_rect>
                 <Link to="/yourkitchen" onClick={() => update_app_flow("dashboard")}>
-                    <button>Login / SignUp</button>
+                    {userAccount.user_details.username ? (
+                    <ButtonStyle.Navbar_CTA 
+                        onClick = {logout}
+                        bg_button = {visibility_navBar.bg_button_color}
+                        txt_button = {visibility_navBar.txt_button_color}
+                    >
+                        Sign out
+                    </ButtonStyle.Navbar_CTA>
+                    ) : (
+                        <ButtonStyle.Navbar_CTA
+                            bg_button = {visibility_navBar.bg_button_color}
+                            txt_button = {visibility_navBar.txt_button_color}
+                        >
+                            Login / SignUp
+                        </ButtonStyle.Navbar_CTA>
+                    )}
                 </Link>
             </DivStyle.NavBar_compact>
             
@@ -72,8 +106,8 @@ const NavBar = ({endpoint, pantryUpdater}) => {
                 </div>
             
             ) : userAccount.token && !userAccount.isLoading ? (
-                <div 
-                /* yposition = {visibilityNavBar.data.top}  */
+                <DivStyle.Navbar_extended 
+                    visibility = {visibility_navBar}
                 >
                     <Link to="/"  onClick={() => update_app_flow("home")} >
                         <span>{userAccount.user_details.name}</span>
@@ -84,27 +118,26 @@ const NavBar = ({endpoint, pantryUpdater}) => {
                     <Link to="/search" onClick={() => update_app_flow("search")}>
                         <span>Explore</span>
                     </Link>
-                    {userAccount.user_details.username && <span onClick = {logout}>Sign out</span>}
-
-                </div>
+                </DivStyle.Navbar_extended>
             ) : userAccount.token === null && !userAccount.isLoading ? (
-                <div>
+                <DivStyle.Navbar_extended
+                    visibility = {visibility_navBar}
+                >
                     <Link to="/" onClick={() => update_app_flow("home")}>
                         <span>Home</span>
                     </Link>
                     <Link to="/yourkitchen"  onClick={() => update_app_flow("dashboard")}>
-                        <span>Login / Sign up</span>
+                        <span>Your Food Stock</span>
                     </Link>
                     <Link to="/search" onClick={() => update_app_flow("search")}>
                         <span>Discover</span>
                     </Link>
-                    {userAccount.user_details.username && <span onClick = {logout}>Sign out</span>}
 
-                </div>
+                </DivStyle.Navbar_extended>
             ) : (
                 null
             )}
-        </div>
+        </DivStyle.NavBar_grid>
     );
 }
  

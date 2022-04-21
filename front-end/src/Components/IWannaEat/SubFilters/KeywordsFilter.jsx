@@ -2,6 +2,9 @@ import FilterList from "../FilterList";
 import * as React from 'react';
 import axios from "axios";
 import * as TextStyle from "../../../Style/TextStyle";
+import * as PictureStyle from "../../../Style/PictureStyle";
+import * as ButtonStyle from "../../../Style/ButtonStyle";
+import * as FormStyle from "../../../Style/FormStyle";
 
 
 
@@ -40,15 +43,12 @@ const KeywordsFilter = ({filters, filterUpdater, endpoint, dispatchRecipesFilter
 
     return (  
         <>
-        {/* IDEA TBC ? When the user clicks on this button
-         the form for the keywords appear and the others filters are turned off (action FILTER_RESET) - we will use filterUpdater here */}
-        <>
-            <TextStyle.Filter_name>Search by keywords</TextStyle.Filter_name>  
-            <form action="">
-                <input type="text" onChange = {keywordsUpdater} value = {keywordsTyped} />
-                <input type="submit" value="Search" />
-            </form>
-            </>
+            <TextStyle.Filter_name>Search by keywords</TextStyle.Filter_name>
+            <PictureStyle.Filter_pic src="recipes_explorer/keywords.svg" alt="" />  
+            <FormStyle.Keywords_form action="">
+                <FormStyle.Food_stock_input type="text" onChange = {keywordsUpdater} value = {keywordsTyped} />
+                <ButtonStyle.Main_button type="submit" value="Search" />
+            </FormStyle.Keywords_form>
         </>
 
 

@@ -5,6 +5,8 @@ import * as React from 'react';
 import axios from "axios";
 import UserContext from "../../../Context/UserContext";
 import  {useContext} from "react";
+import * as DivStyle from "../../../Style/DivStyle"
+
 
 
 
@@ -111,7 +113,7 @@ const RecipesAvailable = ({endpoint, pantryUpdater}) => {
     const recipe_group_description = {
         perfect_match : "You have enough of everything to cook it !",
         almost : "only 1 ingredient missing...",
-        stretch :"More than 2 ingredients are missing"
+        stretch :"2 - 3 ingredients are missing. Oups!"
     }
 
 
@@ -123,11 +125,29 @@ const RecipesAvailable = ({endpoint, pantryUpdater}) => {
                 {matchingRecipes.isLoading || !matchingRecipes.data  ?  (
                     <p>Recipes incoming...</p>
                 ) : (
-                <div>
-                    <RecipesGroup recipesGroup = {matchingRecipes.data.perfectMatchRecipes} pantryUpdater = {pantryUpdater} group_description = {recipe_group_description.perfect_match} />
-                    <RecipesGroup recipesGroup = {matchingRecipes.data.almostRecipes} pantryUpdater = {pantryUpdater} group_description = {recipe_group_description.almost}/>
-                    <RecipesGroup recipesGroup = {matchingRecipes.data.complexRecipes} pantryUpdater = {pantryUpdater} group_description = {recipe_group_description.stretch}/>
-                </div> 
+                <DivStyle.All_matching_recipes>
+                    <RecipesGroup 
+                        recipesGroup = {matchingRecipes.data.perfectMatchRecipes} 
+                        pantryUpdater = {pantryUpdater} 
+                        group_description = {recipe_group_description.perfect_match}
+                        bg_color = "rgb(144, 238, 144)"
+                        width = "33vw"
+                    />
+                    <RecipesGroup 
+                        recipesGroup = {matchingRecipes.data.almostRecipes} 
+                        pantryUpdater = {pantryUpdater} 
+                        group_description = {recipe_group_description.almost}
+                        bg_color = "rgb(250, 250, 210)"
+                        width = "33vw"
+                    />
+                    <RecipesGroup 
+                        recipesGroup = {matchingRecipes.data.complexRecipes} 
+                        pantryUpdater = {pantryUpdater} 
+                        group_description = {recipe_group_description.stretch}
+                        bg_color = "rgb(255, 160, 122)"
+                        width = "33vw"
+                    />
+                </DivStyle.All_matching_recipes> 
                 )}
         </>
     );

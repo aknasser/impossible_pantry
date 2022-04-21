@@ -167,6 +167,11 @@ module.exports = {
                     complexRecipes.recipes.push(recipe);
                     /* console.log(`Complex match for : ${recipe.name} (2 ingredients Missing)`) */
                     break;
+                    
+                case 3 : 
+                    complexRecipes.recipes.push(recipe);
+                    /* console.log(`Complex match for : ${recipe.name} (2 ingredients Missing)`) */
+                    break;
 
                 default:
                     break;
@@ -199,6 +204,8 @@ module.exports = {
                         model : "Ingredient"
                     }
             }
+        ).populate(
+            "style mainIngredient"
         );
         // 2 - Get Two random recipe !== recipe. If recipeSuggestion._id[i] = recipeChosenId, we look for another recipe.  
             
@@ -428,6 +435,8 @@ module.exports = {
                         model : "Ingredient"
                     }
             }
+        ).populate(
+            "style mainIngredient"
         );
         const randomIndex = Math.floor(Math.random() * allRecipes.length);
         const randomRecipe = allRecipes[randomIndex];

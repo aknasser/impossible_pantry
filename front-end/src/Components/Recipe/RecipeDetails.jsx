@@ -6,6 +6,7 @@ import Suggestions from "./Suggestions"
 import * as React from 'react';
 import axios from "axios";
 import * as DivStyle from "../../Style/DivStyle";
+import * as PictureStyle from "../../Style/PictureStyle";
 
 
 // reciped is required to send the good Id to the back-end
@@ -35,17 +36,16 @@ const RecipeDetails = ({endpoint, recipe, go_to_recipe_featured}) => {
             console.log(recipe.difficulty);
             const difficultyLevel = [];
             for (let i = 0; i < recipe.difficulty; i++) {
-                difficultyLevel.push("aStar.jpg");
+                difficultyLevel.push("star.svg");
             }
             console.log(difficultyLevel);
             setnmbrOfStars(difficultyLevel);
-    }, []);
+    }, [recipe]);
 
 
     React.useEffect( () => {
         console.log(nmbrOfStars)
-        console.log(`ING NEEDED : ${JSON.stringify(recipe.ingredientsNeeded)}`)
-    }, [recipe])
+    }, [nmbrOfStars]);
 
     
     return (
@@ -63,14 +63,17 @@ const RecipeDetails = ({endpoint, recipe, go_to_recipe_featured}) => {
                        <h4>Difficulty</h4>
                         <DivStyle.Difficulty_s_stars>
                         {nmbrOfStars.map( (star, index) => (
-                            <img src={star} alt="a shiny star" key= {index} />
+                            <div>
+                                <PictureStyle.Difficulty_star src={`recipe_details/${star}`} alt="a shiny star" key= {index} />
+                            </div>
+
                         ))}             
                         </DivStyle.Difficulty_s_stars> 
                     </div>
 
             }
             <DivStyle.Ingredients_List_Recipe_Details>
-                <h4>Ingredient List</h4>
+                <h4>Ingredients List</h4>
                 {recipe.ingredientsNeeded === undefined ? (
                     <p>Coming!!!</p>
                     ) : (
@@ -82,6 +85,7 @@ const RecipeDetails = ({endpoint, recipe, go_to_recipe_featured}) => {
             </DivStyle.Ingredients_List_Recipe_Details>
             <Steps recipeSteps={recipe.steps}/>
         
+            <h3>Featured Recipes</h3>
             <DivStyle.Featured_recipes>
                 {randomRecipes.map(mysteriousRecipe => (
                     <Suggestions 
