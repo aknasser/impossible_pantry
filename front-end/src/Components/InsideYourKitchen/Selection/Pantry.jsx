@@ -102,7 +102,7 @@ const Pantry = ({allCategories, endpoint, pantryUpdater, checkValidation}) => {
     return ( 
         <>
             <PageTitle title= "Your Food Stock"></PageTitle>
-            <PageInstructions instructions= "What do you have at home ?" />
+            <PageInstructions instructions= "What do you have in your kitchen ?" />
 
 
 

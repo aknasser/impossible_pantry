@@ -35,7 +35,7 @@ export const main_fonts = {
         display: flex;
         flex-direction: column;
     }
-    h1, h2, h3{
+    h1, h2, h3, button{
         font-family : ${main_fonts.title_font};
         text-transform : uppercase;
     }

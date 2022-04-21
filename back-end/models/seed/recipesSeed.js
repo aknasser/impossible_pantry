@@ -57,7 +57,7 @@ const alimentationRecipe = async() => {
         steps : ["Mix the meat with a bit of pepper and salt. Mix it thorougly. Let it rest", "put a saucing pan full of water on the stove", "while the water is boiling, cut onions in thin piece, carrots in dice and crush the garlic"],
         country: "Italy",
         style : await Style.findOne({ name : "Yummy"}),
-        difficulty : 1,
+        difficulty : 2,
         pictureUrl : "bolognese.png",
         mainIngredient : await Ingredient.findOne({ name : "tomato pulp"}),
         ingredientsNeeded : [
@@ -117,7 +117,7 @@ const alimentationRecipe = async() => {
         steps : ["Melt the butter in the microwave (30 sec is enough)", "mix the melted butter with the brown sugar", "once you get a fluid mixture, add the lemon juice"],
         country: "Ireland",
         style : await Style.findOne({ name : "Sweet"}),
-        difficulty : 1.5,
+        difficulty : 1,
         pictureUrl : "biscuits.png",
         mainIngredient : await Ingredient.findOne({ name : "lemon juice"}),
         ingredientsNeeded : [

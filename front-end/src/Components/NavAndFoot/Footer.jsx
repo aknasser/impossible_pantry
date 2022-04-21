@@ -1,6 +1,9 @@
 import axios from 'axios';
 import * as React from 'react';
 import DailyRecipe from '../SmallParts/DailyRecipe';
+import * as TextStyle from '../../Style/TextStyle'
+import * as DivStyle from '../../Style/DivStyle'
+import { Link } from "react-router-dom";
 
 
 const Footer = ({recipeTrigger, endpoint}) => {
@@ -24,17 +27,17 @@ const Footer = ({recipeTrigger, endpoint}) => {
 
 
     return (
-        <>
+        <DivStyle.Footer_div>
             <DailyRecipe
                 recipeTrigger = {recipeTrigger}
                 dailyRecipe = {dailyRecipe}
             />
-            <div>
-                <p>© Copyright 2022</p> 
-                <p>Nasser "Nass La Menace" Massadimi</p> 
-            </div>
+            <DivStyle.Copyright>
+                <span>Nasser "Nass La Menace" Massadimi</span> 
+                <span>© Copyright 2022</span> 
+            </DivStyle.Copyright>
 
-        </>
+        </DivStyle.Footer_div>
     );
 }
  

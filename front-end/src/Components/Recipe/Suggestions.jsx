@@ -11,10 +11,8 @@ const Suggestions = ({randomRecipe, go_to_recipe_featured}) => {
 
     return (
         <DivStyle.Suggestion onClick={() => go_to_recipe(randomRecipe)}>
-            <h3>{randomRecipe.name}</h3>
-            <a href ={`recipe/${randomRecipe._id}`}>
-                <img src={randomRecipe.pic} alt="RecipePic" />
-            </a>
+                <h3>{randomRecipe.name}</h3>
+                {/* <img src={randomRecipe.pic} alt="RecipePic" />   ONLY FOR DESKTOP ?*/}
         </DivStyle.Suggestion>
     );
 }

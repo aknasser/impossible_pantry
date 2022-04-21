@@ -2,6 +2,7 @@ import axios from "axios";
 import * as React from 'react';
 import UserContext from "../../Context/UserContext";
 import * as DivStyle from "../../Style/DivStyle";
+import * as PictureStyle from "../../Style/PictureStyle";
 
 
 const BlocPicture = ({recipe, endpoint}) => {
@@ -105,15 +106,15 @@ const BlocPicture = ({recipe, endpoint}) => {
 
     return (
         <div>
-            <img src={recipe.pictureUrl} alt={recipe.name} />
+            <PictureStyle.Dish_pic src={`recipe_details/recipes_pic/${recipe.pictureUrl}`} alt={recipe.name} />
             <DivStyle.Bookmark_and_tick>
-                <img src="bookmark_not_saved.png" alt="bookmark" onClick={() => bookmark_recipe(saved_recipe, set_saved_recipe)} />
-                <img src="bookmark_not_saved.png" alt="star" onClick={() => bookmark_recipe(cooked_recipe, set_cooked_recipe)} />
+                <img src="recipe_details/bookmark.svg" alt="bookmark" onClick={() => bookmark_recipe(saved_recipe, set_saved_recipe)} />
+                <img src="recipe_details/tick.svg" alt="star" onClick={() => bookmark_recipe(cooked_recipe, set_cooked_recipe)} />
             </DivStyle.Bookmark_and_tick>
 
             <DivStyle.Bookmark_and_tick>
-                <img src={country.pic} alt="RecipeCountry" />
-                <img src={style.pic} alt="RecipeStyle" />
+                <span>{recipe.style.name}</span>
+                <span>{recipe.country}</span>
             </DivStyle.Bookmark_and_tick>
         </div>
     );

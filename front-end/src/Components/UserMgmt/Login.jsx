@@ -80,55 +80,68 @@ const Login = ({endpoint, pantryUpdater}) => {
 
 // REGISTER NEW USER
 
-    const display_register_form = () => {
-        // Play with visibility / display of the NewUser component 
+    const [user_form, set_user_form] = React.useState("login");
+
+    const display_register_form = (form_to_display) => {
+            set_user_form(form_to_display);
     };
 
     React.useEffect( () => {
         console.log(`LOGIN_INFO: ${JSON.stringify(sign_up_info)}`)
     }, [sign_up_info])
+{/*  {!login_info.valid_form && <h3>Invalid user info. Check the username and / or the password</h3>}
+ */}
 
+/*  {!sign_up_info.valid_form && <h3>Please complete the form properly</h3>}
+ */
 
     return (
         <>
-            <h2>Login</h2>
-            {!login_info.valid_form && <h3>Invalid user info. Check the username and / or the password</h3>}
-            <form onSubmit={(event) => submit_login_info(event,"login",login_info, set_login_info)}>
-                <DivStyle.Login_form_input>
-                    <FormStyle.Login_label htmlFor="username">Email </FormStyle.Login_label>
-                    <FormStyle.Login_input type="text" name ="username" value={login_info.username} onChange={(event) => update_login_or_sign_up_info(event, login_info, set_login_info)} />
-                </DivStyle.Login_form_input>
-                <DivStyle.Login_form_input>
-                    <FormStyle.Login_label htmlFor="password">Password</FormStyle.Login_label>
-                    <FormStyle.Login_input type="password" name = "password" value={login_info.password} onChange={(event) => update_login_or_sign_up_info(event, login_info, set_login_info)}/>
-                </DivStyle.Login_form_input>
-                <DivStyle.Double_button>
-                    <ButtonStyle.Main_button type="submit" value = "login" />
-                    <ButtonStyle.Secundary_button onClick={display_register_form}>New User</ButtonStyle.Secundary_button>
-                </DivStyle.Double_button>
-            </form>
-
-            <h2>Sign up</h2>
-            {!sign_up_info.valid_form && <h3>Please complete the form properly</h3>}
-            <form onSubmit = {(event) => submit_login_info(event, "create", sign_up_info, set_sign_up_info)}>
-                <DivStyle.Login_form_input>
-                    <FormStyle.Login_label htmlFor="name">Name</FormStyle.Login_label>
-                    <FormStyle.Login_input type="text" name ="name" value={sign_up_info.name} onChange={(event) => update_login_or_sign_up_info(event, sign_up_info, set_sign_up_info)} />
-                </DivStyle.Login_form_input>
-                <DivStyle.Login_form_input>
-                    <FormStyle.Login_label htmlFor="surname">Surname</FormStyle.Login_label>
-                    <FormStyle.Login_input type="text" name ="surname" value={sign_up_info.surname} onChange={(event) => update_login_or_sign_up_info(event, sign_up_info, set_sign_up_info)} />
-                </DivStyle.Login_form_input>
-                <DivStyle.Login_form_input>
-                    <FormStyle.Login_label htmlFor="email">Email</FormStyle.Login_label>
-                    <FormStyle.Login_input type="email" name ="username" value={sign_up_info.username} onChange={(event) => update_login_or_sign_up_info(event, sign_up_info, set_sign_up_info)} />
-                </DivStyle.Login_form_input>
-                <DivStyle.Login_form_input>
-                    <FormStyle.Login_label htmlFor="password">Password</FormStyle.Login_label>
-                    <FormStyle.Login_input type="password" name = "password" value={sign_up_info.password} onChange={(event) => update_login_or_sign_up_info(event, sign_up_info, set_sign_up_info)}/>
-                </DivStyle.Login_form_input>
-                <ButtonStyle.Main_button type="submit" value = "register" />
-            </form>
+            {user_form === "login" ? (
+                 <div>
+                    <h2>Login</h2>
+                    <form onSubmit={(event) => submit_login_info(event,"login",login_info, set_login_info)}>
+                        <DivStyle.Login_form_input>
+                            <FormStyle.Login_label htmlFor="username">Email </FormStyle.Login_label>
+                            <FormStyle.Login_input type="text" name ="username" value={login_info.username} onChange={(event) => update_login_or_sign_up_info(event, login_info, set_login_info)} />
+                        </DivStyle.Login_form_input>
+                        <DivStyle.Login_form_input>
+                            <FormStyle.Login_label htmlFor="password">Password</FormStyle.Login_label>
+                            <FormStyle.Login_input type="password" name = "password" value={login_info.password} onChange={(event) => update_login_or_sign_up_info(event, login_info, set_login_info)}/>
+                        </DivStyle.Login_form_input>
+                        <DivStyle.Double_button>
+                            <ButtonStyle.Main_button type="submit" value = "login" />
+                            <ButtonStyle.Secundary_button onClick={() => display_register_form("sign_up")}>New User</ButtonStyle.Secundary_button>
+                        </DivStyle.Double_button>
+                    </form>
+                </div>
+            ) : (
+                <div>
+                    <h2>Sign up</h2>
+                    <form onSubmit = {(event) => submit_login_info(event, "create", sign_up_info, set_sign_up_info)}>
+                        <DivStyle.Login_form_input>
+                            <FormStyle.Login_label htmlFor="name">Name</FormStyle.Login_label>
+                            <FormStyle.Login_input type="text" name ="name" value={sign_up_info.name} onChange={(event) => update_login_or_sign_up_info(event, sign_up_info, set_sign_up_info)} />
+                        </DivStyle.Login_form_input>
+                        <DivStyle.Login_form_input>
+                            <FormStyle.Login_label htmlFor="surname">Surname</FormStyle.Login_label>
+                            <FormStyle.Login_input type="text" name ="surname" value={sign_up_info.surname} onChange={(event) => update_login_or_sign_up_info(event, sign_up_info, set_sign_up_info)} />
+                        </DivStyle.Login_form_input>
+                        <DivStyle.Login_form_input>
+                            <FormStyle.Login_label htmlFor="email">Email</FormStyle.Login_label>
+                            <FormStyle.Login_input type="email" name ="username" value={sign_up_info.username} onChange={(event) => update_login_or_sign_up_info(event, sign_up_info, set_sign_up_info)} />
+                        </DivStyle.Login_form_input>
+                        <DivStyle.Login_form_input>
+                            <FormStyle.Login_label htmlFor="password">Password</FormStyle.Login_label>
+                            <FormStyle.Login_input type="password" name = "password" value={sign_up_info.password} onChange={(event) => update_login_or_sign_up_info(event, sign_up_info, set_sign_up_info)}/>
+                        </DivStyle.Login_form_input>
+                        <DivStyle.Double_button>
+                            <ButtonStyle.Main_button type="submit" value = "register" />
+                            <ButtonStyle.Secundary_button onClick={() => display_register_form("login")}>I have an account</ButtonStyle.Secundary_button>
+                        </DivStyle.Double_button>
+                    </form>
+                </div> 
+            )}
         </> 
     );
 }

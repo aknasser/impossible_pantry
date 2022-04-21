@@ -4,6 +4,7 @@ import * as DivStyle from "../../../Style/DivStyle";
 import * as FormStyle from "../../../Style/FormStyle";
 import * as TextStyle from "../../../Style/TextStyle";
 import * as ButtonStyle from "../../../Style/ButtonStyle";
+import * as PictureStyle from "../../../Style/PictureStyle";
 
 
 const Filter = ({filterName, entries, entriesUpdater, filters, addFilter, deleteFilter, resetFilter, checkValidation}) => {
@@ -21,7 +22,7 @@ const Filter = ({filterName, entries, entriesUpdater, filters, addFilter, delete
 
 
     return (
-        <>
+        <div>
             {!entries ? (
                 <p>Loading</p>
             ) : (
@@ -29,9 +30,9 @@ const Filter = ({filterName, entries, entriesUpdater, filters, addFilter, delete
                     <form onSubmit={(event) => addFilter(event, entries, filterName, filterTyped)}>
                         <DivStyle.Filter_intro>
                             <TextStyle.Filter_name>{filterName}</TextStyle.Filter_name>
-                            <img src="" alt="pika.png" />
+                            <PictureStyle.Filter_pic src={`recipes_explorer/${filterName}.svg`} alt="pika.png" />
                         </DivStyle.Filter_intro>
-                            <FormStyle.Login_input list={`${filterName}_name`} id="filter" name={filterName} onChange = {updateFilterTyped}  />
+                            <FormStyle.Food_stock_input list={`${filterName}_name`} id="filter" name={filterName} onChange = {updateFilterTyped}  />
                             <datalist id={`${filterName}_name`}>
                                 {entries.map(entry => (
                                     <option value={entry.name} key = {entry.name}></option>
@@ -52,7 +53,7 @@ const Filter = ({filterName, entries, entriesUpdater, filters, addFilter, delete
                 deleteFilter = {deleteFilter}
                 filterToUpdate = {filterName}  // We needs this props to identify the field we need to update after the deletion.
             />
-        </>
+        </div>
     );
     
 

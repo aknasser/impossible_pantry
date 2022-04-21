@@ -4,6 +4,8 @@ import IngredientsList from "./IngredientsList";
 import * as DivStyle from "../../Style/DivStyle";
 import * as FormStyle from "../../Style/FormStyle";
 import * as ButtonStyle from "../../Style/ButtonStyle";
+import * as PictureStyle from "../../Style/PictureStyle";
+import * as TextStyle from "../../Style/TextStyle";
 
 
 
@@ -239,9 +241,9 @@ const IngredientsSelection = ({category, endpoint, stock, setStock, checkValidat
 
 
     return (
-        <div>
-            <h3>{category.name}</h3>
-            <img src={category.categoryPicture} alt="Category" />
+        <DivStyle.Ingredient_category>
+            <TextStyle.Category_title>{category.name}</TextStyle.Category_title>
+            <PictureStyle.Filter_pic src={`food_stock/${category.categoryPicture}`} alt="Category" />
             <h5>{category.description}</h5>
             <form action="" onSubmit={validationIngredients}>
                 <DivStyle.Ingredient_list_input>
@@ -274,7 +276,7 @@ const IngredientsSelection = ({category, endpoint, stock, setStock, checkValidat
                 stock = {stock}
                 setStock = {setStock}
             />
-        </div>
+        </DivStyle.Ingredient_category>
     );
 }
  
