@@ -8,6 +8,10 @@ const HomeAdmin = ({dispatchAdminManagement}) => {
                 type : "MAIN_PAGE_MODEL",
                 payload : model
         })
+        window.scrollTo({      
+            top : 0,
+            behavior :"smooth"
+        })
     };
 
     return (

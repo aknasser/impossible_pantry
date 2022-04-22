@@ -9,6 +9,10 @@ const CreateOrUpdate = ({adminManagement, dispatchAdminManagement}) => {
                     status: crudStatus
                 }
         })
+        window.scrollTo({      
+            top : 0,
+            behavior :"smooth"
+        })
     };
     
     return (

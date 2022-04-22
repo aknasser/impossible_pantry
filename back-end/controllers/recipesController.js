@@ -32,7 +32,16 @@ module.exports = {
      
     selectedRecipe : async(req, res, next) => {
         const idRecipe = req.params.id;                    // on récupère le paramètre de l'id appelé 
-        const chosenRecipe = await Recipe.findById(idRecipe)
+        const chosenRecipe = await Recipe.findById(idRecipe).populate(
+            {
+                path : "ingredientsNeeded",
+                populate : 
+                    {
+                        path : "ingredient",
+                        model : "Ingredient"
+                    }
+            }
+        )
         res.locals.toConvert = chosenRecipe;
         next();
     },
@@ -290,7 +299,7 @@ module.exports = {
                 }
             )
             .populate(
-                "style"
+                "style mainIngredient"
             ); 
 
 
@@ -450,10 +459,8 @@ module.exports = {
         const bookmarked_or_cooked = req.body.type_of_recipe;
         const already_in_user = req.body.already_in_user_recipes_property; // A boolean, if it's true we remove the recipe from the property | if it's false, we add this recipe to the property
 
-        console.log(`already_in_user: ${already_in_user}`);
         // 1 - We find the id of the corresponding recipe
         const recipe_to_add_to_user = await Recipe.findById(recipe_to_saved._id);
-        console.log(`recipe found : ${recipe_to_add_to_user}`);
         // 2  - We update the right property of the user object 
         // 2a -  We add the recipe in the user object
         if (!already_in_user) { 

@@ -85,6 +85,7 @@ export const Submit_Food_stock = styled(Plus_button)`
 
 export const Main_button = styled(Plus_button)`
     font-size: 0.75rem;
+    font-family : ${MainStyle.main_fonts.title_font};
     font-weight: 800;
     width : 50vw;
     text-transform : uppercase;
@@ -97,8 +98,9 @@ export const Main_button = styled(Plus_button)`
       
 `;
 
-export const Secundary_button = styled.button`
+export const Secundary_button = styled.span`
     font-size: 0.75rem;
+    font-family : ${MainStyle.main_fonts.title_font};
     font-weight: 800;
     width : 50vw;
     text-transform : uppercase;
@@ -140,6 +142,12 @@ export const Navbar_CTA = styled(Cta_Homepage)`
     }
     
 `;
+// LOADING MESSAGE AND 404
+
+
+export const Error_button = styled(Secundary_button)`
+    margin: 1rem auto;
+`; 
 
 
 export default Cta_Homepage;

@@ -63,7 +63,7 @@ const RecipeDetails = ({endpoint, recipe, go_to_recipe_featured}) => {
                        <h4>Difficulty</h4>
                         <DivStyle.Difficulty_s_stars>
                         {nmbrOfStars.map( (star, index) => (
-                            <div>
+                            <div key= {index}>
                                 <PictureStyle.Difficulty_star src={`recipe_details/${star}`} alt="a shiny star" key= {index} />
                             </div>
 

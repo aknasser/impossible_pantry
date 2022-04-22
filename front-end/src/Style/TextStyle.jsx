@@ -3,7 +3,7 @@ import * as MainStyle from "./MainStyle"
 
 export const Page_title = styled.h1`
     font-weight : 900;
-    font-size: 4rem;
+    font-size: 3rem;
 `;
 
 
@@ -27,6 +27,7 @@ export const Activity_details_desc = styled.h4`
 //######## DASHBOARD #####//
 export const Dashboard_title = styled.h3`
     font-size: 1.75rem;
+    color : ${props => props.color};
     font-weight: 800;
     @media(min-width :${MainStyle.device_size.tablet}) {
         font-size :2.5rem;
@@ -45,12 +46,12 @@ export const Page_description = styled.h4`
 `;
 
 export const Recipe_in_dashboard = styled(Item_dashboard)`
-    color: white;
-    background-color: ${MainStyle.colors.third_color};
+    color: ${props => props.txt_color};
+    background-color: ${props => props.bg_color};
     padding: 0.5rem;
     border-radius: 1rem;
     font-weight: 200;
-    transition : all 250ms ease-out 0s;
+    transition : all 100ms ease-out 0s;
 
     &:hover {
         color : ${MainStyle.colors.third_color};
@@ -96,6 +97,12 @@ export const Recipe_available_spec = styled.span`
     font-weight : 200
 `
 
+export const Empty_category_message = styled.span`
+    margin: 2rem;
+    font-size: 1.5rem;
+    font-weight: 400;
+    font-family : ${MainStyle.main_fonts.subtitle_font};
+`
 
 //RECIPE EXPLORER
 
@@ -113,5 +120,17 @@ export const Recipe_title_footer = styled.h5`
 export const Recipe_description_footer = styled(Item_dashboard)`
     font-size: 0.75rem;
 `;
+
+
+// LOADING MESSAGE AND 404
+
+export const Loading_message = styled.p`
+    color : ${MainStyle.colors.primary_color};
+    font-size. 1.25rem;
+`;
+
+export const Title_404 = styled(Activity_details_title)`
+    font-size : 2rem;
+`
 
 export default Catchprase;

@@ -16,15 +16,24 @@ const RecipesGroup = ({recipesGroup, pantryUpdater, group_description, bg_color,
             type : "RECIPE_PICKED",
             recipe : recipe
         })
+        window.scrollTo({      
+            top : 0,
+            behavior :"smooth"
+        })
     };
 
 
     return (
         <DivStyle.Recipe_found_block bg_color = {bg_color} width_big_screen={width}>
             {/* This conditional is useful when we use this component inside SearchRecipes.jsx */}
-            <TextStyle.Recipe_group_title>{!recipesGroup.title ? ("Recipes Found") : (recipesGroup.title)}</TextStyle.Recipe_group_title>
+            <TextStyle.Recipe_group_title>{!recipesGroup.title ? (
+                `${recipesGroup.recipes.length} Recipes Found`
+                ) : (
+                recipesGroup.title
+                )}
+            </TextStyle.Recipe_group_title>
             <TextStyle.Recipes_group_description>{group_description}</TextStyle.Recipes_group_description>
-            {recipesGroup.recipes ? (
+            {recipesGroup.recipes.length > 0 ? (
                 recipesGroup.recipes.map(meal => (
                     <DivStyle.Recipe_block onClick = { () => {pickedRecipeHandler(meal)}} key = {meal._id}>
                         <div>
@@ -38,7 +47,7 @@ const RecipesGroup = ({recipesGroup, pantryUpdater, group_description, bg_color,
                     </DivStyle.Recipe_block>
                 )) 
             ) : (
-                <span>Nada</span>
+                <TextStyle.Empty_category_message>Nada</TextStyle.Empty_category_message>
             )}
 
         </DivStyle.Recipe_found_block>

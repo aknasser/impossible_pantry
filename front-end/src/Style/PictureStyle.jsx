@@ -14,11 +14,12 @@ export const Feature_picture = styled.img`
 
 
 // ###### USER DASHBOARD ###### //
-export const Dashboard_picture = styled.img`
+export const Dashboard_picture = styled.svg`
     max-width: 30vw;
     max-height: 46vh;
     margin: 1rem auto;
 `;
+
 
 
 // ###### RECIPE DETAILS ###### //
@@ -37,7 +38,6 @@ export const Dish_pic = styled.img`
 export const Difficulty_star = styled.img`
     width: 10vw;
 `;
-
 
 // ###### RECIPES EXPLORER ###### //
 
@@ -59,6 +59,18 @@ export const navBar_rect = styled.svg`
     margin : 0.15rem; 
     transition : all 500ms ease-out 200ms;
     `;
+
+
+// ###### LOADING AND 404 PAGE ###### //
+
+export const Error_pic = styled.img`
+    max-width : 95vw;
+    margin: 1rem auto;
+    border-radius: 0.5rem;
+    @media(min-width :${MainStyle.device_size.tablet}) {
+        max-width: 45vw;
+    } 
+`;
 
 
 export default Dish_pic;

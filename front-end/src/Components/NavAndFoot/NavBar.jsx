@@ -49,6 +49,11 @@ const NavBar = ({endpoint, pantryUpdater}) => {
             type : "UI_FLOW",
             page_name : page_to_display,
         })
+        switch_navbar();
+        window.scrollTo({      
+            top : 0,
+            behavior :"smooth"
+        })
     }
 
     const logout = async() => {
@@ -62,6 +67,10 @@ const NavBar = ({endpoint, pantryUpdater}) => {
             user_details: {},
             token : null,
             isLoading : false
+        })
+        window.scrollTo({      
+            top : 0,
+            behavior :"smooth"
         })
     };
 

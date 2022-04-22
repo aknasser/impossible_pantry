@@ -24,7 +24,7 @@ const Filter = ({filterName, entries, entriesUpdater, filters, addFilter, delete
     return (
         <div>
             {!entries ? (
-                <p>Loading</p>
+                <TextStyle.Loading_message>Loading...</TextStyle.Loading_message>
             ) : (
                 <>
                     <form onSubmit={(event) => addFilter(event, entries, filterName, filterTyped)}>
