@@ -6,6 +6,7 @@ import  {useContext} from "react";
 import UserContext from "../../../Context/UserContext";
 import * as React from 'react';
 import * as ButtonStyle from '../../../Style/ButtonStyle'
+import * as TextStyle from "../../../Style/TextStyle";
 
 
 const Pantry = ({allCategories, endpoint, pantryUpdater, checkValidation}) => {
@@ -17,6 +18,21 @@ const Pantry = ({allCategories, endpoint, pantryUpdater, checkValidation}) => {
 
 // we assign an initial value to stock. stock (initialValue) = userAccount.stock
     const [stock, setStock] = React.useState([...userAccount.user_details.stock]);
+
+
+// GET RID OF "NO CATEGORY"
+    const [clean_categories, set_clean_categories] = React.useState();
+
+    React.useEffect( () => {
+        if (allCategories) {
+            const without_garbage_category = allCategories.content.filter(category => {
+                return category.name !== "No Category"
+              })
+              set_clean_categories(without_garbage_category)
+        }
+    }, [])
+    
+
 
 
 // START SUBMIT
@@ -92,31 +108,25 @@ const Pantry = ({allCategories, endpoint, pantryUpdater, checkValidation}) => {
     }, [userAccount]);
 
 
-
-
-
-
-
-
-
     return ( 
         <>
             <PageTitle title= "Your Food Stock"></PageTitle>
             <PageInstructions instructions= "What do you have in your kitchen ?" />
+            {!clean_categories ? (
+                <TextStyle.Loading_message>Loading...</TextStyle.Loading_message>
+            ) : (
+                clean_categories.map(category => (
+                    <IngredientsSelection
+                        key = {category._id} 
+                        category = {category}
+                        endpoint = {endpoint} 
+                        stock = {stock}
+                        setStock = {setStock}
+                        checkValidation = {checkValidation}
+                    />
+                ))
+            )}
 
-
-
-            {/* Use a array.map here categories */}
-             {allCategories.content.map(category => (
-                <IngredientsSelection
-                    key = {category._id} 
-                    category = {category}
-                    endpoint = {endpoint} 
-                    stock = {stock}
-                    setStock = {setStock}
-                    checkValidation = {checkValidation}
-                />
-            ))} 
             <form onSubmit={completedStock}>
                 <ButtonStyle.Submit_Food_stock type="submit" value="Confirm your stock" />
             </form>

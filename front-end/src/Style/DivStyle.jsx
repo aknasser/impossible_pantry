@@ -177,18 +177,13 @@ import * as MainStyle from "./MainStyle"
         > span {
             margin : auto 0.25rem;
         }
-        > img {
+        > svg {
             margin : auto 1rem;
             width: 15vw;
             cursor: pointer;
             @media(min-width :${MainStyle.device_size.tablet}) {
                 width: 7vw;
             }  
-        }
-        > svg {
-            margin : auto 1rem;
-            width: 15vw;
-            cursor: pointer;
         }
     `;
 
@@ -224,11 +219,6 @@ import * as MainStyle from "./MainStyle"
             background-color: white;
             border: solid 0.2rem ${MainStyle.colors.primary_color}; 
         }
-
-
-        @media(min-width :${MainStyle.device_size.tablet}) {
-           
-        }  
     }
 
     `;
@@ -280,6 +270,9 @@ import * as MainStyle from "./MainStyle"
         width: 100vw;
         background-color : ${MainStyle.colors.primary_color};
 
+        @media(min-width :${MainStyle.device_size.laptopS}) {
+           padding : 2rem 0rem;
+        }  
 
 
         > a {

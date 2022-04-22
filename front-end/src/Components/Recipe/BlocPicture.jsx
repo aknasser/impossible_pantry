@@ -1,17 +1,18 @@
 import axios from "axios";
 import * as React from 'react';
+import StyleContext from "../../Context/StyleContext";
 import UserContext from "../../Context/UserContext";
 import * as DivStyle from "../../Style/DivStyle";
 import * as PictureStyle from "../../Style/PictureStyle";
+import Bookmark from "../../Style/SVG/Bookmark"
+import Tick from "../../Style/SVG/Tick"
 
 
 const BlocPicture = ({recipe, endpoint}) => {
 
     const {userAccount, setUserAccount} = React.useContext(UserContext)
+    const {style, setStyle} = React.useContext(StyleContext)
 
-    const country = "";  // FETCH  THE COUNTRIES OBJECT IN THE DB CORRESPONDING TO recipe.country 
-    const style = "";    // FETCH ALL THE STYLE IN THE DB CORRESPONDING TO recipe.style
- 
     const [saved_recipe, set_saved_recipe] = React.useState({
         property_name : "recipesSaved",
         already_in_user: false
@@ -21,6 +22,13 @@ const BlocPicture = ({recipe, endpoint}) => {
         already_in_user: false
     });
 
+    const [bookmark_color, set_bookmark_color] = React.useState();
+    const [tick_color, set_tick_color] = React.useState(
+        {
+            fill : "",
+            stroke : ""
+        }
+    );
 
     // TO CHECK IF THE RECIPE IS ALREADY PART OF THE PROPERTY "recipesSaved" or "recipesCooked"
     React.useEffect(() => {
@@ -42,8 +50,11 @@ const BlocPicture = ({recipe, endpoint}) => {
                     ...saved_recipe,
                     already_in_user : true,
                 })
+                // we update the bookmark logo to show that the recipe has been already saved before
+                set_bookmark_color(style.color_theme.primary_color);
             } else {
-                console.log("first timer savedd ?")
+                set_bookmark_color(style.color_theme.drawing_color);
+                console.log("first timer bookmarked ?")
             }
             if (recipes_cooked_ht[recipe._id]) {
                 console.log("already cooked")
@@ -51,14 +62,23 @@ const BlocPicture = ({recipe, endpoint}) => {
                     ...cooked_recipe,
                     already_in_user : true,
                 })
+                // we update the tick logo to show that the recipe has been already saved before
+                set_tick_color({
+                    fill : "rgb(0, 138, 11)",
+                    stroke : "white",
+                });
             } else {
+                set_tick_color({
+                    fill : "white",
+                    stroke : "rgb(0, 138, 11)",
+                });
                 console.log("first timer cooked ?")
             }
         };
         if (userAccount.user_details.recipesSaved || userAccount.user_details.recipesSaved) {
             check_recipes();
         } 
-    }, [])
+    }, [recipe, userAccount.user_details])
 
     React.useEffect ( () => {
         console.log(JSON.stringify(saved_recipe));
@@ -69,6 +89,7 @@ const BlocPicture = ({recipe, endpoint}) => {
 
     // TO ADD THIS RECIPE TO THE RECIPES SAVED PROPERTY FOR THE USER
     // param1: the category of recipe we want to update in the user object (recipesSaved or recipesCooked)
+    // param2 : the state updater function for the recipe_category
     const bookmark_recipe = async(recipe_category, updater_recipe_category) => {
         // 1 - We create an object 
         const to_save_the_recipe = {
@@ -83,7 +104,6 @@ const BlocPicture = ({recipe, endpoint}) => {
         // 3 - If the update is successful...
         const response = adding_recipe_to_user.data;
         if (response.success) {
-            console.log("yeah!")
             // 3a - update the user_details with the data from the back-end.
             setUserAccount({
                 ...userAccount,
@@ -99,8 +119,7 @@ const BlocPicture = ({recipe, endpoint}) => {
                 already_in_user : !recipe_category.already_in_user
             })
 
-            // 3c - We update the src of the img (might be good to create a state to achieve that). -  we change the color of the bookmark pic with SVG features (or we just replace the pic with another one)
-            // insert SVG manipulation here
+            // 3c - The color of the svg change. It happens when the user_details are updated thanks to the useEffect and its dependencies.
         };
     };
 
@@ -108,8 +127,17 @@ const BlocPicture = ({recipe, endpoint}) => {
         <div>
             <PictureStyle.Dish_pic src={`recipe_details/recipes_pic/${recipe.pictureUrl}`} alt={recipe.name} />
             <DivStyle.Bookmark_and_tick>
-                <img src="recipe_details/bookmark.svg" alt="bookmark" onClick={() => bookmark_recipe(saved_recipe, set_saved_recipe)} />
-                <img src="recipe_details/tick.svg" alt="star" onClick={() => bookmark_recipe(cooked_recipe, set_cooked_recipe)} />
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26.5 33.04" onClick={() => bookmark_recipe(saved_recipe, set_saved_recipe)}>
+                    <Bookmark
+                        fill_color={bookmark_color}    
+                    />
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 77.82 77.82" onClick={() => bookmark_recipe(cooked_recipe, set_cooked_recipe)}>
+                    <Tick
+                        fill_color={tick_color.fill}
+                        tick_color={tick_color.stroke}
+                    />
+                </svg>
             </DivStyle.Bookmark_and_tick>
 
             <DivStyle.Bookmark_and_tick>

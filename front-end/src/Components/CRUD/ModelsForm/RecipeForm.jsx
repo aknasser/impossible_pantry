@@ -2,7 +2,7 @@ import * as React from 'react';
 import useCountries from '../../../CustomHooks/useCountries';
 import StepsList from './RecipesFormModules/StepsList';
 import { check_duplicate_among_ingredients_selected, getRightUnit, get_all_ingredients_name } from '../../../Helpers/functions';
-
+import * as TextStyle from "../../../Style/TextStyle"
 
 const RecipeForm = ({endpoint, submitNewRecipe, allIngredients, allStyles, objectToUpdate, selectedAndCheckedInput}) => {
     
@@ -230,7 +230,7 @@ const RecipeForm = ({endpoint, submitNewRecipe, allIngredients, allStyles, objec
 
                 <label htmlFor="country">Country</label>
                 {!countries ? (
-                    <p>Loading</p>
+                    <TextStyle.Loading_message>Loading...</TextStyle.Loading_message>
                 ) : (
                     <select name="country" id="" onChange = {(event) => updateValue(event, "UPDATE_VALUE")}>
                     <option value="">---Pick a country---</option>

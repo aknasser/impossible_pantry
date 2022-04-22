@@ -1,6 +1,6 @@
 import FilterList from "../FilterList";
 import * as React from 'react';
-
+import * as TextStyle from "../../../Style/TextStyle"
 
 const CountryFilterList = ({filterName, countries, filter, submitFilter, checkValidation}) => {
 
@@ -16,7 +16,7 @@ const CountryFilterList = ({filterName, countries, filter, submitFilter, checkVa
     return (
         <>
             {!countries ? (
-                <p>Loading </p>
+                <TextStyle.Loading_message>Loading...</TextStyle.Loading_message>
             ) : (
                 <form onSubmit={(event) => submitFilter(event, filterName, filterTyped)}>
                     <h3>Country</h3>

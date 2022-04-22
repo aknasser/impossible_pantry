@@ -13,6 +13,4 @@ const BarNavButton = ({bar_color}) => {
     );
 }
 
-
-
 export default BarNavButton;

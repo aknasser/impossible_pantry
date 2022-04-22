@@ -7,7 +7,6 @@ import Pantry from './Components/InsideYourKitchen/Selection/Pantry';
 import RecipesAvailable from './Components/InsideYourKitchen/Results/RecipesAvailable';
 import SearchRecipes from './Components/IWannaEat/SearchRecipes';
 import RecipeDetails from './Components/Recipe/RecipeDetails';
-import NotFound from './Components/NotFound';
 import UserContext from './Context/UserContext';
 import useFetchModel from './CustomHooks/useFetchModel';
 import Admin from './Components/CRUD/Admin';
@@ -16,6 +15,10 @@ import UserDashboard from './Components/UserMgmt/UserDashboard'
 import axios from "axios";
 import MainStyle from "./Style/MainStyle"
 import StyleContext from "./Context/StyleContext"
+import * as TextStyle from './Style/TextStyle';
+import * as ButtonStyle from './Style/ButtonStyle';
+
+import NotFound from "./Components/NotFound"
 
 const App = () => {
  
@@ -249,7 +252,7 @@ const theme = {style, setStyle}
                   />
                 ) : pantryFlow.ui_to_display === pantry_stages.food_stock ? (
                   <Pantry
-                    allCategories = {categories}
+                    allCategories = {categories}  // All the categories except NO CATEGORY
                     endpoint = {API_ENDPOINT}
                     pantryUpdater = {dispatchPantryFlow}
                     checkValidation = {checkValidation}
@@ -265,7 +268,7 @@ const theme = {style, setStyle}
                     endpoint = {API_ENDPOINT}
                   />
                 ) : userAccount.isLoading ? (
-                  <p>Loading</p>
+                  <TextStyle.Loading_message>Loading...</TextStyle.Loading_message>
                 ) : pantryFlow.ui_to_display === pantry_stages.recipe_details ? (
                   <RecipeDetails
                     endpoint = {API_ENDPOINT}
@@ -281,7 +284,7 @@ const theme = {style, setStyle}
     {/* I WANNA EAT */}
               <Route path = "/search">
                 {recipes.isLoading || styles.isLoading || ingredients.isLoading  ? (
-                    <p>Loading...</p>
+                    <TextStyle.Loading_message>Loading...</TextStyle.Loading_message>
                 ) : pantryFlow.ui_to_display === pantry_stages.recipe_details ? (
                   <RecipeDetails
                     endpoint = {API_ENDPOINT}
@@ -320,9 +323,11 @@ const theme = {style, setStyle}
 
     {/*NOT FOUND -404 */}
               <Route>
-                <NotFound/>
+                <NotFound 
+                  pantryUpdater = {dispatchPantryFlow}
+                />
               </Route>
-
+              
             </Switch>
           <Footer
             endpoint = {API_ENDPOINT}

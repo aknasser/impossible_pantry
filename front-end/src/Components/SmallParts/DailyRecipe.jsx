@@ -9,6 +9,10 @@ const DailyRecipe = ({recipeTrigger, dailyRecipe}) => {
             type : "RECIPE_PICKED",
             recipe : dailyRecipe 
         })
+        window.scrollTo({      
+            top : 0,
+            behavior :"smooth"
+        })
     }
     
     React.useEffect( () => {

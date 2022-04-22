@@ -6,7 +6,7 @@ import axios from "axios";
 import Filter from "./SubFilters/Filter";
 import KeywordsFilter from "./SubFilters/KeywordsFilter";
 import useCountries from "../../CustomHooks/useCountries";
-
+import * as TextStyle from "../../Style/TextStyle"
 
 const SearchRecipes = ({endpoint, allIngredients, allStyles, recipesUpdater, checkValidation, checkDuplicate}) => {                   // allRecipes will be used to display the recipe available while the user types its request.
 
@@ -120,8 +120,8 @@ const SearchRecipes = ({endpoint, allIngredients, allStyles, recipesUpdater, che
                         ...state.filters,
                         [action.typeOfFilter] : [],  // We will find a better name later on.
                     },
-                    isLoading : true,
-                    standby : false
+/*                     isLoading : true,
+                    standby : false */
                 }
 
             default:
@@ -138,7 +138,7 @@ const SearchRecipes = ({endpoint, allIngredients, allStyles, recipesUpdater, che
                 style : [],
                 difficulty : [],
                 ingredients : [],
-                keywords : "",    // keywords is only a couple of string. An array isn't neccesary here. 
+                keywords : "",    // keywords is only a couple of string. An array isn't needed here. 
             },
             isLoading : false,
             isError : false,
@@ -176,6 +176,7 @@ const SearchRecipes = ({endpoint, allIngredients, allStyles, recipesUpdater, che
 
     const addFilter = (event, entriesAccepted, filterInputFieldName, newFilter) => {
         // 1 - Prevent the usual action of the submitted form (DONE!)
+        console.log("CHECKER§§§")
         event.preventDefault();
         console.log(`New Filter : ${newFilter}`)
 
@@ -234,7 +235,7 @@ const SearchRecipes = ({endpoint, allIngredients, allStyles, recipesUpdater, che
     const resetFilter = (propertyToClean) => {
         // 1 - We clean the property collected from the Component Filter to match with the properties of the "filter" state
         const cleanProperty = propertyToClean.toLowerCase();
-
+        console.log(`CLEAN PROPERTY : ${cleanProperty}`)
         // We update the state using the dispatchFilter.
         dispatchFilter({
             type : "RESET_FILTER",
@@ -301,9 +302,9 @@ const SearchRecipes = ({endpoint, allIngredients, allStyles, recipesUpdater, che
     
     // A mere useeffect() to check the value of recipes
 
-    React.useEffect( () => {
+/*     React.useEffect( () => {
         console.log(`recipesFiltered : ${JSON.stringify(recipesFiltered)}`)
-    }, [recipesFiltered])
+    }, [recipesFiltered]) */
 
 
 
@@ -315,7 +316,7 @@ const SearchRecipes = ({endpoint, allIngredients, allStyles, recipesUpdater, che
             <PageInstructions instructions="Choose your preferences!"/>
 
             {!countries || !styles ||!difficulties || !ingredients ? (
-                <p>Loading</p>
+                <TextStyle.Loading_message>Loading...</TextStyle.Loading_message>
             ) : (
                 <>
                     <Filter

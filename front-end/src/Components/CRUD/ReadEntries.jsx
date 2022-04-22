@@ -28,13 +28,17 @@ const ReadEntries = ({adminManagement, dispatchAdminManagement, endpoint}) => {
                 objectSelected : object_to_update
             }
         })
+        window.scrollTo({      
+            top : 0,
+            behavior :"smooth"
+        })
     };
 
     // To start the deletion process.
     const delete_entry = async(object_to_delete) => {
         try {
             //we post the object to delete.
-            const deletion_process = await axios.post(`${endpoint}/${plural_name()}/delete/${object_to_delete._id}` , object_to_delete)
+            const deletion_process = await axios.post(`${endpoint}/${plural_name()}/delete/${object_to_delete._id}` , object_to_delete);
         } catch (e) {
             console.log(`error in the deletion process : ${e}`);
         }

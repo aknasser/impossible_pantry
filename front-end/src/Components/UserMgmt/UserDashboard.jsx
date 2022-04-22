@@ -5,6 +5,10 @@ import StyleContext from '../../Context/StyleContext';
 import * as DivStyle from '../../Style/DivStyle';
 import * as TextStyle from '../../Style/TextStyle'
 import * as PictureStyle from '../../Style/PictureStyle'
+import Bookmark from '../../Style/SVG/Bookmark';
+import Fridge from '../../Style/SVG/Fridge';
+import Fork from '../../Style/SVG/Fork';
+
 
 
 const UserDashboard = ({pantryUpdater, endpoint}) => {
@@ -17,12 +21,20 @@ const UserDashboard = ({pantryUpdater, endpoint}) => {
             type : "UI_FLOW",
             page_name : "pantry"
         })
+        window.scrollTo({      
+            top : 0,
+            behavior :"smooth"
+        })
     };
 
     const go_to_recipe_details = (recipe) => {
         pantryUpdater({
             type : "RECIPE_PICKED",
             recipe : recipe
+        })
+        window.scrollTo({      
+            top : 0,
+            behavior :"smooth"
         })
     }
 
@@ -43,6 +55,7 @@ const UserDashboard = ({pantryUpdater, endpoint}) => {
     // TO GET THE FULL RECIPE INFORMATIONS (to optimized later)
     const [recipes_saved, set_recipes_saved] = React.useState([]);
     const [recipes_cooked, set_recipes_cooked] = React.useState([]);
+    
     React.useEffect( () => {
         const full_recipes_info = async() => {
             const recipes_saved_details = [];
@@ -64,6 +77,30 @@ const UserDashboard = ({pantryUpdater, endpoint}) => {
         full_recipes_info();
     }, []);
 
+    // TO CHANGE THE COLOR THE PICTURE WHEN THE USER HOVER ON A BLOCK
+    
+    const initial_color = {
+        fridge : {
+            pic_color : style.color_theme.drawing_color,
+            txt_color : "white" 
+        },
+        bookmark : {
+            pic_color : style.color_theme.drawing_color,
+            txt_color : style.color_theme.third_color 
+        },
+        fork : {
+            pic_color : style.color_theme.drawing_color,
+            txt_color : "white" 
+        }
+    };
+    const [pic_color, set_pic_color] = React.useState(initial_color);
+
+    const change_pic_color = (color, pic_to_change) => {
+        set_pic_color({
+            ...initial_color,
+            [pic_to_change] : color
+        });
+    };
 
 
     return (
@@ -73,8 +110,11 @@ const UserDashboard = ({pantryUpdater, endpoint}) => {
                     background_color={style.color_theme.third_color} 
                     txt_color="white" 
                     onClick = {app_flow}
+                    onMouseEnter = {() => change_pic_color({pic_color : style.color_theme.primary_color, txt_color :style.color_theme.primary_color},"fridge")}
+                    onMouseLeave = {() => change_pic_color({pic_color : style.color_theme.drawing_color, txt_color :"white"},"fridge")}
+
                 >
-                    <TextStyle.Dashboard_title>Current Food Stock</TextStyle.Dashboard_title>
+                    <TextStyle.Dashboard_title color = {pic_color.fridge.txt_color}>Current Food Stock</TextStyle.Dashboard_title>
                     <DivStyle.Dashboard_block_content side="row">
                         <DivStyle.Dashboard_text>
                             <h4> Recently added</h4>
@@ -85,7 +125,9 @@ const UserDashboard = ({pantryUpdater, endpoint}) => {
                                 <TextStyle.Item_dashboard>...</TextStyle.Item_dashboard>
                             </DivStyle.Item_group>
                         </DivStyle.Dashboard_text>
-                        <PictureStyle.Dashboard_picture src="dashboard/fridge.svg" alt="huge fridge" />
+                        <PictureStyle.Dashboard_picture xmlns="http://www.w3.org/2000/svg" viewBox="0 0 76 130">
+                            <Fridge fill_color ={pic_color.fridge.pic_color}/>
+                        </PictureStyle.Dashboard_picture>                    
                     </DivStyle.Dashboard_block_content>
                 </DivStyle.Dashboard_category>
                      
@@ -93,8 +135,10 @@ const UserDashboard = ({pantryUpdater, endpoint}) => {
                 <DivStyle.Dashboard_category
                     background_color={style.color_theme.secundary_color} 
                     txt_color={style.color_theme.third_color} 
+                    onMouseEnter = {() => change_pic_color({pic_color : style.color_theme.primary_color, txt_color :style.color_theme.primary_color},"bookmark")}
+                    onMouseLeave = {() => change_pic_color({pic_color : style.color_theme.drawing_color, txt_color :style.color_theme.third_color},"bookmark")}
                 >
-                    <TextStyle.Dashboard_title>Recipes Bookmarked</TextStyle.Dashboard_title>
+                    <TextStyle.Dashboard_title color = {pic_color.bookmark.txt_color}>Recipes Bookmarked</TextStyle.Dashboard_title>
                     <DivStyle.Dashboard_block_content side="row-reverse">
                         <DivStyle.Dashboard_text>
                         {recipes_saved.length <= 0 ? (
@@ -102,12 +146,21 @@ const UserDashboard = ({pantryUpdater, endpoint}) => {
                             ) : (
                             <DivStyle.Item_group>
                                 {recipes_saved.map(recipe => (
-                                    <TextStyle.Recipe_in_dashboard key = {recipe._id} onClick={() => go_to_recipe_details(recipe)}>{recipe.name}</TextStyle.Recipe_in_dashboard>
+                                    <TextStyle.Recipe_in_dashboard 
+                                        txt_color = {style.color_theme.secundary_color}
+                                        bg_color = {style.color_theme.third_color} 
+                                        key = {recipe._id} 
+                                        onClick={() => go_to_recipe_details(recipe)}
+                                    >
+                                        {recipe.name}
+                                    </TextStyle.Recipe_in_dashboard>
                                 ))}
                             </DivStyle.Item_group>
                         )}
                         </DivStyle.Dashboard_text>
-                        <PictureStyle.Dashboard_picture src="dashboard/bookmark.svg" alt="bookmark" />  
+                        <PictureStyle.Dashboard_picture xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26.5 33.04">
+                            <Bookmark fill_color ={pic_color.bookmark.pic_color}/>
+                        </PictureStyle.Dashboard_picture>
                     </DivStyle.Dashboard_block_content>
                 </DivStyle.Dashboard_category>
 
@@ -115,8 +168,10 @@ const UserDashboard = ({pantryUpdater, endpoint}) => {
                 <DivStyle.Dashboard_category
                     background_color={style.color_theme.third_color} 
                     txt_color="white" 
+                    onMouseEnter = {() => change_pic_color({pic_color : style.color_theme.primary_color, txt_color :style.color_theme.primary_color},"fork")}
+                    onMouseLeave = {() => change_pic_color({pic_color : style.color_theme.drawing_color, txt_color :"white"},"fork")}
                 >
-                    <TextStyle.Dashboard_title>Recipes Cooked</TextStyle.Dashboard_title>
+                    <TextStyle.Dashboard_title color = {pic_color.fork.txt_color}>Recipes Cooked</TextStyle.Dashboard_title>
                     <DivStyle.Dashboard_block_content side="row">
                         <DivStyle.Dashboard_text>
                             {recipes_cooked.length <= 0 ? (
@@ -124,12 +179,21 @@ const UserDashboard = ({pantryUpdater, endpoint}) => {
                                 ) : (
                                 <DivStyle.Item_group>
                                     {recipes_cooked.map(recipe => (
-                                        <TextStyle.Recipe_in_dashboard key = {recipe._id} onClick={() => go_to_recipe_details(recipe)}>{recipe.name}</TextStyle.Recipe_in_dashboard>
+                                        <TextStyle.Recipe_in_dashboard 
+                                            txt_color = {style.color_theme.third_color}
+                                            bg_color = {style.color_theme.secundary_color} 
+                                            key = {recipe._id}
+                                            onClick={() => go_to_recipe_details(recipe)}
+                                        >
+                                            {recipe.name}
+                                        </TextStyle.Recipe_in_dashboard>
                                     ))}
                                 </DivStyle.Item_group>
                             )}
                         </DivStyle.Dashboard_text>
-                        <PictureStyle.Dashboard_picture src="dashboard/fork.svg" alt="the king of fork" />
+                        <PictureStyle.Dashboard_picture xmlns="http://www.w3.org/2000/svg" viewBox="0 0 23.36 161.39">
+                            <Fork fill_color ={pic_color.fork.pic_color}/>
+                        </PictureStyle.Dashboard_picture>
                     </DivStyle.Dashboard_block_content>
                 </DivStyle.Dashboard_category>
             </DivStyle.Dashboard_three_blocks>

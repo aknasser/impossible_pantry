@@ -7,6 +7,10 @@ const Suggestions = ({randomRecipe, go_to_recipe_featured}) => {
             type : "RECIPE_PICKED",
             recipe : recipe,
         })
+        window.scrollTo({      
+            top : 0,
+            behavior :"smooth"
+        })
     };
 
     return (
